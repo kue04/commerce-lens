@@ -2,7 +2,16 @@
 
 更新：2026-10-22，Asia/Shanghai。新会话先读根 AGENTS.md；本文保留当前有效状态，历史细节查 Git，不继续追加聊天流水账。
 
-## 本轮执行快照（恢复自 dbffd01）
+## 最新交接快照（恢复自 6411a0b）
+
+- 职责/目录/分支：后端 D:/llm/Commerce Lens-backend，backend/payment-api；本轮开始 HEAD 6411a0b、工作区干净。用户下一步授权本地前后端连接，真实模型继续跳过。本轮只制作交接，不改前端页面或未提交文件、不合并分支。
+- 新增 docs/INTEGRATION-HANDOFF.md、docs/INTEGRATION-PROMPT.md；更新过时的 FRONTEND-HANDOFF 入口、BACKEND-QUICKSTART 的确定性启动约束。已只读核对主目录 main 25a18ec 的 ?? apps/ 与 ?? docs/progress-frontend.md、前端 HttpApi/Vite/进度，及后端 6411a0b 的 HTTP 1.1.0 契约。具体差异、最小同步清单和验收顺序见新交接文档。
+- 可行性判断：前端已有 HttpApi、共享 DTO 导入和 /api 代理，后端已有 loopback HTTP/SSE/真实 PostgreSQL；需先同步共享契约并修复 units、库存聚合、固定 E03 等接入差异。浏览器真实联调尚未发生，不能以各自历史测试宣称成功。
+- 接口同步：后端 contracts/src/http.ts、examples/payment-flow.json、schemas.json、API-CONTRACT.md 是主目录待同步文件；QuerySpec index.ts 无差异。双目录第一链路无须合并 Fastify 根依赖；未来合并需审查 package/lock、tsconfig、.env.example，保留前端独立 package/lock。
+- 验证：本次为文档与只读差异核对，未运行 typecheck/test/build/HTTP/browser；上节 6411a0b 测试成绩均为历史版本证据。仅做文档链接/文件路径与 git diff --check 校验后提交；没有模型请求，未修改冻结样本。
+- 准确停留与下一步：新窗口在原前端目录按 INTEGRATION-PROMPT.md 从支付金额真实浏览器链路开始，保持后端 deterministic、mock 独立，逐片验证。前端未提交成果归前端会话；本轮后端文档改动归本会话，提交后核对工作区干净。真实模型/B/C、人工复核、视频与新系统复现仍未完成。
+
+## 上一切片快照（6411a0b，历史验证）
 
 - 本轮开始分支 backend/payment-api、HEAD dbffd01、工作区干净，worktree 位置已核实。读取 AGENTS.md、本文、PRD 导出/证据要求、API-CONTRACT、ADR 0001/0004 后核对代码，继续导出核查。仅后端，真实模型持续跳过。
 - 核查结果与修复详见 docs/EXPORT-REVIEW.md：JSON 与保存报告一致；旧 Markdown 漏掉证据 QuerySpec/列名/覆盖率/signal/note 与报告状态。新增 apps/api/src/report-export.ts，由原 export 路由调用，完整保留报告口径/状态/原始比较贡献/来源/trace，以及每条证据完整 JSON，自身子范围不再依赖报告总范围猜测。导出不重新查数或覆写报告。
@@ -16,8 +25,8 @@
 - 负责后端、数据库、指标计算、Pi runtime、API、共享契约与后端验证/交付；不修改前端页面或 docs/progress-frontend.md。
 - 工作目录 D:/llm/Commerce Lens-backend，分支 backend/payment-api。主 worktree D:/llm/Commerce Lens 的 main 在 25a18ec，由前端会话使用，未合入最新后端。
 - 最近已提交实现 dbffd01（子范围解释与指标匹配）、f5cb3d5（库存解释引用/合池限制），此前 c4885cf 为三指标、信号、生命周期、离线评测、恢复，ec08b13 是支付金额初版，不能作为当前能力上限。
-- 本轮开始 HEAD=dbffd01，git status --short 为空；修改范围与本次验证见顶部快照。最终提交自身用 git log -1 查询，不在文件中循环记录自身 hash。
-- 用户当前要求：继续非外部真实 API 的后端工作；不等待前端页面。真实模型调用仍被排除，即使日后本机有 Key 也不能自动调用。公网部署不在当前范围。
+- 当前最近业务实现 HEAD=6411a0b；本轮文档交接开始工作区干净，最新交接提交用 git log -1 查询。验证版本见顶部快照，不将文档修改当成新一轮业务验证。
+- 用户最新要求：做好交接，新窗口开始本地前后端连接；保留已有页面，先支付金额链路。真实模型仍被排除，即使有 Key 也不能调用。公网部署不在当前范围。
 
 ## 2. 已完成功能与主要文件
 
@@ -98,8 +107,8 @@
 
 1. 按 AGENTS.md 恢复，核对 Git/实际实现；优先处理真实复现的失败和非模型 PRD 验收缺口。不要重新搭建已完成模块，不重复大规模验证来凑进度。
 2. 本轮已完成 20 报告独立自动核查、PRD 出口核对及 dev/专项修复，详见 REPORT-REVIEW.md。保留人工复核缺口，不能把自动核查重复改称人工完成；旧报告核查仍应报出 2 例 F1。
-3. 库存/流量子范围解释和 Markdown/JSON 导出范围已验证，见 ADR 0004、EXPORT-REVIEW。下一步优先实际核查 BACKEND-QUICKSTART/DEMO 的本地构建启动、备份到空库恢复与构建产物复现证据；先识别未验证路径，不机械重跑通过的规模测试。真实模型/人工/前端/视频出口不由自动审计代填。
-4. 若推进联调，先只读比较 main 与 backend/payment-api 的契约/根配置，给具体提交同步清单；不覆盖前端页面或未提交修改，不盲目合并。
+3. 用户已选择联调为下一步：按 INTEGRATION-HANDOFF/INTEGRATION-PROMPT 在原前端目录保护未提交成果，先完成共享契约最小同步及支付金额真实浏览器链路；后端独立 deterministic 运行，不盲目合并。首片通过再验澄清/追问、退款/件数与失败路径。
+4. 本地构建启动/备份空库恢复的新系统复现仍是后续候选，不优先于本次用户选择的联调。真实模型/人工/视频出口不由自动审计或联调代填。
 5. 真模型与 B/C 评测持续延期，直到用户明确改变要求。前端/视频由其负责会话处理，不把这些当成本地工作的阻塞。
 
 ## 9. 前后端契约与同步

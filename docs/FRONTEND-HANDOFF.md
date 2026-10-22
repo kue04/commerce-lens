@@ -1,5 +1,7 @@
 # 前后端并行开发交接
 
+> 2026-10-22 更新：下方为早期 M1 历史说明，其中“没有 HTTP 服务”等内容已失效。当前已有后端 HTTP 1.1.0 与三指标，下一步用户要求真实前后端连接，继续跳过外部模型。请先读 [INTEGRATION-HANDOFF.md](INTEGRATION-HANDOFF.md) 和 [INTEGRATION-PROMPT.md](INTEGRATION-PROMPT.md)，权威接口以本 worktree 的 API-CONTRACT.md、packages/contracts/src/http.ts 为准。本文下方不作为当前实现状态。
+
 2026-10-22：前端归用户开发，目录 apps/web；当前 Codex 负责 contracts、metrics、analytics、db、scripts、tests 和相关文档。涉及公共契约的变更先同步，后端不覆盖用户前端文件。当前没有 HTTP 服务；以下接口是 M3 实施契约，不表示已上线。
 
 本地接口前缀 /api，计划后端端口 3000、前端端口 5173，均绑定 127.0.0.1。开发代理让浏览器使用同源相对 URL。未实现的接口不得用固定答案伪装后端成功。

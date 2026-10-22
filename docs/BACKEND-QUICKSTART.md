@@ -5,6 +5,7 @@
 ```powershell
 . .\scripts\bootstrap-node.ps1
 npm ci
+$env:ANALYSIS_MODE='deterministic'
 npm run api:dev
 ```
 
@@ -36,8 +37,9 @@ npm run typecheck
 npm test
 npm run build
 node dist/scripts/verify-api.js
-npm run verify:pi
 ```
+
+当前用户持续跳过真实外部模型：显式 ANALYSIS_MODE=deterministic 优先于 .env，不运行 verify:pi，即使已有凭证。前后端接入见 docs/INTEGRATION-HANDOFF.md。
 
 离线评测：`npm run eval:offline`，无需 Key，120 案例按模板族分 dev/frozen-test，冻结集重复三次，共 240 次执行。它衡量确定性解析/工具链，不能写作真实模型准确率。所有运行结果按时间单独保存，不覆盖冻结案例或历史失败。人工复核材料另存 audit-*.json，automated 标记不等于人工已审核。
 
