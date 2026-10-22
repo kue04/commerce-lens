@@ -14,6 +14,9 @@ export function signalScope(a:QuerySpec,b:QuerySpec){
   return a.metricId===b.metricId && isDeepStrictEqual(a.currentWindow,b.currentWindow) && isDeepStrictEqual(a.baselineWindow,b.baselineWindow) &&
     (['channelId','regionId','skuId'] as const).every(key=>!b.filters[key] || (a.filters[key] && a.filters[key]!.every(id=>b.filters[key]!.includes(id))));
 }
+function sameFilters(a:QuerySpec,b:QuerySpec,keys:('channelId'|'regionId'|'skuId')[]){
+  return keys.every(key=>isDeepStrictEqual(a.filters[key]?.toSorted(),b.filters[key]?.toSorted()));
+}
 export function makeEvidence(result:Awaited<ReturnType<AnalyticsService['analyze']>>,runId:string,kind:'comparison'|'contribution'):EvidenceDTO {
   const e=result.evidence;
   const label=metrics[e.metricId].name,unit=e.metricId==='sold_units'?'件':'分';
@@ -73,15 +76,19 @@ export function buildReport(options:{draft:unknown;evidences:EvidenceDTO[];query
     const ref=[comparisonEvidence.id,e.id];
     if(e.signal.type==='inventory'){
       const s=e.signal;
-      facts.push({templateId:'signal',text:`被核查库存池本期观测 ${s.current.observedHours}/${s.current.expectedHours} 小时，零库存 ${s.current.zeroHours} 小时；基期零库存 ${s.baseline.zeroHours} 小时。`,evidenceIds:[e.id],valueRefs:['signal.current','signal.baseline']});
+      facts.push({templateId:'signal',text:`被核查库存池（SKU：${e.query.filters.skuId?.join('、')??'全部'}；大区：${e.query.filters.regionId?.join('、')??'全部'}；大区共享，不区分渠道）本期观测 ${s.current.observedHours}/${s.current.expectedHours} 小时，零库存 ${s.current.zeroHours} 小时；基期零库存 ${s.baseline.zeroHours} 小时。`,evidenceIds:[e.id],valueRefs:['signal.current','signal.baseline']});
       const skuIds=e.query.filters.skuId;
+      const matched=sameFilters(e.query,query,['channelId','regionId']);
+      if(!matched)unknowns.push('库存核查范围与 SKU 贡献的渠道或大区范围不同，不能据此解释该 SKU 的下降。');
       if(!skuIds || skuIds.length!==1)unknowns.push('库存为多个或未分 SKU 的聚合观测，无法判断单个下降 SKU 的零库存变化。');
-      if(query.metricId!=='refund_amount' && decomp && s.current.coverage>=0.95 && s.baseline.coverage>=0.95 && s.current.zeroHours>s.baseline.zeroHours && comparison.delta<0 && query.groupBy==='sku' && skuIds?.length===1 && contributors.some(c=>c.key===skuIds[0] && !c.isOther && c.delta!<0))hypotheses.push({text:'下降商品的零库存观测增加，与销售下降在时间上重叠，可能存在供应约束；不能证明全部下降由缺货造成。',evidenceIds:[...ref,decomp.id],missingEvidence:['缺少曝光、需求与精确补货数据，无法估计因果损失。']});
+      if(matched && query.metricId!=='refund_amount' && decomp && s.current.coverage>=0.95 && s.baseline.coverage>=0.95 && s.current.zeroHours>s.baseline.zeroHours && comparison.delta<0 && query.groupBy==='sku' && skuIds?.length===1 && contributors.some(c=>c.key===skuIds[0] && !c.isOther && c.delta!<0))hypotheses.push({text:'下降商品的零库存观测增加，与销售下降在时间上重叠，可能存在供应约束；不能证明全部下降由缺货造成。',evidenceIds:[...ref,decomp.id],missingEvidence:['缺少曝光、需求与精确补货数据，无法估计因果损失。']});
       if(s.current.coverage<0.95||s.baseline.coverage<0.95)unknowns.push('库存观测覆盖不足 95%，不能声称全天未缺货。');
     }else if(e.signal.type==='traffic'){
-      const s=e.signal;facts.push({templateId:'signal',text:`已观测渠道与大区背景会话数由 ${s.baseline.sessions} 变为 ${s.current.sessions}，不代表 SKU 流量。`,evidenceIds:[e.id],valueRefs:['signal.baseline.sessions','signal.current.sessions']});
+      const s=e.signal;facts.push({templateId:'signal',text:`已观测渠道与大区背景（渠道：${e.query.filters.channelId?.join('、')??'全部'}；大区：${e.query.filters.regionId?.join('、')??'全部'}）会话数由 ${s.baseline.sessions} 变为 ${s.current.sessions}，不代表 SKU 流量。`,evidenceIds:[e.id],valueRefs:['signal.baseline.sessions','signal.current.sessions']});
+      const matched=sameFilters(e.query,query,['channelId','regionId']);
+      if(!matched)unknowns.push('流量核查范围与指标总量的渠道或大区范围不同，仅保留背景事实，不能支持同口径变化解释。');
       if(e.coverage!==1||e.baselineCoverage!==1)unknowns.push('流量覆盖不足，已观测会话数不代表完整窗口总量。');
-      if(s.attributionMatched && s.current.sessions<s.baseline.sessions && comparison.delta<0)hypotheses.push({text:'同口径渠道流量下降与经营指标下降同时出现，支持流量相关解释；不能直接归因到单个 SKU。',evidenceIds:ref,missingEvidence:['缺少 SKU 曝光和访问，尚不能证明因果。']});
+      if(matched && query.metricId!=='refund_amount' && e.coverage===1 && e.baselineCoverage===1 && s.attributionMatched && s.current.sessions<s.baseline.sessions && comparison.delta<0)hypotheses.push({text:'同口径渠道流量下降与经营指标下降同时出现，支持流量相关解释；不能直接归因到单个 SKU。',evidenceIds:ref,missingEvidence:['缺少 SKU 曝光和访问，尚不能证明因果。']});
     }else if(e.signal.type==='promotion'){
       if(e.signal.campaigns.length)hypotheses.push({text:'发现与比较窗口重叠的活动记录，需核实活动结束时间及影响；不能据此确定活动效果。',evidenceIds:ref,missingEvidence:['缺少活动曝光、价格和对照实验数据。']});
     }else{

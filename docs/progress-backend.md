@@ -2,20 +2,20 @@
 
 更新：2026-10-22，Asia/Shanghai。新会话先读根 AGENTS.md；本文保留当前有效状态，历史细节查 Git，不继续追加聊天流水账。
 
-## 本轮执行快照（恢复自 e69f360）
+## 本轮执行快照（恢复自 f5cb3d5）
 
-- 已按顺序读取 AGENTS.md、本文、PRD 相关验收/契约/出口、API-CONTRACT 与 ADR 0001—0003；核实分支 backend/payment-api、HEAD e69f360、开始时工作区干净。只操作 D:/llm/Commerce Lens-backend，未改前端 worktree。
-- 已完成保存报告的独立自动核查切片：新增 scripts/audit-report-samples.ts、docs/REPORT-REVIEW.md 和 evals/results/report-review-2026-10-22T11-26-39-851Z.json。真实 PostgreSQL 18.4 重新发布对应种子，20 份总量/逐贡献与独立 SQL 一致，结构/hash/引用检查 20/20 通过，2 份库存解释漏引贡献证据；humanReviewCompleted=false，不是人工复核。原始报告/冻结标签保持不变。
-- 验证版本为 e69f360 加本次提交差异：packages/agent/src/report.ts 已修复库存解释引用及单 SKU 粒度要求，合池事实保留而归因进入 unknown，退款下降不生成“销售供应约束”解释。先前专项 0/2 失败、修复后 2/2 通过；最终 npm run typecheck、npm test（64/64，0 跳过，40.84 秒）、npm run build 均通过。tests/integration/signals.test.ts 验证持久化报告三类引用，以及独立 SQL/手工预期确认仅增长 B 有 10 小时零库存时 A/B 合池不能支持 A 缺货。
-- 本轮全部改动归本会话，随本次修复提交：报告生成、两测试文件、审查脚本/文档/JSON、EVALUATION/API-CONTRACT 说明与本文。没有外部模型调用，没有新增依赖、DTO、路由或迁移。3000/55432 初查未有监听，本轮临时数据库均正常停止。
-- 当前停留点：审查和库存解释修复切片完成。未重跑 240 次离线集、规模性能或 socket smoke；下方历史成绩不可作为当前版本重新测量。PRD 出口缺口详见 REPORT-REVIEW：真实模型/B/C、人工复核、前后端浏览器验收、视频/全新环境复现仍未完成。
+- 本轮开始分支 backend/payment-api、HEAD f5cb3d5、工作区干净，worktree 位置已核实。恢复 AGENTS.md、本文、PRD 信号/解释边界、API-CONTRACT 与相关 ADR，实际代码核对后继续子范围信号切片。仅操作后端目录，真实模型持续跳过。
+- 已复现并修复：华东库存被用于解释跨大区 SKU 下降；tmall 或华东流量被用于解释全渠道/全大区总量下降。修复前定向 3 测试中 2 失败、同范围正例通过。packages/agent/src/report.ts 新增解释时的渠道/大区集合匹配；不匹配保留明确范围的事实，解释进入 unknown，库存仍是共享池、流量仍不支持 SKU 归因。
+- 当前验证对象 f5cb3d5 加本次提交差异：npm run typecheck、npm test（72/72，0 跳过，44.85 秒）、npm run build 均通过；此前 agent + signal-scope 专项 14/14 通过。新真实 PostgreSQL/Pi faux-provider/HTTP 测试用独立 SQL 和手工预期确认华东 A +500000、华北 A -4500000 分，华东库存零值/背景流量不能解释其他范围下降；验证持久化报告、证据读取和 JSON 导出；同范围正例保留。覆盖筛选顺序、SKU-only 背景、部分覆盖与退款下降。不代表 DeepSeek 验收。
+- 本轮全部修改归本会话，随本次修复提交：report.ts、tests/unit/agent.test.ts、tests/integration/signal-scope.test.ts、ADR 0004、API-CONTRACT 和本文；未改前端、冻结标签或历史报告，无新增依赖/DTO/迁移。临时数据库已正常停止，收尾以 git status 核实无遗留改动。
+- 当前停留点：子范围解释切片及当前质量门禁完成。未重跑 240 次离线集、规模性能或 socket smoke；未运行真实模型/B/C、人工复核、前后端浏览器验收、视频/全新环境复现。下一步核查还未完整验证的事实导出范围与本地复现证据，不扩展 P1。
 
 ## 1. 职责、目录、分支和提交
 
 - 负责后端、数据库、指标计算、Pi runtime、API、共享契约与后端验证/交付；不修改前端页面或 docs/progress-frontend.md。
 - 工作目录 D:/llm/Commerce Lens-backend，分支 backend/payment-api。主 worktree D:/llm/Commerce Lens 的 main 在 25a18ec，由前端会话使用，未合入最新后端。
-- 最近实现提交 c4885cf（三指标、信号、生命周期、离线评测、恢复）；此前 ec08b13 是支付金额初版，不能作为当前能力上限。
-- 本轮开始 HEAD=e69f360（上一会话交接），git status --short 为空；修改范围与本次验证见顶部快照。最终提交自身用 git log -1 查询，不在文件中循环记录自身 hash。
+- 最近已提交实现 f5cb3d5（库存解释引用/合池限制），此前 c4885cf 为三指标、信号、生命周期、离线评测、恢复，ec08b13 是支付金额初版，不能作为当前能力上限。
+- 本轮开始 HEAD=f5cb3d5，git status --short 为空；修改范围与本次验证见顶部快照。最终提交自身用 git log -1 查询，不在文件中循环记录自身 hash。
 - 用户当前要求：继续非外部真实 API 的后端工作；不等待前端页面。真实模型调用仍被排除，即使日后本机有 Key 也不能自动调用。公网部署不在当前范围。
 
 ## 2. 已完成功能与主要文件
@@ -40,6 +40,10 @@
 
 ## 3. 验证结果与对应版本
 
+### 上轮 f5cb3d5（历史，非本轮）
+
+20 份保存报告经独立自动核查：总量/逐贡献与独立 SQL、结构/hash/引用检查通过，2 份库存解释漏引 contribution，详见 REPORT-REVIEW.md 与 report-review-2026-10-22T11-26-39-851Z.json。不是人工复核，历史报告与冻结标签未改。f5cb3d5 修复后 typecheck、npm test 64/64（0 跳过，40.84 秒）、build 通过；本轮不将其当作当前通过。
+
 ### 上一会话交接核验（历史，非本轮）
 
 已核对 worktree、Git、实际文件与原始结果；本次未修改业务代码，验证对象为 c4885cf 的实现（交接前 HEAD=0bc9e9c）。2026-10-22 实际重新运行：npm run typecheck 通过；npm test 60/60 通过、0 跳过（约 44.2 秒）；npm run build 通过；node dist/scripts/verify-api.js 的真实 HTTP/SSE、25 个事件、断点重放与报告/证据持久化均通过，比较为 7000000/10000000 分，agentExecuted=false。最新 smoke 证据已重新生成在 evals/results/backend-api-smoke.json，随本次交接保存。
@@ -58,7 +62,7 @@
 
 ## 4. 进行中任务和停留点
 
-本轮已独立核查 20 份保存报告并完成库存解释的小切片，未遗留半个业务功能。原始 2 份报告的引用缺口保留；修复后通过 dev/专项及当前完整测试验证，没有重写历史报告或冻结标签。下一会话先核对 Git，再按第 8 节处理明确的非模型证据缺口，不重新搭架构或重复抽样来凑通过。
+子范围信号解释切片的当前实现与验证见顶部快照；旧报告 2 份引用缺口仍保留。下一会话先核对 Git，再按第 8 节处理明确的非模型证据缺口，不重新搭架构或重复抽样来凑通过。
 
 ## 5. 未提交修改、归属与进程
 
@@ -89,7 +93,7 @@
 
 1. 按 AGENTS.md 恢复，核对 Git/实际实现；优先处理真实复现的失败和非模型 PRD 验收缺口。不要重新搭建已完成模块，不重复大规模验证来凑进度。
 2. 本轮已完成 20 报告独立自动核查、PRD 出口核对及 dev/专项修复，详见 REPORT-REVIEW.md。保留人工复核缺口，不能把自动核查重复改称人工完成；旧报告核查仍应报出 2 例 F1。
-3. 如继续非模型工作，先检查报告其他信号解释在缩小筛选后的证据范围是否仍匹配，再选可真实复现的小切片；当前样本核查不能证明任意筛选组合都正确。若无新复现，不扩展 P1，也不机械重跑规模测试。真实模型/人工/前端/视频出口不由自动审计代填。
+3. 库存/流量子范围解释已修复并经真实 SQL/Pi faux/HTTP 验证，详见 ADR 0004。后续优先核查 Markdown/JSON 导出的事实、假设、unknown 与证据范围是否完整一致（特别是退款原因和活动子范围），或验证现有本地启动/恢复说明的实际复现缺口；先构造可复现反馈，不凭假想风险扩展。真实模型/人工/前端/视频出口不由自动审计代填。
 4. 若推进联调，先只读比较 main 与 backend/payment-api 的契约/根配置，给具体提交同步清单；不覆盖前端页面或未提交修改，不盲目合并。
 5. 真模型与 B/C 评测持续延期，直到用户明确改变要求。前端/视频由其负责会话处理，不把这些当成本地工作的阻塞。
 
@@ -100,6 +104,7 @@
 - 三主指标；金额 unit=fen、件数 unit=units，null 不显示为 0。phaseName 映射四个前端阶段；0—7 phase 不直接索引四项数组。
 - Evidence.signal/hashAlgorithm 可选；Fact.templateId 新增 signal；hypothesis 含 missingEvidence 和可选 contradictingEvidenceIds；ReportDraft 可选 signalEvidenceIds，旧 provenance 1.0.0 可读取。证据数量可变、rows 原值未格式化。
 - 本轮仅行为同步：库存供应约束假设现在引用 comparison、contribution、inventory 三类证据；仅单个下降 SKU 可获该解释，多 SKU 合池保留事实与 unknown；退款下降不解释为销售供应约束。原 QuerySpec/HTTP 1.1.0 schema、路由、迁移和依赖未变；API-CONTRACT.md 已说明 evidenceIds 不固定为两个。不向另一聊天发消息或自动合并。
+- 子范围补充：渠道/大区筛选与指标证据不匹配时不生成库存/流量解释，但保留带实际范围的 facts 并增加 unknown；同集合不同顺序等价，SKU-only 流量仅为背景。仅文本与解释生成条件改变，不新增契约字段，见 ADR 0004。
 - DELETE /api/sessions/:id；POST /api/reports/:id/feedback；历史 cursor 在 X-Next-Cursor，原数组响应不变；SSE 过期 410 REPLAY_EXPIRED，details.reportUrl 可读最终报告。
 - 迁移增加 003/004，不改旧 SQL。原目录 main 仅到 25a18ec，合并需审查 package.json、package-lock.json、tsconfig.json、.env.example；Fastify 5.12.7/API scripts 为后端引入，前端独立 package/lockfile 保留。
 - 用 catalog 数据版本和字典，禁止发送 scenario/storeId/ownerId/SQL。前端 fixture nuts/oats、mall/live 不是后端 A/B/C、douyin 等授权 ID。
