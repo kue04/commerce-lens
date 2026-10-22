@@ -21,6 +21,8 @@
 
 用户已明确恢复后端独立推进，撤销此前等待前端页面的顺序；本会话持续只负责后端。本轮支付金额接口实现沿用契约提交 0c9d3b2，代码位于 backend/payment-api 分支。
 
+可接入的后端实现提交：ec08b13（feat(api): deliver persisted payment analysis with SSE and bounded Pi tools）。在独立 worktree 验证与提交，尚未合入前端所在 main；联调可直接启动该 worktree API，合并时先审查根配置差异。
+
 | 可用接口 | 字段与实际验证 |
 |---|---|
 | GET /api/catalog、/api/health/live、/api/health/ready | 数据集、时钟、mode、支持指标；实际 HTTP 验证 |
