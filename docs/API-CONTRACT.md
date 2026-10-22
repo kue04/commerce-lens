@@ -4,6 +4,14 @@
 
 本版本只开放 paid_amount。退款/件数底层计算存在不表示 HTTP/Agent 已开放。服务模式由后端启动配置决定：deterministic 执行真实 SQL、明确未执行 Agent；agent 使用真实 Pi + DeepSeek。不会因模型失败自动切换模式。
 
+## 当前可运行接口
+
+本表中的路由已在 apps/api/src/app.ts 实现；默认 `npm run api:dev` 启动 http://127.0.0.1:3000，自动启动独立的本地 PostgreSQL 18 并发布 acceptance-v1。无需 API Key 的 deterministic 模式实际执行 SQL。`npm run verify:api` 自动使用空闲端口验证真实 HTTP/SSE 并保存 evals/results/backend-api-smoke.json。
+
+支付金额首条链路：POST session → POST run（可只传“昨天华东支付金额为什么下降？”）→ GET events → GET report/evidence。已支持 scope 确认、历史报告、JSON/Markdown 导出、取消、幂等和事件重放。确定性解析只覆盖文档中有限表达，无法解释的输入返回澄清；完整自然语言解析只在 agent 模式调用模型。
+
+本切片只部署一个本地 API 进程。服务重启将当前身份的遗留 queued/running 标记 interrupted，不自动重复执行；数据库中已完成报告保持可读取。不要对同一库和身份启动第二个 API 进程来做滚动重启。暂不提供公网访问、完整 30 天清理、会话删除、feedback 或 cursor 分页；不能宣称完整 M3/P0 完成。
+
 ## 路由与字段
 
 | 路由 | 请求 | 响应 schema |
@@ -38,4 +46,6 @@
 
 ## 根配置与依赖同步
 
-后端在独立 backend/payment-api 分支与 worktree 开发。公共契约提交可单独合并/cherry-pick；不要直接拷贝整个 apps 目录。契约本身只需要根工程已有 typebox；后续 HTTP 提交会增加根 Fastify 依赖、API scripts 和后端构建 include。前端当前独立 apps/web/package.json 保留，不在本切片重组 workspace 或 lockfile。
+后端在独立 backend/payment-api 分支与 worktree 开发。公共契约提交可单独合并/cherry-pick；不要直接拷贝整个 apps 目录。契约本身只需要根工程已有 typebox；HTTP 提交增加根 Fastify 5.12.7、api:dev/api:start/verify:api/contracts:examples scripts，tsconfig include apps/api，并新增 APP_DATABASE_URL/ANALYSIS_MODE。合入后在根目录 npm ci；前端当前独立 apps/web/package.json 保留，不在本切片重组 workspace 或前端 lockfile。
+
+共享 HTTP schema 维持 v1.0.0，没有另起一套接口。新的 apps/api、002-app migration 和 packages/agent 随后端提交一起接入。首次启动需执行新版 migration 建立 app schema 和 commerce_app 状态写入角色，已有 001-business.sql 未改写。

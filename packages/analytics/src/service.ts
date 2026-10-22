@@ -4,19 +4,37 @@ import { DomainError, parseQuerySpec, safeInteger, sumIntegers, type Catalog, ty
 import { METRIC_VERSION, metrics, validateWindows } from '../../metrics/src/index.js';
 import { compare, contributions } from './compare.js';
 import { compileQuery } from './query-compiler.js';
+import { watchQueryAbort } from './cancellation.js';
 
 type AggregateRow = { period: 'current' | 'baseline'; key: string; paid: string; units: string; orders: string; refund: string };
 type Watermark = { source: string; coverage_start: string; complete_through: string; missing_partitions: string[] };
 export class AnalyticsService {
   constructor(private readonly pool: Pool) {}
 
-  async analyze(input: unknown, context: QueryContext) {
+  async checkDataQuality(input:unknown,context:QueryContext,signal?:AbortSignal) {
+    const spec=parseQuerySpec(input),client=await this.pool.connect();
+    let watcher:Awaited<ReturnType<typeof watchQueryAbort>>|undefined;
+    try {
+      watcher=await watchQueryAbort(this.pool,client,signal);signal?.throwIfAborted();
+      await client.query('BEGIN READ ONLY');await client.query("SET LOCAL statement_timeout='3s'");
+      await client.query("SELECT set_config('lens.store',$1,true),set_config('lens.dataset',$2,true)",[context.storeId,context.datasetVersion]);
+      const dataset=(await client.query<{clock:string}>("SELECT business_clock::text AS clock FROM business.datasets WHERE dataset_version=$1 AND status='published'",[context.datasetVersion])).rows[0];
+      if(!dataset)throw new DomainError('DATASET_NOT_FOUND','数据集不存在或尚未发布');
+      validateWindows(spec,dataset.clock);
+      const coverage=await this.checkQuality(client,spec,context);await this.validateCatalog(client,spec,context);
+      await watcher.stop();signal?.throwIfAborted();await client.query('COMMIT');return coverage;
+    }catch(error){await watcher?.stop();await client.query('ROLLBACK');signal?.throwIfAborted();throw error;}finally{client.release();}
+  }
+
+  async analyze(input: unknown, context: QueryContext,signal?:AbortSignal) {
     const spec = parseQuerySpec(input);
     // Context is constructed by the server, never parsed from model arguments.
     if (!context.storeId || !context.datasetVersion) throw new DomainError('INVALID_CONTEXT', '缺少服务端访问范围');
     if (spec.groupBy !== 'none' && !metrics[spec.metricId].additive) throw new DomainError('NON_ADDITIVE_METRIC', '比率和去重订单数不能做可加贡献分解');
     const client = await this.pool.connect();
+    let watcher:Awaited<ReturnType<typeof watchQueryAbort>>|undefined;
     try {
+      watcher=await watchQueryAbort(this.pool,client,signal);signal?.throwIfAborted();
       await client.query('BEGIN READ ONLY');
       await client.query("SET LOCAL statement_timeout = '3s'");
       await client.query("SELECT set_config('lens.store',$1,true),set_config('lens.dataset',$2,true)",[context.storeId,context.datasetVersion]);
@@ -35,7 +53,7 @@ export class AnalyticsService {
         current:this.value(groupedRows.find(r=>r.key===key && r.period==='current'),spec)!,
         baseline:this.value(groupedRows.find(r=>r.key===key && r.period==='baseline'),spec)!,
       })),total,spec.topN!) : [];
-      await client.query('COMMIT');
+      await watcher.stop();signal?.throwIfAborted();await client.query('COMMIT');
       const result={comparison:total,contributors};
       const resultHash=createHash('sha256').update(JSON.stringify(result)).digest('hex');
       return {
@@ -47,7 +65,7 @@ export class AnalyticsService {
           result,resultHash,sourceCoverage:quality,createdAt:new Date().toISOString(),isSynthetic:dataset.rows[0].is_synthetic,
         },
       };
-    } catch(error) { await client.query('ROLLBACK'); throw error; }
+    } catch(error) { await watcher?.stop();await client.query('ROLLBACK');signal?.throwIfAborted();throw error; }
     finally {client.release();}
   }
 

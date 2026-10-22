@@ -7,6 +7,7 @@ import { migrate } from '../../db/migrate.js';
 import { AnalyticsService } from '../../packages/analytics/src/service.js';
 import { defaultWindows,utcWindow } from '../../packages/metrics/src/index.js';
 import type { MetricId } from '../../packages/contracts/src/index.js';
+import { setTimeout as delay } from 'node:timers/promises';
 
 let db:Awaited<ReturnType<typeof startLocalPostgres>>,service:AnalyticsService;
 const context={storeId:'store-demo',datasetVersion:'acceptance-v1'};
@@ -20,7 +21,7 @@ after(async()=>{await db?.stop();});
 test('runs on real PostgreSQL 18 and migrations are idempotent',async()=>{
   const version=await db.admin.query('SHOW server_version_num');assert.ok(Number(version.rows[0].server_version_num)>=180000);
   await migrate(db.admin);
-  const result=await db.admin.query('SELECT count(*) FROM public.schema_migrations');assert.equal(result.rows[0].count,'1');
+  const result=await db.admin.query('SELECT count(*) FROM public.schema_migrations');assert.equal(result.rows[0].count,'2');
 });
 test('PRD hand-verified payment/units/order/AOV/refund/net amounts match',async()=>{
   const expected:Record<MetricId,[number,number]>={paid_amount:[7000000,10000000],sold_units:[70,100],paid_orders:[1,1],aov:[7000000,10000000],refund_amount:[300000,0],net_receipts:[6700000,10000000]};
@@ -127,4 +128,20 @@ test('bulk publication refreshes planner statistics for related facts before val
   assert.ok(stats.find(r=>r.relname==='order_items').estimated_rows>=10000);
   assert.ok(stats.find(r=>r.relname==='products').estimated_rows>=30);
   assert.equal((await db.admin.query('SELECT status FROM business.datasets WHERE dataset_version=$1',[data.version])).rows[0].status,'published');
+});
+test('abort signal cancels a blocked PostgreSQL query and safely returns connection to pool',async()=>{
+  const lock=await db.admin.connect();await lock.query('BEGIN');await lock.query('LOCK TABLE business.order_items IN ACCESS EXCLUSIVE MODE');
+  const controller=new AbortController();
+  const analysis=service.analyze(query(),context,controller.signal);
+  const rejected=assert.rejects(analysis,/abort/i);
+  try{
+    let blocked=false;
+    for(let n=0;n<100;n++){
+      const rows=(await db.admin.query("SELECT 1 FROM pg_stat_activity WHERE usename='lens_query' AND wait_event_type='Lock'")).rows;
+      if(rows.length){blocked=true;break;}await delay(10);
+    }
+    assert.equal(blocked,true,'Must observe an actual waiting PostgreSQL query before cancelling');
+    controller.abort();await rejected;
+  }finally{controller.abort();await lock.query('ROLLBACK');lock.release();}
+  assert.equal((await service.analyze(query(),context)).comparison.current,7000000);
 });

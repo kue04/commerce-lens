@@ -1,8 +1,29 @@
 # Commerce Lens
 
-电商经营数据异常分析 Agent 求职作品集，当前已实现 **M0/M1 环境与确定性数据计算**。合成食品电商数据，CNY，Asia/Shanghai，固定演示业务时钟 2026-10-22。本地运行；前端由用户在 apps/web 同步开发。
+电商经营数据异常分析 Agent 求职作品集，当前已实现 **M0/M1 数据基础与支付金额后端 API 切片**。合成食品电商数据，CNY，Asia/Shanghai，固定演示业务时钟 2026-10-22。本地运行；本后端 worktree 不修改前端。
 
-当前演示执行真实 PostgreSQL 查询，但**没有执行 Agent 或调用模型**。Pi + DeepSeek、Fastify API、报告持久化将在后续阶段接入。进度和验收边界见 [docs/PROGRESS.md](docs/PROGRESS.md)，实施基线见 [docs/PRD.md](docs/PRD.md)。
+默认模式执行真实 PostgreSQL 查询，明确**没有执行 Agent 或调用模型**。已提供 Fastify API、任务/报告/证据持久化与 SSE，以及可配置的 Pi + DeepSeek 实现。Pi Core 使用测试传输的工具闭环已验证，真实 DeepSeek 凭证不可用，未声称真实供应商闭环通过。最新进度见 [docs/progress-backend.md](docs/progress-backend.md)，数据阶段记录见 [docs/PROGRESS.md](docs/PROGRESS.md)，实施基线见 [docs/PRD.md](docs/PRD.md)。
+
+## 启动支付金额 API
+
+在独立后端目录 D:/llm/Commerce Lens-backend：
+
+```powershell
+. .\scripts\bootstrap-node.ps1
+npm ci
+npm run api:dev
+```
+
+访问 http://127.0.0.1:3000/api/catalog。该命令自动启动持久 PostgreSQL（127.0.0.1:55432）、迁移并发布小型验收数据，不需要单独运行 db:start。Ctrl+C 停止服务；下次启动保留报告与证据。不要同时启动同一目录的 db:start，或在原前端目录再启动另一个后端。
+
+```powershell
+# 另一个终端：自动启动临时数据库 + 空闲 HTTP 端口，执行真正的 HTTP 与 SSE 验证
+npm run verify:api
+```
+
+完整请求/响应和与前端同步的字段见 [docs/API-CONTRACT.md](docs/API-CONTRACT.md)；最小 PowerShell 示例见 [docs/BACKEND-QUICKSTART.md](docs/BACKEND-QUICKSTART.md)。
+
+真实模型模式：在本 worktree 的 .env 配置 DEEPSEEK_API_KEY、DEEPSEEK_MODEL、ANALYSIS_MODE=agent 后再启动；没有 Key 或 modelId 时拒绝启动，不自动回退。API 仅支持 paid_amount。没有提供真实模型凭证时，不把无 Key 的启动或测试当作 Agent 供应商验收。
 
 ## Windows 快速复现
 
@@ -53,6 +74,8 @@ npm run db:seed
 - db：版本化 migrations、合成明细与事务发布。
 - scripts：本地数据库生命周期、演示、SDK 和规模验证。
 - tests、evals/oracles：人工预期、真实数据库测试与独立 SQL。
-- apps/web：用户负责的前端目录；HTTP 接口尚未提供。
+- apps/api：Fastify 支付分析 API、任务执行与持久化仓库。
+- packages/agent：Pi runtime、运行预算、受控工具、模板化报告验证。
+- apps/web：由另一个会话负责，本后端 worktree 不包含页面实现。
 
-设计取舍、查询权限与数据版本语义见 docs/decisions/0001-baseline.md。当前不提供 npm run dev 页面，后端 HTTP 服务尚未建立。
+设计取舍、查询权限与数据版本语义见 docs/decisions/0001-baseline.md 与 0002-payment-backend.md。当前不提供 npm run dev 页面；使用 api:dev 启动本地后端。

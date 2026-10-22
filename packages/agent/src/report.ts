@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto';
+import { createHash,randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { Value } from 'typebox/value';
-import { DomainError,parseQuerySpec,type QuerySpec } from '../../contracts/src/index.js';
-import { ReportDraftSchema,ReportSchema, type DatasetDTO,type EvidenceDTO,type ExecutionMode,type ReportDraft,type ReportDTO,type TraceDTO } from '../../contracts/src/http.js';
+import { DomainError,parseQuerySpec,sumIntegers,safeInteger,type QuerySpec } from '../../contracts/src/index.js';
+import { ReportDraftSchema,ReportSchema,EvidenceSchema, type DatasetDTO,type EvidenceDTO,type ExecutionMode,type ReportDraft,type ReportDTO,type TraceDTO } from '../../contracts/src/http.js';
 import { METRIC_VERSION } from '../../metrics/src/index.js';
 import type { AnalyticsService } from '../../analytics/src/service.js';
 
@@ -24,9 +24,25 @@ const money=(value:number)=>`${(value/100).toFixed(2)} 元`;
 export function buildReport(options:{draft:unknown;evidences:EvidenceDTO[];query:QuerySpec;dataset:DatasetDTO;runId:string;sessionId:string;question:string;mode:ExecutionMode;modelId:string|null;trace:TraceDTO[];partial?:boolean}):ReportDTO {
   if(!Value.Check(ReportDraftSchema,options.draft))throw new DomainError('INVALID_REPORT_DRAFT','报告只允许选择已注册证据，不能直接填写事实或数字');
   const draft=options.draft as ReportDraft;
+  if(options.query.groupBy!=='none' && !draft.contributionEvidenceId && !options.partial)throw new DomainError('MISSING_CONTRIBUTION','当前分析需要贡献分解证据；不足时仅能生成部分报告');
   const verify=(id:string,kind:EvidenceDTO['kind'])=>{
     const e=options.evidences.find(e=>e.id===id && e.runId===options.runId && e.kind===kind && e.status==='success');
     if(!e || e.datasetVersion!==options.dataset.version || e.metricVersion!==METRIC_VERSION || !sameScope(e.query,options.query))throw new DomainError('INVALID_EVIDENCE','证据不存在、跨运行或分析范围不匹配');
+    if(!Value.Check(EvidenceSchema,e))throw new DomainError('INVALID_EVIDENCE','证据结构不合法');
+    const comparison=e.comparison;
+    if(!comparison || comparison.current===null || comparison.baseline===null || comparison.delta===null)throw new DomainError('REPORT_VALUE_MISMATCH','金额证据缺失');
+    const current=safeInteger(comparison.current),baseline=safeInteger(comparison.baseline),delta=sumIntegers([current,-baseline]);
+    if(delta!==comparison.delta || comparison.changeRate!==(baseline===0?null:delta/baseline))throw new DomainError('REPORT_VALUE_MISMATCH','比较数字不一致');
+    const rawContributors=(e.contributors??[]).map(row=>({key:row.key,current:row.current,baseline:row.baseline,delta:row.delta,changeRate:row.changeRate,isOther:row.isOther,share:row.share}));
+    if(kind==='contribution'){
+      if(sumIntegers(rawContributors.map(r=>safeInteger(r.current)))!==current || sumIntegers(rawContributors.map(r=>safeInteger(r.baseline)))!==baseline)throw new DomainError('REPORT_VALUE_MISMATCH','贡献不守恒');
+      for(const row of rawContributors){
+        const change=sumIntegers([safeInteger(row.current),-safeInteger(row.baseline)]);
+        if(row.delta!==change || row.share!==(delta===0?null:change/delta) || row.changeRate!==(row.baseline===0?null:change/row.baseline!))throw new DomainError('REPORT_VALUE_MISMATCH','贡献行数字不一致');
+      }
+    }
+    const normalizedComparison={current:comparison.current,baseline:comparison.baseline,delta:comparison.delta,changeRate:comparison.changeRate};
+    if(e.resultHash!==createHash('sha256').update(JSON.stringify({comparison:normalizedComparison,contributors:rawContributors})).digest('hex'))throw new DomainError('INVALID_EVIDENCE','证据结果 hash 不一致');
     return e;
   };
   const comparisonEvidence=verify(draft.comparisonEvidenceId,'comparison');

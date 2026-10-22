@@ -3,13 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24 <25" },
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
+    "api:dev": "tsx scripts/api-dev.ts",
+    "api:start": "tsx scripts/api-start.ts",
+    "verify:api": "tsx scripts/verify-api.ts",
+    "contracts:examples": "tsx scripts/contract-examples.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
-    "test": "node --import tsx --test --test-concurrency=1 tests/unit/*.test.ts tests/integration/*.test.ts",
+    "test": "node --import tsx --test --test-concurrency=1 --test-timeout=60000 tests/unit/*.test.ts tests/integration/*.test.ts",
     "test:unit": "node --import tsx --test tests/unit/*.test.ts",
-    "test:integration": "node --import tsx --test --test-concurrency=1 tests/integration/*.test.ts",
+    "test:integration": "node --import tsx --test --test-concurrency=1 --test-timeout=60000 tests/integration/*.test.ts",
     "demo": "tsx scripts/demo.ts",
     "db:start": "tsx scripts/database.ts",
     "db:migrate": "tsx scripts/migrate.ts",
@@ -20,6 +26,7 @@
   "dependencies": {
     "@earendil-works/pi-agent-core": "1.4.0",
     "@earendil-works/pi-ai": "1.4.0",
+    "fastify": "5.12.7",
     "pg": "8.16.3",
     "typebox": "1.3.27"
   },
