@@ -1,0 +1,3222 @@
+{
+  "AnalysisRequestSchema": {
+    "type": "object",
+    "required": [
+      "question"
+    ],
+    "properties": {
+      "question": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2000
+      },
+      "confirmedIntent": {
+        "type": "object",
+        "required": [
+          "metricId",
+          "currentWindow",
+          "baselineWindow",
+          "filters",
+          "groupBy"
+        ],
+        "properties": {
+          "metricId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "paid_amount"
+              },
+              {
+                "type": "string",
+                "const": "paid_orders"
+              },
+              {
+                "type": "string",
+                "const": "sold_units"
+              },
+              {
+                "type": "string",
+                "const": "refund_amount"
+              },
+              {
+                "type": "string",
+                "const": "net_receipts"
+              },
+              {
+                "type": "string",
+                "const": "aov"
+              }
+            ]
+          },
+          "currentWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "baselineWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "channelId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "regionId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "skuId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              }
+            },
+            "additionalProperties": false
+          },
+          "groupBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "none"
+              },
+              {
+                "type": "string",
+                "const": "channel"
+              },
+              {
+                "type": "string",
+                "const": "region"
+              },
+              {
+                "type": "string",
+                "const": "sku"
+              },
+              {
+                "type": "string",
+                "const": "category"
+              }
+            ]
+          },
+          "topN": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "additionalProperties": false
+      },
+      "parentRunId": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "CatalogSchema": {
+    "type": "object",
+    "required": [
+      "version",
+      "storeName",
+      "synthetic",
+      "businessClock",
+      "updatedAt",
+      "timezone",
+      "contractVersion",
+      "executionMode",
+      "supportedMetrics",
+      "datasets"
+    ],
+    "properties": {
+      "version": {
+        "type": "string",
+        "minLength": 1
+      },
+      "storeName": {
+        "type": "string",
+        "minLength": 1
+      },
+      "synthetic": {
+        "type": "boolean",
+        "const": true
+      },
+      "businessClock": {
+        "type": "string"
+      },
+      "updatedAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "timezone": {
+        "type": "string",
+        "const": "Asia/Shanghai"
+      },
+      "contractVersion": {
+        "type": "string",
+        "const": "1.0.0"
+      },
+      "executionMode": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "deterministic"
+          },
+          {
+            "type": "string",
+            "const": "agent"
+          }
+        ]
+      },
+      "supportedMetrics": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "paid_amount"
+            },
+            {
+              "type": "string",
+              "const": "paid_orders"
+            },
+            {
+              "type": "string",
+              "const": "sold_units"
+            },
+            {
+              "type": "string",
+              "const": "refund_amount"
+            },
+            {
+              "type": "string",
+              "const": "net_receipts"
+            },
+            {
+              "type": "string",
+              "const": "aov"
+            }
+          ]
+        }
+      },
+      "datasets": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "version",
+            "storeName",
+            "synthetic",
+            "businessClock",
+            "updatedAt",
+            "timezone"
+          ],
+          "properties": {
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "storeName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "synthetic": {
+              "type": "boolean",
+              "const": true
+            },
+            "businessClock": {
+              "type": "string"
+            },
+            "updatedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+            },
+            "timezone": {
+              "type": "string",
+              "const": "Asia/Shanghai"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "ClarificationSchema": {
+    "type": "object",
+    "required": [
+      "question",
+      "metricId",
+      "date",
+      "region"
+    ],
+    "properties": {
+      "question": {
+        "type": "string",
+        "minLength": 1
+      },
+      "metricId": {
+        "type": "string",
+        "const": "paid_amount"
+      },
+      "date": {
+        "type": "string"
+      },
+      "region": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "ComparisonSchema": {
+    "type": "object",
+    "required": [
+      "current",
+      "baseline",
+      "delta",
+      "changeRate"
+    ],
+    "properties": {
+      "current": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "baseline": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "delta": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "changeRate": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "ContributorSchema": {
+    "type": "object",
+    "required": [
+      "key",
+      "label",
+      "isOther",
+      "current",
+      "baseline",
+      "delta",
+      "changeRate",
+      "share"
+    ],
+    "properties": {
+      "key": {
+        "type": "string",
+        "minLength": 1
+      },
+      "label": {
+        "type": "string",
+        "minLength": 1
+      },
+      "isOther": {
+        "type": "boolean"
+      },
+      "current": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "baseline": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "delta": {
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "changeRate": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "share": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "DatasetSchema": {
+    "type": "object",
+    "required": [
+      "version",
+      "storeName",
+      "synthetic",
+      "businessClock",
+      "updatedAt",
+      "timezone"
+    ],
+    "properties": {
+      "version": {
+        "type": "string",
+        "minLength": 1
+      },
+      "storeName": {
+        "type": "string",
+        "minLength": 1
+      },
+      "synthetic": {
+        "type": "boolean",
+        "const": true
+      },
+      "businessClock": {
+        "type": "string"
+      },
+      "updatedAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "timezone": {
+        "type": "string",
+        "const": "Asia/Shanghai"
+      }
+    },
+    "additionalProperties": false
+  },
+  "ErrorSchema": {
+    "type": "object",
+    "required": [
+      "code",
+      "message",
+      "retryable",
+      "traceId"
+    ],
+    "properties": {
+      "code": {
+        "type": "string",
+        "minLength": 1
+      },
+      "message": {
+        "type": "string",
+        "minLength": 1
+      },
+      "retryable": {
+        "type": "boolean"
+      },
+      "traceId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "details": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "EvidenceSchema": {
+    "type": "object",
+    "required": [
+      "id",
+      "runId",
+      "code",
+      "title",
+      "kind",
+      "status",
+      "metricId",
+      "query",
+      "source",
+      "datasetVersion",
+      "metricVersion",
+      "createdAt",
+      "coverage",
+      "baselineCoverage",
+      "columns",
+      "rows",
+      "note",
+      "resultHash",
+      "queryTemplateIds"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "runId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "code": {
+        "type": "string",
+        "minLength": 1
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "kind": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "comparison"
+          },
+          {
+            "type": "string",
+            "const": "contribution"
+          },
+          {
+            "type": "string",
+            "const": "inventory"
+          },
+          {
+            "type": "string",
+            "const": "quality"
+          },
+          {
+            "type": "string",
+            "const": "traffic"
+          },
+          {
+            "type": "string",
+            "const": "promotion"
+          },
+          {
+            "type": "string",
+            "const": "refund_reason"
+          }
+        ]
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "success"
+          },
+          {
+            "type": "string",
+            "const": "missing"
+          }
+        ]
+      },
+      "metricId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "paid_amount"
+          },
+          {
+            "type": "string",
+            "const": "paid_orders"
+          },
+          {
+            "type": "string",
+            "const": "sold_units"
+          },
+          {
+            "type": "string",
+            "const": "refund_amount"
+          },
+          {
+            "type": "string",
+            "const": "net_receipts"
+          },
+          {
+            "type": "string",
+            "const": "aov"
+          }
+        ]
+      },
+      "query": {
+        "type": "object",
+        "required": [
+          "metricId",
+          "currentWindow",
+          "baselineWindow",
+          "filters",
+          "groupBy"
+        ],
+        "properties": {
+          "metricId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "paid_amount"
+              },
+              {
+                "type": "string",
+                "const": "paid_orders"
+              },
+              {
+                "type": "string",
+                "const": "sold_units"
+              },
+              {
+                "type": "string",
+                "const": "refund_amount"
+              },
+              {
+                "type": "string",
+                "const": "net_receipts"
+              },
+              {
+                "type": "string",
+                "const": "aov"
+              }
+            ]
+          },
+          "currentWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "baselineWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "channelId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "regionId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "skuId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              }
+            },
+            "additionalProperties": false
+          },
+          "groupBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "none"
+              },
+              {
+                "type": "string",
+                "const": "channel"
+              },
+              {
+                "type": "string",
+                "const": "region"
+              },
+              {
+                "type": "string",
+                "const": "sku"
+              },
+              {
+                "type": "string",
+                "const": "category"
+              }
+            ]
+          },
+          "topN": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "additionalProperties": false
+      },
+      "source": {
+        "type": "string",
+        "minLength": 1
+      },
+      "datasetVersion": {
+        "type": "string",
+        "minLength": 1
+      },
+      "metricVersion": {
+        "type": "string",
+        "minLength": 1
+      },
+      "createdAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "coverage": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "baselineCoverage": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "columns": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "rows": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "note": {
+        "type": "string",
+        "minLength": 1
+      },
+      "resultHash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "queryTemplateIds": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "comparison": {
+        "type": "object",
+        "required": [
+          "current",
+          "baseline",
+          "delta",
+          "changeRate"
+        ],
+        "properties": {
+          "current": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "baseline": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "delta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "changeRate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "contributors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "key",
+            "label",
+            "isOther",
+            "current",
+            "baseline",
+            "delta",
+            "changeRate",
+            "share"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "isOther": {
+              "type": "boolean"
+            },
+            "current": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "baseline": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "delta": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "changeRate": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "share": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "ExecutionModeSchema": {
+    "anyOf": [
+      {
+        "type": "string",
+        "const": "deterministic"
+      },
+      {
+        "type": "string",
+        "const": "agent"
+      }
+    ]
+  },
+  "FactSchema": {
+    "type": "object",
+    "required": [
+      "text",
+      "templateId",
+      "evidenceIds",
+      "valueRefs"
+    ],
+    "properties": {
+      "text": {
+        "type": "string",
+        "minLength": 1
+      },
+      "templateId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "comparison"
+          },
+          {
+            "type": "string",
+            "const": "contribution"
+          }
+        ]
+      },
+      "evidenceIds": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "valueRefs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "HistorySchema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": [
+        "sessionId",
+        "reportId",
+        "title",
+        "createdAt",
+        "question"
+      ],
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reportId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "HypothesisSchema": {
+    "type": "object",
+    "required": [
+      "text",
+      "evidenceIds",
+      "missingEvidence"
+    ],
+    "properties": {
+      "text": {
+        "type": "string",
+        "minLength": 1
+      },
+      "evidenceIds": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "missingEvidence": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "PhaseNameSchema": {
+    "anyOf": [
+      {
+        "type": "string",
+        "const": "received"
+      },
+      {
+        "type": "string",
+        "const": "interpreting"
+      },
+      {
+        "type": "string",
+        "const": "checking_data"
+      },
+      {
+        "type": "string",
+        "const": "comparing"
+      },
+      {
+        "type": "string",
+        "const": "decomposing"
+      },
+      {
+        "type": "string",
+        "const": "inspecting"
+      },
+      {
+        "type": "string",
+        "const": "validating"
+      },
+      {
+        "type": "string",
+        "const": "persisting"
+      }
+    ]
+  },
+  "ReportDraftSchema": {
+    "type": "object",
+    "required": [
+      "comparisonEvidenceId"
+    ],
+    "properties": {
+      "comparisonEvidenceId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "contributionEvidenceId": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "ReportSchema": {
+    "type": "object",
+    "required": [
+      "id",
+      "runId",
+      "sessionId",
+      "question",
+      "title",
+      "status",
+      "query",
+      "scopeLabel",
+      "metricLabel",
+      "unit",
+      "dataset",
+      "comparison",
+      "contributors",
+      "finding",
+      "facts",
+      "hypotheses",
+      "unknowns",
+      "nextActions",
+      "limitations",
+      "evidences",
+      "trace",
+      "createdAt",
+      "provenance"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "runId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sessionId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "question": {
+        "type": "string",
+        "minLength": 1
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "completed"
+          },
+          {
+            "type": "string",
+            "const": "partial"
+          }
+        ]
+      },
+      "query": {
+        "type": "object",
+        "required": [
+          "metricId",
+          "currentWindow",
+          "baselineWindow",
+          "filters",
+          "groupBy"
+        ],
+        "properties": {
+          "metricId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "paid_amount"
+              },
+              {
+                "type": "string",
+                "const": "paid_orders"
+              },
+              {
+                "type": "string",
+                "const": "sold_units"
+              },
+              {
+                "type": "string",
+                "const": "refund_amount"
+              },
+              {
+                "type": "string",
+                "const": "net_receipts"
+              },
+              {
+                "type": "string",
+                "const": "aov"
+              }
+            ]
+          },
+          "currentWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "baselineWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "channelId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "regionId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "skuId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              }
+            },
+            "additionalProperties": false
+          },
+          "groupBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "none"
+              },
+              {
+                "type": "string",
+                "const": "channel"
+              },
+              {
+                "type": "string",
+                "const": "region"
+              },
+              {
+                "type": "string",
+                "const": "sku"
+              },
+              {
+                "type": "string",
+                "const": "category"
+              }
+            ]
+          },
+          "topN": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "additionalProperties": false
+      },
+      "scopeLabel": {
+        "type": "string",
+        "minLength": 1
+      },
+      "metricLabel": {
+        "type": "string",
+        "minLength": 1
+      },
+      "unit": {
+        "type": "string",
+        "const": "fen"
+      },
+      "dataset": {
+        "type": "object",
+        "required": [
+          "version",
+          "storeName",
+          "synthetic",
+          "businessClock",
+          "updatedAt",
+          "timezone"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storeName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "synthetic": {
+            "type": "boolean",
+            "const": true
+          },
+          "businessClock": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "timezone": {
+            "type": "string",
+            "const": "Asia/Shanghai"
+          }
+        },
+        "additionalProperties": false
+      },
+      "comparison": {
+        "type": "object",
+        "required": [
+          "current",
+          "baseline",
+          "delta",
+          "changeRate"
+        ],
+        "properties": {
+          "current": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "baseline": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "delta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "changeRate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "contributors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "key",
+            "label",
+            "isOther",
+            "current",
+            "baseline",
+            "delta",
+            "changeRate",
+            "share"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "isOther": {
+              "type": "boolean"
+            },
+            "current": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "baseline": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "delta": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "changeRate": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "share": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "finding": {
+        "type": "string",
+        "minLength": 1
+      },
+      "facts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "text",
+            "templateId",
+            "evidenceIds",
+            "valueRefs"
+          ],
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "templateId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "comparison"
+                },
+                {
+                  "type": "string",
+                  "const": "contribution"
+                }
+              ]
+            },
+            "evidenceIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "valueRefs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "hypotheses": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "text",
+            "evidenceIds",
+            "missingEvidence"
+          ],
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidenceIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "missingEvidence": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "unknowns": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "nextActions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "evidences": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "id",
+            "runId",
+            "code",
+            "title",
+            "kind",
+            "status",
+            "metricId",
+            "query",
+            "source",
+            "datasetVersion",
+            "metricVersion",
+            "createdAt",
+            "coverage",
+            "baselineCoverage",
+            "columns",
+            "rows",
+            "note",
+            "resultHash",
+            "queryTemplateIds"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "runId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "comparison"
+                },
+                {
+                  "type": "string",
+                  "const": "contribution"
+                },
+                {
+                  "type": "string",
+                  "const": "inventory"
+                },
+                {
+                  "type": "string",
+                  "const": "quality"
+                },
+                {
+                  "type": "string",
+                  "const": "traffic"
+                },
+                {
+                  "type": "string",
+                  "const": "promotion"
+                },
+                {
+                  "type": "string",
+                  "const": "refund_reason"
+                }
+              ]
+            },
+            "status": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "success"
+                },
+                {
+                  "type": "string",
+                  "const": "missing"
+                }
+              ]
+            },
+            "metricId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "paid_amount"
+                },
+                {
+                  "type": "string",
+                  "const": "paid_orders"
+                },
+                {
+                  "type": "string",
+                  "const": "sold_units"
+                },
+                {
+                  "type": "string",
+                  "const": "refund_amount"
+                },
+                {
+                  "type": "string",
+                  "const": "net_receipts"
+                },
+                {
+                  "type": "string",
+                  "const": "aov"
+                }
+              ]
+            },
+            "query": {
+              "type": "object",
+              "required": [
+                "metricId",
+                "currentWindow",
+                "baselineWindow",
+                "filters",
+                "groupBy"
+              ],
+              "properties": {
+                "metricId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "paid_amount"
+                    },
+                    {
+                      "type": "string",
+                      "const": "paid_orders"
+                    },
+                    {
+                      "type": "string",
+                      "const": "sold_units"
+                    },
+                    {
+                      "type": "string",
+                      "const": "refund_amount"
+                    },
+                    {
+                      "type": "string",
+                      "const": "net_receipts"
+                    },
+                    {
+                      "type": "string",
+                      "const": "aov"
+                    }
+                  ]
+                },
+                "currentWindow": {
+                  "type": "object",
+                  "required": [
+                    "startDate",
+                    "endDateExclusive"
+                  ],
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDateExclusive": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "baselineWindow": {
+                  "type": "object",
+                  "required": [
+                    "startDate",
+                    "endDateExclusive"
+                  ],
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDateExclusive": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "filters": {
+                  "type": "object",
+                  "properties": {
+                    "channelId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "minItems": 1,
+                      "maxItems": 20,
+                      "uniqueItems": true
+                    },
+                    "regionId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "minItems": 1,
+                      "maxItems": 20,
+                      "uniqueItems": true
+                    },
+                    "skuId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "minItems": 1,
+                      "maxItems": 20,
+                      "uniqueItems": true
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "groupBy": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "none"
+                    },
+                    {
+                      "type": "string",
+                      "const": "channel"
+                    },
+                    {
+                      "type": "string",
+                      "const": "region"
+                    },
+                    {
+                      "type": "string",
+                      "const": "sku"
+                    },
+                    {
+                      "type": "string",
+                      "const": "category"
+                    }
+                  ]
+                },
+                "topN": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                }
+              },
+              "additionalProperties": false
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "datasetVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "metricVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "createdAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+            },
+            "coverage": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "baselineCoverage": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resultHash": {
+              "type": "string",
+              "minLength": 1
+            },
+            "queryTemplateIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "comparison": {
+              "type": "object",
+              "required": [
+                "current",
+                "baseline",
+                "delta",
+                "changeRate"
+              ],
+              "properties": {
+                "current": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "baseline": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "delta": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "changeRate": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "contributors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "key",
+                  "label",
+                  "isOther",
+                  "current",
+                  "baseline",
+                  "delta",
+                  "changeRate",
+                  "share"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "isOther": {
+                    "type": "boolean"
+                  },
+                  "current": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "baseline": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "delta": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "changeRate": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "share": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "trace": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "name",
+            "params",
+            "status",
+            "durationMs"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "params": {
+              "type": "string"
+            },
+            "status": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "success"
+                },
+                {
+                  "type": "string",
+                  "const": "missing"
+                }
+              ]
+            },
+            "durationMs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "evidenceId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "createdAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "provenance": {
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "executionMode",
+          "agentExecuted",
+          "modelId",
+          "promptVersion",
+          "metricVersion",
+          "datasetVersion"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "const": "1.0.0"
+          },
+          "executionMode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "deterministic"
+              },
+              {
+                "type": "string",
+                "const": "agent"
+              }
+            ]
+          },
+          "agentExecuted": {
+            "type": "boolean"
+          },
+          "modelId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "promptVersion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "metricVersion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "datasetVersion": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "RunEventSchema": {
+    "anyOf": [
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "run.started"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "status",
+              "executionMode"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "const": "running"
+              },
+              "executionMode": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "deterministic"
+                  },
+                  {
+                    "type": "string",
+                    "const": "agent"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "phase.changed"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "phase",
+              "phaseName",
+              "action"
+            ],
+            "properties": {
+              "phase": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 7
+              },
+              "phaseName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "received"
+                  },
+                  {
+                    "type": "string",
+                    "const": "interpreting"
+                  },
+                  {
+                    "type": "string",
+                    "const": "checking_data"
+                  },
+                  {
+                    "type": "string",
+                    "const": "comparing"
+                  },
+                  {
+                    "type": "string",
+                    "const": "decomposing"
+                  },
+                  {
+                    "type": "string",
+                    "const": "inspecting"
+                  },
+                  {
+                    "type": "string",
+                    "const": "validating"
+                  },
+                  {
+                    "type": "string",
+                    "const": "persisting"
+                  }
+                ]
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "tool.started"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "toolCallId",
+              "toolName",
+              "params"
+            ],
+            "properties": {
+              "toolCallId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "toolName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "params": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "tool.completed"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "toolCallId",
+              "toolName",
+              "durationMs",
+              "rowCount"
+            ],
+            "properties": {
+              "toolCallId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "toolName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "durationMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "rowCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "evidenceId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "tool.failed"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "toolCallId",
+              "toolName",
+              "code",
+              "retryable"
+            ],
+            "properties": {
+              "toolCallId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "toolName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "retryable": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "clarification.required"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "status",
+              "clarification"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "const": "needs_clarification"
+              },
+              "clarification": {
+                "type": "object",
+                "required": [
+                  "question",
+                  "metricId",
+                  "date",
+                  "region"
+                ],
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "metricId": {
+                    "type": "string",
+                    "const": "paid_amount"
+                  },
+                  "date": {
+                    "type": "string"
+                  },
+                  "region": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "report.ready"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "reportId",
+              "status"
+            ],
+            "properties": {
+              "reportId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "completed"
+                  },
+                  {
+                    "type": "string",
+                    "const": "partial"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "runId",
+          "seq",
+          "type",
+          "at",
+          "payload"
+        ],
+        "properties": {
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "type": "string",
+            "const": "run.finished"
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "payload": {
+            "type": "object",
+            "required": [
+              "status",
+              "usage",
+              "reason"
+            ],
+            "properties": {
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "queued"
+                  },
+                  {
+                    "type": "string",
+                    "const": "running"
+                  },
+                  {
+                    "type": "string",
+                    "const": "completed"
+                  },
+                  {
+                    "type": "string",
+                    "const": "partial"
+                  },
+                  {
+                    "type": "string",
+                    "const": "needs_clarification"
+                  },
+                  {
+                    "type": "string",
+                    "const": "insufficient_data"
+                  },
+                  {
+                    "type": "string",
+                    "const": "failed"
+                  },
+                  {
+                    "type": "string",
+                    "const": "cancelled"
+                  },
+                  {
+                    "type": "string",
+                    "const": "timed_out"
+                  },
+                  {
+                    "type": "string",
+                    "const": "interrupted"
+                  }
+                ]
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              },
+              "usage": {
+                "type": "object",
+                "required": [
+                  "modelRequests",
+                  "toolCalls",
+                  "tokens",
+                  "costUsd"
+                ],
+                "properties": {
+                  "modelRequests": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "toolCalls": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "tokens": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "costUsd": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  },
+  "RunSchema": {
+    "type": "object",
+    "required": [
+      "id",
+      "sessionId",
+      "question",
+      "status",
+      "phase",
+      "phaseName",
+      "executionMode",
+      "createdAt",
+      "usage"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sessionId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "question": {
+        "type": "string",
+        "minLength": 1
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "queued"
+          },
+          {
+            "type": "string",
+            "const": "running"
+          },
+          {
+            "type": "string",
+            "const": "completed"
+          },
+          {
+            "type": "string",
+            "const": "partial"
+          },
+          {
+            "type": "string",
+            "const": "needs_clarification"
+          },
+          {
+            "type": "string",
+            "const": "insufficient_data"
+          },
+          {
+            "type": "string",
+            "const": "failed"
+          },
+          {
+            "type": "string",
+            "const": "cancelled"
+          },
+          {
+            "type": "string",
+            "const": "timed_out"
+          },
+          {
+            "type": "string",
+            "const": "interrupted"
+          }
+        ]
+      },
+      "phase": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 7
+      },
+      "phaseName": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "received"
+          },
+          {
+            "type": "string",
+            "const": "interpreting"
+          },
+          {
+            "type": "string",
+            "const": "checking_data"
+          },
+          {
+            "type": "string",
+            "const": "comparing"
+          },
+          {
+            "type": "string",
+            "const": "decomposing"
+          },
+          {
+            "type": "string",
+            "const": "inspecting"
+          },
+          {
+            "type": "string",
+            "const": "validating"
+          },
+          {
+            "type": "string",
+            "const": "persisting"
+          }
+        ]
+      },
+      "executionMode": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "deterministic"
+          },
+          {
+            "type": "string",
+            "const": "agent"
+          }
+        ]
+      },
+      "createdAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "endedAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "reportId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "parentRunId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "clarification": {
+        "type": "object",
+        "required": [
+          "question",
+          "metricId",
+          "date",
+          "region"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "metricId": {
+            "type": "string",
+            "const": "paid_amount"
+          },
+          "date": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "message": {
+        "type": "string",
+        "minLength": 1
+      },
+      "usage": {
+        "type": "object",
+        "required": [
+          "modelRequests",
+          "toolCalls",
+          "tokens",
+          "costUsd"
+        ],
+        "properties": {
+          "modelRequests": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "toolCalls": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "costUsd": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "RunStatusSchema": {
+    "anyOf": [
+      {
+        "type": "string",
+        "const": "queued"
+      },
+      {
+        "type": "string",
+        "const": "running"
+      },
+      {
+        "type": "string",
+        "const": "completed"
+      },
+      {
+        "type": "string",
+        "const": "partial"
+      },
+      {
+        "type": "string",
+        "const": "needs_clarification"
+      },
+      {
+        "type": "string",
+        "const": "insufficient_data"
+      },
+      {
+        "type": "string",
+        "const": "failed"
+      },
+      {
+        "type": "string",
+        "const": "cancelled"
+      },
+      {
+        "type": "string",
+        "const": "timed_out"
+      },
+      {
+        "type": "string",
+        "const": "interrupted"
+      }
+    ]
+  },
+  "SessionRequestSchema": {
+    "type": "object",
+    "properties": {
+      "datasetVersion": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "SessionResponseSchema": {
+    "type": "object",
+    "required": [
+      "sessionId",
+      "datasetVersion"
+    ],
+    "properties": {
+      "sessionId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "datasetVersion": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "StartRunResponseSchema": {
+    "type": "object",
+    "required": [
+      "runId",
+      "status",
+      "eventsUrl"
+    ],
+    "properties": {
+      "runId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "queued"
+          },
+          {
+            "type": "string",
+            "const": "running"
+          },
+          {
+            "type": "string",
+            "const": "completed"
+          },
+          {
+            "type": "string",
+            "const": "partial"
+          },
+          {
+            "type": "string",
+            "const": "needs_clarification"
+          },
+          {
+            "type": "string",
+            "const": "insufficient_data"
+          },
+          {
+            "type": "string",
+            "const": "failed"
+          },
+          {
+            "type": "string",
+            "const": "cancelled"
+          },
+          {
+            "type": "string",
+            "const": "timed_out"
+          },
+          {
+            "type": "string",
+            "const": "interrupted"
+          }
+        ]
+      },
+      "eventsUrl": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "TraceSchema": {
+    "type": "object",
+    "required": [
+      "name",
+      "params",
+      "status",
+      "durationMs"
+    ],
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "params": {
+        "type": "string"
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "success"
+          },
+          {
+            "type": "string",
+            "const": "missing"
+          }
+        ]
+      },
+      "durationMs": {
+        "type": "number",
+        "minimum": 0
+      },
+      "evidenceId": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "additionalProperties": false
+  },
+  "UsageSchema": {
+    "type": "object",
+    "required": [
+      "modelRequests",
+      "toolCalls",
+      "tokens",
+      "costUsd"
+    ],
+    "properties": {
+      "modelRequests": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "toolCalls": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "tokens": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "costUsd": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "additionalProperties": false
+  }
+}

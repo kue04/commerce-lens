@@ -1,0 +1,455 @@
+{
+  "analysisRequest": {
+    "question": "昨天华东支付金额为什么下降？",
+    "confirmedIntent": {
+      "metricId": "paid_amount",
+      "currentWindow": {
+        "startDate": "2026-10-21",
+        "endDateExclusive": "2026-10-22"
+      },
+      "baselineWindow": {
+        "startDate": "2026-10-14",
+        "endDateExclusive": "2026-10-15"
+      },
+      "filters": {
+        "regionId": [
+          "east"
+        ]
+      },
+      "groupBy": "sku",
+      "topN": 10
+    }
+  },
+  "startRun": {
+    "runId": "example-run",
+    "status": "queued",
+    "eventsUrl": "/api/runs/example-run/events"
+  },
+  "run": {
+    "id": "example-run",
+    "sessionId": "example-session",
+    "question": "昨天华东支付金额为什么下降？",
+    "status": "completed",
+    "phase": 7,
+    "phaseName": "persisting",
+    "executionMode": "deterministic",
+    "createdAt": "2026-10-22T08:49:40.696Z",
+    "endedAt": "2026-10-22T08:49:40.696Z",
+    "reportId": "1e17d5f6-be2c-4f3e-a64e-1c4a8f9e9795",
+    "usage": {
+      "modelRequests": 0,
+      "toolCalls": 2,
+      "tokens": 0,
+      "costUsd": null
+    }
+  },
+  "catalog": {
+    "version": "acceptance-v1",
+    "storeName": "禾味食品演示店",
+    "synthetic": true,
+    "businessClock": "2026-10-22",
+    "updatedAt": "2026-10-22T08:49:40.696Z",
+    "timezone": "Asia/Shanghai",
+    "contractVersion": "1.0.0",
+    "executionMode": "deterministic",
+    "supportedMetrics": [
+      "paid_amount"
+    ],
+    "datasets": [
+      {
+        "version": "acceptance-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-22T08:49:40.696Z",
+        "timezone": "Asia/Shanghai"
+      }
+    ]
+  },
+  "report": {
+    "id": "1e17d5f6-be2c-4f3e-a64e-1c4a8f9e9795",
+    "runId": "example-run",
+    "sessionId": "example-session",
+    "question": "昨天华东支付金额为什么下降？",
+    "title": "支付金额变化分析",
+    "status": "completed",
+    "query": {
+      "metricId": "paid_amount",
+      "currentWindow": {
+        "startDate": "2026-10-21",
+        "endDateExclusive": "2026-10-22"
+      },
+      "baselineWindow": {
+        "startDate": "2026-10-14",
+        "endDateExclusive": "2026-10-15"
+      },
+      "filters": {
+        "regionId": [
+          "east"
+        ]
+      },
+      "groupBy": "sku",
+      "topN": 10
+    },
+    "scopeLabel": "east · 全部商品",
+    "metricLabel": "支付金额",
+    "unit": "fen",
+    "dataset": {
+      "version": "acceptance-v1",
+      "storeName": "禾味食品演示店",
+      "synthetic": true,
+      "businessClock": "2026-10-22",
+      "updatedAt": "2026-10-22T08:49:40.696Z",
+      "timezone": "Asia/Shanghai"
+    },
+    "comparison": {
+      "current": 7000000,
+      "baseline": 10000000,
+      "delta": -3000000,
+      "changeRate": -0.3
+    },
+    "contributors": [
+      {
+        "key": "A",
+        "current": 2000000,
+        "baseline": 6000000,
+        "delta": -4000000,
+        "changeRate": -0.6666666666666666,
+        "isOther": false,
+        "share": 1.3333333333333333,
+        "label": "A"
+      },
+      {
+        "key": "B",
+        "current": 5000000,
+        "baseline": 4000000,
+        "delta": 1000000,
+        "changeRate": 0.25,
+        "isOther": false,
+        "share": -0.3333333333333333,
+        "label": "B"
+      }
+    ],
+    "finding": "支付金额变化达到下降规则提示阈值，请结合贡献与缺失证据核实。",
+    "facts": [
+      {
+        "templateId": "comparison",
+        "text": "支付金额由 100000.00 元 变为 70000.00 元，变化 -30000.00 元。",
+        "evidenceIds": [
+          "03b7a736-cd43-4665-87db-0850b7927b3c"
+        ],
+        "valueRefs": [
+          "comparison.baseline",
+          "comparison.current",
+          "comparison.delta"
+        ]
+      },
+      {
+        "templateId": "contribution",
+        "text": "A 支付金额变化 -40000.00 元。",
+        "evidenceIds": [
+          "9b393493-5966-435f-8381-1820f6fc4a4d"
+        ],
+        "valueRefs": [
+          "contributors.0.delta"
+        ]
+      },
+      {
+        "templateId": "contribution",
+        "text": "B 支付金额变化 10000.00 元。",
+        "evidenceIds": [
+          "9b393493-5966-435f-8381-1820f6fc4a4d"
+        ],
+        "valueRefs": [
+          "contributors.1.delta"
+        ]
+      }
+    ],
+    "hypotheses": [],
+    "unknowns": [
+      "当前数据集未提供库存、流量和活动证据，无法确认变化原因或估计因果损失。"
+    ],
+    "nextActions": [
+      "核实贡献较大的商品与渠道，补充库存和流量数据。"
+    ],
+    "limitations": [
+      "合成食品电商数据；固定演示业务时钟。",
+      "贡献分解表示变化来源，相关性不等于因果。",
+      "确定性数据库分析模式，未执行 Agent 或调用模型。"
+    ],
+    "evidences": [
+      {
+        "id": "03b7a736-cd43-4665-87db-0850b7927b3c",
+        "runId": "example-run",
+        "code": "E01",
+        "title": "支付金额周期比较",
+        "kind": "comparison",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ]
+          },
+          "groupBy": "none",
+          "topN": 10
+        },
+        "source": "PostgreSQL 支付订单行聚合",
+        "datasetVersion": "acceptance-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-22T08:49:40.819Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "本期（分）",
+          "基期（分）",
+          "变化（分）",
+          "变化率"
+        ],
+        "rows": [
+          [
+            7000000,
+            10000000,
+            -3000000,
+            -0.3
+          ]
+        ],
+        "note": "金额为分整数；支付按 paid_at，结果绑定不可变数据版本。",
+        "resultHash": "410f18f27e8411ed62ef9a6e788036d53c87080e2422edeaf8e0b5904e365e41",
+        "queryTemplateIds": [
+          "aggregate-v1:paid_amount:none"
+        ],
+        "comparison": {
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        }
+      },
+      {
+        "id": "9b393493-5966-435f-8381-1820f6fc4a4d",
+        "runId": "example-run",
+        "code": "E02",
+        "title": "支付金额变化贡献",
+        "kind": "contribution",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL 支付订单行聚合",
+        "datasetVersion": "acceptance-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-22T08:49:40.822Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "分组",
+          "本期（分）",
+          "基期（分）",
+          "变化（分）",
+          "贡献份额"
+        ],
+        "rows": [
+          [
+            "A",
+            2000000,
+            6000000,
+            -4000000,
+            1.3333333333333333
+          ],
+          [
+            "B",
+            5000000,
+            4000000,
+            1000000,
+            -0.3333333333333333
+          ]
+        ],
+        "note": "金额为分整数；支付按 paid_at，结果绑定不可变数据版本。",
+        "resultHash": "e906c27f984622731511170674667b0f5d848337c746e4095f8bcdd32d101cbf",
+        "queryTemplateIds": [
+          "aggregate-v1:paid_amount:none",
+          "aggregate-v1:paid_amount:sku"
+        ],
+        "comparison": {
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        "contributors": [
+          {
+            "key": "A",
+            "current": 2000000,
+            "baseline": 6000000,
+            "delta": -4000000,
+            "changeRate": -0.6666666666666666,
+            "isOther": false,
+            "share": 1.3333333333333333,
+            "label": "A"
+          },
+          {
+            "key": "B",
+            "current": 5000000,
+            "baseline": 4000000,
+            "delta": 1000000,
+            "changeRate": 0.25,
+            "isOther": false,
+            "share": -0.3333333333333333,
+            "label": "B"
+          }
+        ]
+      }
+    ],
+    "trace": [],
+    "createdAt": "2026-10-22T08:49:40.823Z",
+    "provenance": {
+      "contractVersion": "1.0.0",
+      "executionMode": "deterministic",
+      "agentExecuted": false,
+      "modelId": null,
+      "promptVersion": "payment-v1",
+      "metricVersion": "1.0.0",
+      "datasetVersion": "acceptance-v1"
+    }
+  },
+  "evidence": {
+    "id": "03b7a736-cd43-4665-87db-0850b7927b3c",
+    "runId": "example-run",
+    "code": "E01",
+    "title": "支付金额周期比较",
+    "kind": "comparison",
+    "status": "success",
+    "metricId": "paid_amount",
+    "query": {
+      "metricId": "paid_amount",
+      "currentWindow": {
+        "startDate": "2026-10-21",
+        "endDateExclusive": "2026-10-22"
+      },
+      "baselineWindow": {
+        "startDate": "2026-10-14",
+        "endDateExclusive": "2026-10-15"
+      },
+      "filters": {
+        "regionId": [
+          "east"
+        ]
+      },
+      "groupBy": "none",
+      "topN": 10
+    },
+    "source": "PostgreSQL 支付订单行聚合",
+    "datasetVersion": "acceptance-v1",
+    "metricVersion": "1.0.0",
+    "createdAt": "2026-10-22T08:49:40.819Z",
+    "coverage": 1,
+    "baselineCoverage": 1,
+    "columns": [
+      "本期（分）",
+      "基期（分）",
+      "变化（分）",
+      "变化率"
+    ],
+    "rows": [
+      [
+        7000000,
+        10000000,
+        -3000000,
+        -0.3
+      ]
+    ],
+    "note": "金额为分整数；支付按 paid_at，结果绑定不可变数据版本。",
+    "resultHash": "410f18f27e8411ed62ef9a6e788036d53c87080e2422edeaf8e0b5904e365e41",
+    "queryTemplateIds": [
+      "aggregate-v1:paid_amount:none"
+    ],
+    "comparison": {
+      "current": 7000000,
+      "baseline": 10000000,
+      "delta": -3000000,
+      "changeRate": -0.3
+    }
+  },
+  "error": {
+    "code": "INVALID_QUERY",
+    "message": "QuerySpec 不符合受控查询契约",
+    "retryable": false,
+    "traceId": "example-trace"
+  },
+  "events": [
+    {
+      "runId": "example-run",
+      "seq": 1,
+      "type": "run.started",
+      "at": "2026-10-22T08:49:40.696Z",
+      "payload": {
+        "status": "running",
+        "executionMode": "deterministic"
+      }
+    },
+    {
+      "runId": "example-run",
+      "seq": 2,
+      "type": "phase.changed",
+      "at": "2026-10-22T08:49:40.696Z",
+      "payload": {
+        "phase": 3,
+        "phaseName": "comparing",
+        "action": "比较支付金额"
+      }
+    },
+    {
+      "runId": "example-run",
+      "seq": 3,
+      "type": "report.ready",
+      "at": "2026-10-22T08:49:40.696Z",
+      "payload": {
+        "reportId": "1e17d5f6-be2c-4f3e-a64e-1c4a8f9e9795",
+        "status": "completed"
+      }
+    },
+    {
+      "runId": "example-run",
+      "seq": 4,
+      "type": "run.finished",
+      "at": "2026-10-22T08:49:40.696Z",
+      "payload": {
+        "status": "completed",
+        "usage": {
+          "modelRequests": 0,
+          "toolCalls": 2,
+          "tokens": 0,
+          "costUsd": null
+        },
+        "reason": "report_validated"
+      }
+    }
+  ]
+}
