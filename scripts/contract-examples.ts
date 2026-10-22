@@ -23,7 +23,7 @@ try {
     analysisRequest:{question,confirmedIntent:query},
     startRun:{runId,status:'queued',eventsUrl:`/api/runs/${runId}/events`},
     run:{id:runId,sessionId,question,status:'completed',phase:7,phaseName:'persisting',executionMode:'deterministic',createdAt:now,endedAt:now,reportId:report.id,usage},
-    catalog:{...dataset,contractVersion:'1.0.0',executionMode:'deterministic',supportedMetrics:['paid_amount'],datasets:[dataset]},
+    catalog:{...dataset,contractVersion:schemas.CONTRACT_VERSION,executionMode:'deterministic',supportedMetrics:['paid_amount','refund_amount','sold_units'],datasets:[dataset]},
     report,evidence:comparison,
     error:{code:'INVALID_QUERY',message:'QuerySpec 不符合受控查询契约',retryable:false,traceId:'example-trace'},
     events:[{runId,seq:1,type:'run.started',at:now,payload:{status:'running',executionMode:'deterministic'}},

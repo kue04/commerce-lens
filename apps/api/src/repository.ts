@@ -2,7 +2,7 @@ import { createHash,randomUUID } from 'node:crypto';
 import type { Pool,PoolClient } from 'pg';
 import { Value } from 'typebox/value';
 import { DomainError,type QuerySpec } from '../../../packages/contracts/src/index.js';
-import { RunEventSchema, type AnalysisRequest,type ExecutionMode,type RunDTO,type RunEventDTO,type ReportDTO,type EvidenceDTO } from '../../../packages/contracts/src/http.js';
+import { RunEventSchema, type FeedbackRequest,type AnalysisRequest,type ExecutionMode,type RunDTO,type RunEventDTO,type ReportDTO,type EvidenceDTO } from '../../../packages/contracts/src/http.js';
 
 export const active=(status:RunDTO['status'])=>status==='queued'||status==='running';
 export const emptyUsage=()=>({modelRequests:0,toolCalls:0,tokens:0,costUsd:null as number|null});
@@ -31,8 +31,42 @@ export class Repository {
     const sessionId=randomUUID();await this.pool.query('INSERT INTO app.sessions(session_id,owner_id,store_id,dataset_version) VALUES($3,$1,$2,$4)',[...this.args(),sessionId,datasetVersion]);
     return {sessionId,datasetVersion};
   }
-  async history(limit:number){
-    return (await this.pool.query<{dto:ReportDTO}>(`SELECT dto FROM app.reports WHERE owner_id=$1 AND store_id=$2 ORDER BY created_at DESC,report_id LIMIT $3`,[...this.args(),limit])).rows.map(({dto:r})=>({sessionId:r.sessionId,reportId:r.id,title:r.title,createdAt:r.createdAt,question:r.question}));
+  async history(limit:number,cursor?:string){
+    let boundary:{at:string;id:string}|null=null;
+    if(cursor){try{boundary=JSON.parse(Buffer.from(cursor,'base64url').toString('utf8'));}catch{throw new DomainError('INVALID_REQUEST','分页游标无效');}
+      if(!boundary||typeof boundary.at!=='string'||!Number.isFinite(Date.parse(boundary.at))||typeof boundary.id!=='string'||boundary.id.length>100)throw new DomainError('INVALID_REQUEST','分页游标无效');}
+    const rows=(await this.pool.query<{dto:ReportDTO;at:string}>(`SELECT dto,to_char(created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS at FROM app.reports WHERE owner_id=$1 AND store_id=$2
+      AND ($4::timestamptz IS NULL OR (created_at,report_id)<($4::timestamptz,$5::text)) ORDER BY created_at DESC,report_id DESC LIMIT $3`,[...this.args(),limit+1,boundary?.at??null,boundary?.id??null])).rows;
+    const selected=rows.slice(0,limit),last=selected.at(-1);
+    return {items:selected.map(({dto:r})=>({sessionId:r.sessionId,reportId:r.id,title:r.title,createdAt:r.createdAt,question:r.question})),
+      nextCursor:rows.length>limit && last?Buffer.from(JSON.stringify({at:last.at,id:last.dto.id})).toString('base64url'):null};
+  }
+  async feedback(reportId:string,input:FeedbackRequest){
+    const feedbackId=randomUUID();
+    const result=await this.pool.query(`INSERT INTO app.feedback(feedback_id,report_id,owner_id,store_id,rating,issue_type,comment)
+      SELECT $3,report_id,$1,$2,$5,$6,$7 FROM app.reports WHERE owner_id=$1 AND store_id=$2 AND report_id=$4`,[...this.args(),feedbackId,reportId,input.rating,input.issueType,input.comment]);
+    if(!result.rowCount)throw new DomainError('NOT_FOUND','报告不存在');return {feedbackId};
+  }
+  async activeRuns(sessionId:string){await this.session(sessionId);return (await this.pool.query<{run_id:string}>("SELECT run_id FROM app.runs WHERE owner_id=$1 AND store_id=$2 AND session_id=$3 AND status IN ('queued','running')",[...this.args(),sessionId])).rows.map(r=>r.run_id);}
+  async deleteSession(id:string,cutoff?:Date){
+    return this.transaction(async client=>{
+      const session=(await client.query('SELECT 1 FROM app.sessions WHERE owner_id=$1 AND store_id=$2 AND session_id=$3 FOR UPDATE',[...this.args(),id])).rowCount;
+      if(!session)throw new DomainError('NOT_FOUND','会话不存在');
+      if((await client.query("SELECT 1 FROM app.runs WHERE session_id=$1 AND (status IN ('queued','running') OR ($2::timestamptz IS NOT NULL AND created_at>=$2))",[id,cutoff??null])).rowCount)throw new DomainError('RUN_CONFLICT','会话有活动或近期任务，不能删除');
+      await client.query('DELETE FROM app.feedback WHERE report_id IN (SELECT report_id FROM app.reports WHERE run_id IN (SELECT run_id FROM app.runs WHERE session_id=$1))',[id]);
+      await client.query('DELETE FROM app.reports WHERE run_id IN (SELECT run_id FROM app.runs WHERE session_id=$1)',[id]);
+      await client.query('DELETE FROM app.evidences WHERE run_id IN (SELECT run_id FROM app.runs WHERE session_id=$1)',[id]);
+      await client.query('DELETE FROM app.run_events WHERE run_id IN (SELECT run_id FROM app.runs WHERE session_id=$1)',[id]);
+      await client.query('DELETE FROM app.runs WHERE session_id=$1',[id]);await client.query('DELETE FROM app.sessions WHERE session_id=$1',[id]);
+    });
+  }
+  async purgeExpired(now=new Date()){
+    const cutoff=new Date(now.getTime()-30*86400000);
+    const expired=(await this.pool.query<{session_id:string}>(`SELECT session_id FROM app.sessions s WHERE owner_id=$1 AND store_id=$2 AND created_at<$3
+      AND NOT EXISTS(SELECT 1 FROM app.runs r WHERE r.session_id=s.session_id AND (r.status IN ('queued','running') OR r.created_at>=$3))`,[...this.args(),cutoff])).rows;
+    let deleted=0;for(const row of expired)try{await this.deleteSession(row.session_id,cutoff);deleted++;}catch(error){if(!(error instanceof DomainError)||!['NOT_FOUND','RUN_CONFLICT'].includes(error.code))throw error;}
+    const expiredEvents=await this.pool.query(`DELETE FROM app.run_events e USING app.runs r WHERE e.run_id=r.run_id AND r.owner_id=$1 AND r.store_id=$2 AND r.status NOT IN ('queued','running') AND e.created_at<$3`,[...this.args(),cutoff]);
+    return {deletedSessions:deleted,deletedEvents:expiredEvents.rowCount,cutoff:cutoff.toISOString()};
   }
   async createRun(sessionId:string,request:AnalysisRequest,key:string,mode:ExecutionMode) {
     const hash=stableHash({sessionId,request});
@@ -117,6 +151,7 @@ export class Repository {
     if(!row)throw new DomainError('NOT_FOUND','证据不存在');return row.dto;
   }
   async events(id:string,after:number){await this.run(id);return (await this.pool.query<{event_json:RunEventDTO}>('SELECT event_json FROM app.run_events WHERE run_id=$1 AND seq>$2 ORDER BY seq',[id,after])).rows.map(r=>r.event_json);}
+  async firstEventSeq(id:string){await this.run(id);const value=(await this.pool.query('SELECT min(seq) AS first FROM app.run_events WHERE run_id=$1',[id])).rows[0].first;return value===null?null:Number(value);}
   async interrupt(){
     const rows=(await this.pool.query<{dto:RunDTO}>("SELECT dto FROM app.runs WHERE owner_id=$1 AND store_id=$2 AND status IN ('queued','running')",this.args())).rows;
     for(const {dto}of rows)await this.finish(dto.id,'interrupted','服务已重启，请创建新任务重试',dto.usage);

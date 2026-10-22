@@ -5,8 +5,24 @@ type Order = { store: string; id: string; at: string; status: string; channel: s
 type Item = { store: string; id: string; order: string; sku: string; category: string; quantity: number; amount: number };
 type Refund = { store: string; id: string; item: string; at: string; status: string; amount: number; units: number; reason: string | null };
 type Product = { store: string; sku: string; name: string; category: string };
+export type InventoryRow={store:string;sku:string;region:string;at:string;units:number;observed:boolean};
+export type TrafficRow={store:string;channel:string;region:string;date:string;sessions:number;attribution:string};
+export type PromotionRow={store:string;id:string;start:string;end:string;channel:string|null;sku:string|null;type:string};
 export type SeedData = { version: string; seed: number; clock: string; start: string; products: Product[]; orders: Order[]; items: Item[]; refunds: Refund[]; missing: string[]; completeThrough: string;
-  sourceOverrides?: Partial<Record<'orders'|'order_items'|'refund_events',{completeThrough?:string;missing?:string[]}>> };
+  inventory?:InventoryRow[];traffic?:TrafficRow[];promotions?:PromotionRow[];
+  sourceOverrides?: Partial<Record<'orders'|'order_items'|'refund_events'|'inventory'|'traffic'|'promotion',{completeThrough?:string;missing?:string[]}>> };
+
+export function signalSeed(version='signals-v1'):SeedData {
+  const data=acceptanceSeed(version);data.inventory=[];data.traffic=[];
+  for(const date of ['2026-10-14','2026-10-21']){
+    for(const region of ['east','south','north','west']){
+      for(const sku of ['A','B','C'])for(let hour=0;hour<24;hour++)data.inventory.push({store:'store-demo',sku,region,at:`${date}T${String(hour).padStart(2,'0')}:00:00+08:00`,units:date==='2026-10-21' && sku==='A' && region==='east' && hour>=8 && hour<18?0:100,observed:true});
+      for(const channel of ['douyin','tmall','jd'])data.traffic.push({store:'store-demo',region,channel,date,sessions:date==='2026-10-21'?700:1000,attribution:'order-channel-region-v1'});
+    }
+  }
+  data.promotions=[{store:'store-demo',id:'promotion-A',start:'2026-10-10T00:00:00+08:00',end:'2026-10-21T00:00:00+08:00',channel:'douyin',sku:'A',type:'discount_ended'}];
+  return data;
+}
 
 export function acceptanceSeed(version = 'acceptance-v1', seed = 42): SeedData {
   const products: Product[] = ['store-demo', 'store-other'].flatMap(store => ['A','B','C'].map(sku => ({ store, sku, name: `食品 ${sku}`, category: sku === 'C' ? '新品' : '零食' })));
@@ -71,7 +87,7 @@ export async function publishSeed(pool: Pool, data: SeedData, onProgress?: (stag
     await client.query("SET LOCAL statement_timeout = '60s'");
     const exists=await client.query('SELECT 1 FROM business.datasets WHERE dataset_version=$1',[data.version]);
     if(exists.rowCount) throw new Error('Dataset version already exists; use a new version instead of overwriting');
-    await client.query(`INSERT INTO business.datasets(dataset_version,schema_version,seed,business_clock,is_synthetic) VALUES($1,'1.0.0',$2,$3,true)`,[data.version,data.seed,data.clock]);
+    await client.query(`INSERT INTO business.datasets(dataset_version,schema_version,seed,business_clock,is_synthetic) VALUES($1,'1.1.0',$2,$3,true)`,[data.version,data.seed,data.clock]);
     const insert = async (table:string, columns:string[], rows:unknown[][]) => {
       for(let offset=0;offset<rows.length;offset+=1500) {
         const batch=rows.slice(offset,offset+1500), values:unknown[]=[];
@@ -91,8 +107,12 @@ export async function publishSeed(pool: Pool, data: SeedData, onProgress?: (stag
     await insert('refund_events',['dataset_version','store_id','refund_event_id','order_item_id','succeeded_at','status','refund_amount_cents','refunded_units','reason_code'],data.refunds.map(r=>[data.version,r.store,r.id,r.item,r.at,r.status,r.amount,r.units,r.reason]));
     onProgress?.('refunds_inserted');
     await client.query('ANALYZE business.refund_events');
-    for(const store of new Set(data.products.map(p=>p.store))) for(const source of ['orders','order_items','refund_events'] as const) {
-      const override=data.sourceOverrides?.[source];
+    if(data.inventory)await insert('inventory_hourly',['dataset_version','store_id','sku_id','region_id','hour_at','available_units','is_observed'],data.inventory.map(r=>[data.version,r.store,r.sku,r.region,r.at,r.units,r.observed]));
+    if(data.traffic)await insert('traffic_daily',['dataset_version','store_id','channel_id','region_id','business_date','sessions','attribution_version'],data.traffic.map(r=>[data.version,r.store,r.channel,r.region,r.date,r.sessions,r.attribution]));
+    if(data.promotions)await insert('promotion_events',['dataset_version','store_id','campaign_id','start_at','end_at','channel_id','sku_id','event_type'],data.promotions.map(r=>[data.version,r.store,r.id,r.start,r.end,r.channel,r.sku,r.type]));
+    const sources=['orders','order_items','refund_events',...(data.inventory?['inventory']:[]),...(data.traffic?['traffic']:[]),...(data.promotions?['promotion']:[])] as const;
+    for(const store of new Set(data.products.map(p=>p.store))) for(const source of sources) {
+      const override=data.sourceOverrides?.[source as keyof NonNullable<SeedData['sourceOverrides']>];
       await client.query(`INSERT INTO business.source_watermarks(dataset_version,store_id,source,coverage_start,complete_through,missing_partitions,checked_at) VALUES($1,$2,$3,$4,$5,$6,$7)`,[data.version,store,source,data.start,override?.completeThrough??data.completeThrough,override?.missing??data.missing,`${data.clock}T00:00:00+08:00`]);
     }
     await client.query("UPDATE business.datasets SET status='published',published_at=$2 WHERE dataset_version=$1",[data.version,`${data.clock}T00:00:00+08:00`]);

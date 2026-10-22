@@ -1,15 +1,30 @@
-import { createHash } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import { DomainError, parseQuerySpec, safeInteger, sumIntegers, type Catalog, type Comparison, type QueryContext, type QuerySpec } from '../../contracts/src/index.js';
 import { METRIC_VERSION, metrics, validateWindows } from '../../metrics/src/index.js';
 import { compare, contributions } from './compare.js';
 import { compileQuery } from './query-compiler.js';
 import { watchQueryAbort } from './cancellation.js';
+import { resultHash as hashResult } from './hash.js';
 
 type AggregateRow = { period: 'current' | 'baseline'; key: string; paid: string; units: string; orders: string; refund: string };
 type Watermark = { source: string; coverage_start: string; complete_through: string; missing_partitions: string[] };
 export class AnalyticsService {
   constructor(private readonly pool: Pool) {}
+
+  async excludeSku(previous:QuerySpec,sku:string,context:QueryContext):Promise<QuerySpec|null>{
+    const client=await this.pool.connect();
+    try{
+      await client.query('BEGIN READ ONLY');await client.query("SET LOCAL statement_timeout='3s'");
+      await client.query("SELECT set_config('lens.store',$1,true),set_config('lens.dataset',$2,true)",[context.storeId,context.datasetVersion]);
+      const ids=(await client.query<{sku_id:string}>('SELECT sku_id FROM business.products WHERE dataset_version=$1 AND store_id=$2 ORDER BY sku_id',[context.datasetVersion,context.storeId])).rows.map(r=>r.sku_id);
+      await client.query('COMMIT');
+      const allowed=previous.filters.skuId??ids;
+      if(!allowed.includes(sku))throw new DomainError('UNKNOWN_FILTER','排除的 SKU 不属于已确认范围');
+      const remaining=allowed.filter(id=>id!==sku);
+      if(remaining.length===0||remaining.length>20)return null;
+      return parseQuerySpec({...previous,filters:{...previous.filters,skuId:remaining}});
+    }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
+  }
 
   async checkDataQuality(input:unknown,context:QueryContext,signal?:AbortSignal) {
     const spec=parseQuerySpec(input),client=await this.pool.connect();
@@ -55,14 +70,14 @@ export class AnalyticsService {
       })),total,spec.topN!) : [];
       await watcher.stop();signal?.throwIfAborted();await client.query('COMMIT');
       const result={comparison:total,contributors};
-      const resultHash=createHash('sha256').update(JSON.stringify(result)).digest('hex');
+      const resultHash=hashResult(result);
       return {
         ...result,
         evidence:{
           metricId:spec.metricId,unit:metrics[spec.metricId].unit,querySpec:spec,datasetVersion:context.datasetVersion,
           snapshotId:context.datasetVersion,metricVersion:METRIC_VERSION,schemaVersion:dataset.rows[0].schema_version,
           queryTemplateIds:[totalQuery.queryTemplateId,...(groupedQuery?[groupedQuery.queryTemplateId]:[])],
-          result,resultHash,sourceCoverage:quality,createdAt:new Date().toISOString(),isSynthetic:dataset.rows[0].is_synthetic,
+          result,resultHash,hashAlgorithm:'sha256-canonical-json-v1' as const,sourceCoverage:quality,createdAt:new Date().toISOString(),isSynthetic:dataset.rows[0].is_synthetic,
         },
       };
     } catch(error) { await watcher?.stop();await client.query('ROLLBACK');signal?.throwIfAborted();throw error; }

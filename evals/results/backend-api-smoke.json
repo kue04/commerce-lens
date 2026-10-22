@@ -1,32 +1,32 @@
 {
-  "at": "2026-10-22T09:56:27.231Z",
+  "at": "2026-10-22T10:42:50.475Z",
   "mode": "deterministic",
   "network": "real loopback HTTP + SSE",
   "agentExecuted": false,
   "node": "v24.22.1",
   "postgres": "18.4",
   "run": {
-    "id": "70924884-af1b-4400-8944-7c78fabdd7a1",
-    "sessionId": "bfef117e-d11f-47c9-bca3-d5d157530320",
+    "id": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+    "sessionId": "bd49e6fc-1c3b-47c8-9027-5040089a5be3",
     "question": "昨天华东支付金额为什么下降？",
     "status": "completed",
     "phase": 7,
     "phaseName": "persisting",
     "executionMode": "deterministic",
-    "createdAt": "2026-10-22T09:56:26.983Z",
+    "createdAt": "2026-10-22T10:42:50.231Z",
     "usage": {
       "modelRequests": 0,
-      "toolCalls": 3,
+      "toolCalls": 6,
       "tokens": 0,
       "costUsd": null
     },
-    "endedAt": "2026-10-22T09:56:27.058Z",
-    "reportId": "0c3571be-ab80-4306-bbd1-37b0bf823a40"
+    "endedAt": "2026-10-22T10:42:50.319Z",
+    "reportId": "638c87e6-13d6-4c22-8228-4f3b171b50f3"
   },
   "report": {
-    "id": "0c3571be-ab80-4306-bbd1-37b0bf823a40",
-    "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
-    "sessionId": "bfef117e-d11f-47c9-bca3-d5d157530320",
+    "id": "638c87e6-13d6-4c22-8228-4f3b171b50f3",
+    "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+    "sessionId": "bd49e6fc-1c3b-47c8-9027-5040089a5be3",
     "question": "昨天华东支付金额为什么下降？",
     "title": "支付金额变化分析",
     "status": "completed",
@@ -87,13 +87,13 @@
         "share": -0.3333333333333333
       }
     ],
-    "finding": "支付金额变化达到下降规则提示阈值，请结合贡献与缺失证据核实。",
+    "finding": "支付金额变化达到业务规则提示阈值，请核实。",
     "facts": [
       {
         "text": "支付金额由 100000.00 元 变为 70000.00 元，变化 -30000.00 元。",
         "templateId": "comparison",
         "evidenceIds": [
-          "e3d848b1-0594-45ac-a1d8-2ffe5812fa47"
+          "6d820ff2-24df-4d10-a448-38d91a7c7f99"
         ],
         "valueRefs": [
           "comparison.baseline",
@@ -105,7 +105,7 @@
         "text": "A 支付金额变化 -40000.00 元。",
         "templateId": "contribution",
         "evidenceIds": [
-          "41bb9d4d-747b-47b4-a34d-0b3765628f5e"
+          "892f63e0-0048-4f72-881c-0679c0458349"
         ],
         "valueRefs": [
           "contributors.0.delta"
@@ -115,7 +115,7 @@
         "text": "B 支付金额变化 10000.00 元。",
         "templateId": "contribution",
         "evidenceIds": [
-          "41bb9d4d-747b-47b4-a34d-0b3765628f5e"
+          "892f63e0-0048-4f72-881c-0679c0458349"
         ],
         "valueRefs": [
           "contributors.1.delta"
@@ -124,10 +124,13 @@
     ],
     "hypotheses": [],
     "unknowns": [
-      "当前数据集未提供库存、流量和活动证据，无法确认变化原因或估计因果损失。"
+      "inventory 缺少完整数据，不能核查该解释。",
+      "traffic 缺少完整数据，不能核查该解释。",
+      "promotion 缺少完整数据，不能核查该解释。",
+      "可观测关联不能证明因果，无法估计因果损失。"
     ],
     "nextActions": [
-      "核实贡献较大的商品与渠道，补充库存和流量数据。"
+      "核实贡献较大的商品与渠道，补充相关源数据。"
     ],
     "limitations": [
       "合成食品电商数据；固定演示业务时钟。",
@@ -136,8 +139,8 @@
     ],
     "evidences": [
       {
-        "id": "e3d848b1-0594-45ac-a1d8-2ffe5812fa47",
-        "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+        "id": "6d820ff2-24df-4d10-a448-38d91a7c7f99",
+        "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
         "code": "E01",
         "title": "支付金额周期比较",
         "kind": "comparison",
@@ -164,7 +167,7 @@
         "source": "PostgreSQL 支付订单行聚合",
         "datasetVersion": "acceptance-v1",
         "metricVersion": "1.0.0",
-        "createdAt": "2026-10-22T09:56:27.023Z",
+        "createdAt": "2026-10-22T10:42:50.259Z",
         "coverage": 1,
         "baselineCoverage": 1,
         "columns": [
@@ -181,8 +184,8 @@
             -0.3
           ]
         ],
-        "note": "金额为分整数；支付按 paid_at，结果绑定不可变数据版本。",
-        "resultHash": "410f18f27e8411ed62ef9a6e788036d53c87080e2422edeaf8e0b5904e365e41",
+        "note": "支付按 paid_at；金额为分整数、件数不扣后续退款，绑定不可变版本。",
+        "resultHash": "920bf0d922845932113108bfb8d136170edd33708d32da8d5306f81f2d25e7f7",
         "queryTemplateIds": [
           "aggregate-v1:paid_amount:none"
         ],
@@ -191,11 +194,12 @@
           "baseline": 10000000,
           "delta": -3000000,
           "changeRate": -0.3
-        }
+        },
+        "hashAlgorithm": "sha256-canonical-json-v1"
       },
       {
-        "id": "41bb9d4d-747b-47b4-a34d-0b3765628f5e",
-        "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+        "id": "892f63e0-0048-4f72-881c-0679c0458349",
+        "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
         "code": "E02",
         "title": "支付金额变化贡献",
         "kind": "contribution",
@@ -222,7 +226,7 @@
         "source": "PostgreSQL 支付订单行聚合",
         "datasetVersion": "acceptance-v1",
         "metricVersion": "1.0.0",
-        "createdAt": "2026-10-22T09:56:27.038Z",
+        "createdAt": "2026-10-22T10:42:50.272Z",
         "coverage": 1,
         "baselineCoverage": 1,
         "columns": [
@@ -248,8 +252,8 @@
             -0.3333333333333333
           ]
         ],
-        "note": "金额为分整数；支付按 paid_at，结果绑定不可变数据版本。",
-        "resultHash": "e906c27f984622731511170674667b0f5d848337c746e4095f8bcdd32d101cbf",
+        "note": "支付按 paid_at；金额为分整数、件数不扣后续退款，绑定不可变版本。",
+        "resultHash": "a5e596ed5650465899722fc33cf19ea2bda543f5bc2478f8b93c693224507aa4",
         "queryTemplateIds": [
           "aggregate-v1:paid_amount:none",
           "aggregate-v1:paid_amount:sku"
@@ -281,6 +285,130 @@
             "changeRate": 0.25,
             "share": -0.3333333333333333
           }
+        ],
+        "hashAlgorithm": "sha256-canonical-json-v1"
+      },
+      {
+        "id": "442e354d-3e61-44d3-951d-18d50adfa0bf",
+        "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+        "code": "E03",
+        "title": "inventory 核查",
+        "kind": "inventory",
+        "status": "missing",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ],
+            "skuId": [
+              "A"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL inventory 受控查询",
+        "datasetVersion": "acceptance-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-22T10:42:50.282Z",
+        "coverage": null,
+        "baselineCoverage": null,
+        "columns": [],
+        "rows": [],
+        "note": "该信号源不存在或时间覆盖不完整，缺失不等于零值。",
+        "resultHash": "15dd55607b635d143ce2c7f2b159e27fec6db99d9c4c6309d07bcdd11883d863",
+        "queryTemplateIds": [
+          "signal-v1:inventory"
+        ]
+      },
+      {
+        "id": "1f3f9e37-18a8-466e-bb87-026ffc1f45e9",
+        "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+        "code": "E04",
+        "title": "traffic 核查",
+        "kind": "traffic",
+        "status": "missing",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL traffic 受控查询",
+        "datasetVersion": "acceptance-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-22T10:42:50.293Z",
+        "coverage": null,
+        "baselineCoverage": null,
+        "columns": [],
+        "rows": [],
+        "note": "该信号源不存在或时间覆盖不完整，缺失不等于零值。",
+        "resultHash": "15dd55607b635d143ce2c7f2b159e27fec6db99d9c4c6309d07bcdd11883d863",
+        "queryTemplateIds": [
+          "signal-v1:traffic"
+        ]
+      },
+      {
+        "id": "dac86b9e-7c63-4f37-acdd-d802b07f6d2c",
+        "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+        "code": "E05",
+        "title": "promotion 核查",
+        "kind": "promotion",
+        "status": "missing",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL promotion 受控查询",
+        "datasetVersion": "acceptance-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-22T10:42:50.302Z",
+        "coverage": null,
+        "baselineCoverage": null,
+        "columns": [],
+        "rows": [],
+        "note": "该信号源不存在或时间覆盖不完整，缺失不等于零值。",
+        "resultHash": "15dd55607b635d143ce2c7f2b159e27fec6db99d9c4c6309d07bcdd11883d863",
+        "queryTemplateIds": [
+          "signal-v1:promotion"
         ]
       }
     ],
@@ -289,40 +417,61 @@
         "name": "compare_metric",
         "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"none\",\"topN\":10}",
         "status": "success",
-        "durationMs": 14.806100000000242,
-        "evidenceId": "e3d848b1-0594-45ac-a1d8-2ffe5812fa47"
+        "durationMs": 11.35719999999992,
+        "evidenceId": "6d820ff2-24df-4d10-a448-38d91a7c7f99"
       },
       {
         "name": "decompose_change",
         "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}",
         "status": "success",
-        "durationMs": 11.401200000000244,
-        "evidenceId": "41bb9d4d-747b-47b4-a34d-0b3765628f5e"
+        "durationMs": 9.031400000000303,
+        "evidenceId": "892f63e0-0048-4f72-881c-0679c0458349"
+      },
+      {
+        "name": "inspect_signals",
+        "params": "{\"signalType\":\"inventory\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"],\"skuId\":[\"A\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "status": "missing",
+        "durationMs": 8.421299999999974,
+        "evidenceId": "442e354d-3e61-44d3-951d-18d50adfa0bf"
+      },
+      {
+        "name": "inspect_signals",
+        "params": "{\"signalType\":\"traffic\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "status": "missing",
+        "durationMs": 7.819799999999759,
+        "evidenceId": "1f3f9e37-18a8-466e-bb87-026ffc1f45e9"
+      },
+      {
+        "name": "inspect_signals",
+        "params": "{\"signalType\":\"promotion\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "status": "missing",
+        "durationMs": 7.096799999999803,
+        "evidenceId": "dac86b9e-7c63-4f37-acdd-d802b07f6d2c"
       },
       {
         "name": "submit_report",
-        "params": "{\"comparisonEvidenceId\":\"e3d848b1-0594-45ac-a1d8-2ffe5812fa47\",\"contributionEvidenceId\":\"41bb9d4d-747b-47b4-a34d-0b3765628f5e\"}",
+        "params": "{\"comparisonEvidenceId\":\"6d820ff2-24df-4d10-a448-38d91a7c7f99\",\"contributionEvidenceId\":\"892f63e0-0048-4f72-881c-0679c0458349\",\"signalEvidenceIds\":[\"442e354d-3e61-44d3-951d-18d50adfa0bf\",\"1f3f9e37-18a8-466e-bb87-026ffc1f45e9\",\"dac86b9e-7c63-4f37-acdd-d802b07f6d2c\"]}",
         "status": "success",
-        "durationMs": 7.933700000000044
+        "durationMs": 7.124300000000403
       }
     ],
-    "createdAt": "2026-10-22T09:56:27.054Z",
+    "createdAt": "2026-10-22T10:42:50.316Z",
     "provenance": {
-      "contractVersion": "1.0.0",
+      "contractVersion": "1.1.0",
       "executionMode": "deterministic",
       "agentExecuted": false,
       "modelId": null,
-      "promptVersion": "payment-v1",
+      "promptVersion": "analysis-v2",
       "metricVersion": "1.0.0",
       "datasetVersion": "acceptance-v1"
     }
   },
   "events": [
     {
-      "at": "2026-10-22T09:56:26.985Z",
+      "at": "2026-10-22T10:42:50.232Z",
       "seq": 1,
       "type": "phase.changed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "phase": 0,
         "action": "接收问题",
@@ -330,20 +479,20 @@
       }
     },
     {
-      "at": "2026-10-22T09:56:26.997Z",
+      "at": "2026-10-22T10:42:50.239Z",
       "seq": 2,
       "type": "run.started",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "status": "running",
         "executionMode": "deterministic"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.000Z",
+      "at": "2026-10-22T10:42:50.241Z",
       "seq": 3,
       "type": "phase.changed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "phase": 1,
         "action": "确认分析口径",
@@ -351,10 +500,10 @@
       }
     },
     {
-      "at": "2026-10-22T09:56:27.006Z",
+      "at": "2026-10-22T10:42:50.246Z",
       "seq": 4,
       "type": "phase.changed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "phase": 2,
         "action": "检查数据覆盖",
@@ -362,21 +511,21 @@
       }
     },
     {
-      "at": "2026-10-22T09:56:27.012Z",
+      "at": "2026-10-22T10:42:50.252Z",
       "seq": 5,
       "type": "tool.started",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"none\",\"topN\":10}",
         "toolName": "compare_metric",
-        "toolCallId": "74fa8fd4-bc43-43f1-b889-35e45525f7dc"
+        "toolCallId": "587a0a94-a6e6-4f6c-bbe8-f31deb2b2343"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.016Z",
+      "at": "2026-10-22T10:42:50.255Z",
       "seq": 6,
       "type": "phase.changed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "phase": 3,
         "action": "比较支付金额",
@@ -384,34 +533,34 @@
       }
     },
     {
-      "at": "2026-10-22T09:56:27.027Z",
+      "at": "2026-10-22T10:42:50.263Z",
       "seq": 7,
       "type": "tool.completed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "rowCount": 1,
         "toolName": "compare_metric",
-        "durationMs": 14.806100000000242,
-        "evidenceId": "e3d848b1-0594-45ac-a1d8-2ffe5812fa47",
-        "toolCallId": "74fa8fd4-bc43-43f1-b889-35e45525f7dc"
+        "durationMs": 11.35719999999992,
+        "evidenceId": "6d820ff2-24df-4d10-a448-38d91a7c7f99",
+        "toolCallId": "587a0a94-a6e6-4f6c-bbe8-f31deb2b2343"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.029Z",
+      "at": "2026-10-22T10:42:50.265Z",
       "seq": 8,
       "type": "tool.started",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}",
         "toolName": "decompose_change",
-        "toolCallId": "354de5cf-8c85-416d-bea6-5eba479d6e67"
+        "toolCallId": "7d84e984-54c7-457b-b474-f70ab5e1221b"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.033Z",
+      "at": "2026-10-22T10:42:50.267Z",
       "seq": 9,
       "type": "phase.changed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "phase": 4,
         "action": "拆分变化贡献",
@@ -419,34 +568,139 @@
       }
     },
     {
-      "at": "2026-10-22T09:56:27.040Z",
+      "at": "2026-10-22T10:42:50.274Z",
       "seq": 10,
       "type": "tool.completed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "rowCount": 2,
         "toolName": "decompose_change",
-        "durationMs": 11.401200000000244,
-        "evidenceId": "41bb9d4d-747b-47b4-a34d-0b3765628f5e",
-        "toolCallId": "354de5cf-8c85-416d-bea6-5eba479d6e67"
+        "durationMs": 9.031400000000303,
+        "evidenceId": "892f63e0-0048-4f72-881c-0679c0458349",
+        "toolCallId": "7d84e984-54c7-457b-b474-f70ab5e1221b"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.042Z",
+      "at": "2026-10-22T10:42:50.277Z",
       "seq": 11,
       "type": "tool.started",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
-        "params": "{\"comparisonEvidenceId\":\"e3d848b1-0594-45ac-a1d8-2ffe5812fa47\",\"contributionEvidenceId\":\"41bb9d4d-747b-47b4-a34d-0b3765628f5e\"}",
-        "toolName": "submit_report",
-        "toolCallId": "d41410e2-5861-4628-8b26-284c9d616f03"
+        "params": "{\"signalType\":\"inventory\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"],\"skuId\":[\"A\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "toolName": "inspect_signals",
+        "toolCallId": "86bb9c6b-8118-43ba-b2e2-d37d729795e3"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.044Z",
+      "at": "2026-10-22T10:42:50.280Z",
       "seq": 12,
       "type": "phase.changed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "phase": 5,
+        "action": "核查辅助证据",
+        "phaseName": "inspecting"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.285Z",
+      "seq": 13,
+      "type": "tool.completed",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "rowCount": 0,
+        "toolName": "inspect_signals",
+        "durationMs": 8.421299999999974,
+        "evidenceId": "442e354d-3e61-44d3-951d-18d50adfa0bf",
+        "toolCallId": "86bb9c6b-8118-43ba-b2e2-d37d729795e3"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.287Z",
+      "seq": 14,
+      "type": "tool.started",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "params": "{\"signalType\":\"traffic\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "toolName": "inspect_signals",
+        "toolCallId": "e85e0d88-c9c2-4f38-8659-b4de7a80c9d6"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.291Z",
+      "seq": 15,
+      "type": "phase.changed",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "phase": 5,
+        "action": "核查辅助证据",
+        "phaseName": "inspecting"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.295Z",
+      "seq": 16,
+      "type": "tool.completed",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "rowCount": 0,
+        "toolName": "inspect_signals",
+        "durationMs": 7.819799999999759,
+        "evidenceId": "1f3f9e37-18a8-466e-bb87-026ffc1f45e9",
+        "toolCallId": "e85e0d88-c9c2-4f38-8659-b4de7a80c9d6"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.297Z",
+      "seq": 17,
+      "type": "tool.started",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "params": "{\"signalType\":\"promotion\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "toolName": "inspect_signals",
+        "toolCallId": "73e012a1-33b5-49c1-a52c-56db2003e53d"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.300Z",
+      "seq": 18,
+      "type": "phase.changed",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "phase": 5,
+        "action": "核查辅助证据",
+        "phaseName": "inspecting"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.304Z",
+      "seq": 19,
+      "type": "tool.completed",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "rowCount": 0,
+        "toolName": "inspect_signals",
+        "durationMs": 7.096799999999803,
+        "evidenceId": "dac86b9e-7c63-4f37-acdd-d802b07f6d2c",
+        "toolCallId": "73e012a1-33b5-49c1-a52c-56db2003e53d"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.306Z",
+      "seq": 20,
+      "type": "tool.started",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
+      "payload": {
+        "params": "{\"comparisonEvidenceId\":\"6d820ff2-24df-4d10-a448-38d91a7c7f99\",\"contributionEvidenceId\":\"892f63e0-0048-4f72-881c-0679c0458349\",\"signalEvidenceIds\":[\"442e354d-3e61-44d3-951d-18d50adfa0bf\",\"1f3f9e37-18a8-466e-bb87-026ffc1f45e9\",\"dac86b9e-7c63-4f37-acdd-d802b07f6d2c\"]}",
+        "toolName": "submit_report",
+        "toolCallId": "6a1f1f4b-0ee4-4fa2-871e-7935f9b38b4a"
+      }
+    },
+    {
+      "at": "2026-10-22T10:42:50.308Z",
+      "seq": 21,
+      "type": "phase.changed",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "phase": 6,
         "action": "验证报告",
@@ -454,22 +708,22 @@
       }
     },
     {
-      "at": "2026-10-22T09:56:27.050Z",
-      "seq": 13,
+      "at": "2026-10-22T10:42:50.313Z",
+      "seq": 22,
       "type": "tool.completed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "rowCount": 0,
         "toolName": "submit_report",
-        "durationMs": 7.933700000000044,
-        "toolCallId": "d41410e2-5861-4628-8b26-284c9d616f03"
+        "durationMs": 7.124300000000403,
+        "toolCallId": "6a1f1f4b-0ee4-4fa2-871e-7935f9b38b4a"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.052Z",
-      "seq": 14,
+      "at": "2026-10-22T10:42:50.315Z",
+      "seq": 23,
       "type": "phase.changed",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "phase": 7,
         "action": "保存报告",
@@ -477,25 +731,25 @@
       }
     },
     {
-      "at": "2026-10-22T09:56:27.059Z",
-      "seq": 15,
+      "at": "2026-10-22T10:42:50.320Z",
+      "seq": 24,
       "type": "report.ready",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "status": "completed",
-        "reportId": "0c3571be-ab80-4306-bbd1-37b0bf823a40"
+        "reportId": "638c87e6-13d6-4c22-8228-4f3b171b50f3"
       }
     },
     {
-      "at": "2026-10-22T09:56:27.060Z",
-      "seq": 16,
+      "at": "2026-10-22T10:42:50.320Z",
+      "seq": 25,
       "type": "run.finished",
-      "runId": "70924884-af1b-4400-8944-7c78fabdd7a1",
+      "runId": "7e51760f-b557-4d26-a3ff-fcced459a1f2",
       "payload": {
         "usage": {
           "tokens": 0,
           "costUsd": null,
-          "toolCalls": 3,
+          "toolCalls": 6,
           "modelRequests": 0
         },
         "reason": "report_validated",
@@ -503,5 +757,5 @@
       }
     }
   ],
-  "replayedEvents": 13
+  "replayedEvents": 22
 }

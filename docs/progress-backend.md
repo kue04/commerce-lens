@@ -2,6 +2,43 @@
 
 2026-10-22。范围：后端、数据库、指标计算、Pi、API 和共享契约；不改前端页面。
 
+## 最新交付：除外部真实模型调用之外的本地后端
+
+本节更新此前支付金额切片的历史记录。本轮始终在 D:/llm/Commerce Lens-backend、backend/payment-api 分支开发，未修改/合并前端工作目录。本轮没有调用 verify:pi 或任何外部模型接口，也未读取本机其他会话的凭证。
+
+### 按优先级完成
+
+1. 生命周期与可靠性：DELETE session 先取消运行再删除关联数据；报告反馈、历史 cursor 分页、每日/启动时 30 天保留清理；过期 SSE 返回 410 和 reportUrl；同身份实例锁、60/min 任务请求限流、2 个执行+10 个排队、取消/完成竞态、实际 SQL 取消。
+2. 三个主指标：paid_amount、refund_amount、sold_units 的自然语言有限规则入口、确定性比较/贡献/报告；退款按 succeeded_at、多次部分退款、件数不扣退款；授权 SKU 排除展开，超过 20 项澄清，重新查询。
+3. 信号与解释：inventory_hourly/traffic_daily/promotion_events 新表与 RLS/不可变保护；库存覆盖和零库存观测、渠道×大区背景流量/归因版本、活动范围匹配、退款原因码与 unknown；缺观测不补零。事实和最多三个可能解释均由受控证据模板生成，附缺失信息与反证字段，不做因果损失估计。
+4. 重试与预算：SQL 暂时错误最多一次重试；Pi 429/500/502/503/504 最多一次额外请求，仍消耗统一时间/调用/token/成本预算；参数/权限不重试。实际 faux-provider 测试验证重试，不访问 DeepSeek。
+5. 评测与性能：S01—S12 明细场景；120 案例、dev/frozen-test 各 60，family 隔离，冻结集重复三次，总计 240 执行。独立 SQL 固定预期、manifest hash 防止原地更改；逐例结果与 20 份自动审计样本保存，不声称人工已审。10 万订单、20 次预热后 100 次真实 loopback HTTP 性能测量。
+6. 本地交付：已迁移空库的固定白名单一致性备份恢复；恢复活动任务为 interrupted，非空库拒绝覆盖，恢复前校验内容/迁移 hash；源码 ZIP 生成命令、启动/恢复/回滚说明、三分钟后端演示和面试问答。
+
+### 实际验证
+
+- 最新完整测试 60/60 通过、0 跳过；真实 PostgreSQL 18.4，包括数据库、HTTP、Pi Core+faux、生命周期、信号、备份恢复和正常关闭。类型检查、构建、真实 socket HTTP/SSE/replay 通过。
+- 冻结案例执行 240/240 通过，外部模型请求为 0；最新结果 evals/results/offline-2026-10-22T10-43-12-334Z.json，四次完整运行结果全部保留。只衡量确定性解析与查询/证据链，不是模型准确率。
+- 10 万订单/20 万行、本地单用户、真实 HTTP，20 次预热+100 次测量：median 139.18 ms、P95 150.08 ms；不含模型等待，不作为 PRD 真实 Agent 延迟。原始 times 与环境见 performance-2026-10-22T10-29-09-360Z.json。
+- 构建产物 api-dev 实际启动，catalog 1.1.0/default signals-v1，三个问题分别返回支付金额 7000000/10000000 分、退款金额 300000/0 分、支付件数 70/100；证据/解释数分别 5/3、3/0、5/3。所有 provenance.agentExecuted=false。测试会话已通过 DELETE 删除。
+- db:scenarios CLI 实际发布 12 个数据版本，catalog.datasets 验证 12 项；db:backup CLI 实际生成 .local/backups/2026-10-22T10-44-39-782Z.json 并输出 hash。备份只保留本地，不入 Git；恢复库测试同时验证已存报告/反馈和信号明细恢复。
+- 一次性能测试因 Top-N 其他残差行属性顺序导致 hash 不一致而失败，未记作通过；新增残差行端到端回归，新证据 sha256-canonical-json-v1，并兼容旧 hash。源码/进度保留失败原因。
+- Windows 手工 Ctrl+C 曾同时终止附属 PostgreSQL，导致 lease 解锁报连接错误；本地启动器改为独立隐藏进程组，先关闭 API/连接池，再 pg_ctl wait。实际 Ctrl+C 重测无错误堆栈，管理测试也覆盖并发关闭。PTY 工具将 Ctrl+C 记为 exit 1，不把此信号退出码当作普通程序 exit 0。
+
+### 需要接口使用方同步
+
+共享契约从原文件兼容升级至 1.1.0：Report.unit 支持 fen/units；Evidence.signal、hashAlgorithm 可选；Fact.templateId 增加 signal；hypotheses 可包含 contradictingEvidenceIds；ReportDraft 可选 signalEvidenceIds。旧报告 provenance 1.0.0 仍可读取。迁移增加 003/004，旧 migration 不改写。GET catalog.supportedMetrics 显示三个主入口。
+
+新增接口：DELETE /api/sessions/:id →204；POST /api/reports/:id/feedback →201 feedbackId；GET /api/sessions?limit=&cursor= 返回原数组，下一游标在 X-Next-Cursor；SSE 过期回放 →410 REPLAY_EXPIRED，可用 details.reportUrl 读取已存报告。
+
+根依赖没有新增，增加 scripts：db:scenarios、db:backup、db:restore、eval:offline、benchmark:local、release:source。启动仍 npm run api:dev。细节 docs/API-CONTRACT.md、BACKEND-QUICKSTART.md、EVALUATION.md、DEMO.md。
+
+### 明确延期/限制
+
+用户要求排除的真实 DeepSeek 连通、多轮模型质量、B/C 基线对比和真实模型价格/延迟未运行；人工 20 份复核待执行（已备样本）、前端页面/端到端视频由另一个会话负责，公网部署已不在范围。因此不宣称整份 P0 已验收或完整作品集视频已完成。
+
+后端可用的有限自然语言解析不覆盖任意电商问题；复杂表达可用 confirmedIntent 或返回澄清，不能称为无模型 NLP 泛化。备份是本项目固定 schema 的逻辑快照，仅恢复到同迁移版本的空库，不能替代企业数据库通用备份系统。
+
 ## 并行隔离
 
 已通过 Codex 会话列表确认前端与本会话起初都在 D:/llm/Commerce Lens；原目录没有 Git 仓库。已仅提交本会话的 M0/M1 后端成果为基线 cef46cc，apps/web 保持未跟踪、未清理、未纳入提交。独立 worktree 为 D:/llm/Commerce Lens-backend，分支 backend/payment-api；原目录 main 供前端继续工作。禁止 reset/clean 或覆盖对方未提交内容。

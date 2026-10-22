@@ -1,5 +1,5 @@
 import { setImmediate as schedule } from 'node:timers';
-import { DomainError,type QuerySpec } from '../../../packages/contracts/src/index.js';
+import { DomainError } from '../../../packages/contracts/src/index.js';
 import type { DatasetDTO,ExecutionMode,PhaseName,RunEventDTO } from '../../../packages/contracts/src/http.js';
 import { AnalyticsService } from '../../../packages/analytics/src/service.js';
 import { deterministicIntent } from '../../../packages/agent/src/intent.js';
@@ -7,18 +7,24 @@ import { RunBudget } from '../../../packages/agent/src/budget.js';
 import { PaymentTools } from '../../../packages/agent/src/tools.js';
 import type { PiPaymentRuntime } from '../../../packages/agent/src/pi.js';
 import { active,Repository } from './repository.js';
+import type { SignalService } from '../../../packages/analytics/src/signals.js';
 
 const phases:PhaseName[]=['received','interpreting','checking_data','comparing','decomposing','inspecting','validating','persisting'];
 export class Runs {
   private readonly queue:string[]=[];
   private readonly running=new Map<string,{controller:AbortController;promise:Promise<void>}>();
   private closed=false;
-  constructor(readonly repository:Repository,readonly analytics:AnalyticsService,readonly dataset:(version:string)=>Promise<DatasetDTO>,readonly mode:ExecutionMode,readonly runtime?:PiPaymentRuntime,readonly timeoutMs=90000){}
+  constructor(readonly repository:Repository,readonly analytics:AnalyticsService,readonly dataset:(version:string)=>Promise<DatasetDTO>,readonly mode:ExecutionMode,readonly runtime?:PiPaymentRuntime,readonly timeoutMs=90000,readonly signals?:SignalService){}
   enqueue(id:string){if(!this.closed){this.queue.push(id);schedule(()=>this.pump());}}
   private pump(){
     while(!this.closed && this.running.size<2 && this.queue.length){
       const id=this.queue.shift()!,controller=new AbortController();
-      const promise=this.execute(id,controller.signal).finally(()=>{this.running.delete(id);this.pump();});
+      const promise=this.execute(id,controller.signal).catch(async(error)=>{
+        // A database outage can also break terminal-state persistence. Keep the
+        // process alive; saved active runs are recovered as interrupted on restart.
+        console.error(JSON.stringify({event:'run.persistence_failed',runId:id,code:error instanceof DomainError?error.code:'INTERNAL_ERROR'}));
+        try{const row=await this.repository.run(id);if(active(row.dto.status))await this.repository.finish(id,'failed','任务状态保存失败，请稍后重试',row.dto.usage);}catch{ /* Dependency remains unavailable; recovery owns the saved record. */ }
+      }).finally(()=>{this.running.delete(id);this.pump();});
       this.running.set(id,{controller,promise});
     }
   }
@@ -36,12 +42,13 @@ export class Runs {
       await this.phase(id,'interpreting');
       const session=await this.repository.session(dto.sessionId),dataset=await this.dataset(session.dataset_version);
       const request=row.request_json,previous=session.state_json??undefined;
-      const query=this.mode==='agent'?
+      const exclusion=/^(?:排除|剔除)\s*([A-Za-z0-9_-]+)(?:\s*呢)?[？?。\s]*$/.exec(request.question);
+      const query=exclusion && previous && !request.confirmedIntent?await this.analytics.excludeSku(previous,exclusion[1]!,{storeId:this.repository.identity.storeId,datasetVersion:session.dataset_version}):this.mode==='agent'?
         await this.runtime!.intent(request.question,dataset.businessClock,budget,request.confirmedIntent,previous):
         deterministicIntent(request.question,dataset.businessClock,request.confirmedIntent,previous);
       budget.check();
       if(!query){
-        const clarification={question:'请确认支付金额、完整日期窗口和筛选范围。',metricId:'paid_amount' as const,date:dataset.businessClock,region:'east'};
+        const clarification={question:'请确认经营指标、完整日期窗口和筛选范围。',metricId:'paid_amount' as const,date:dataset.businessClock,region:'east'};
         await this.repository.patch(id,{clarification},{type:'clarification.required',payload:{status:'needs_clarification',clarification}});
         await this.repository.finish(id,'needs_clarification','需要确认指标、时间或筛选',budget.usage);return;
       }
@@ -51,13 +58,20 @@ export class Runs {
       await this.analytics.checkDataQuality(query,context,budget.signal);budget.check();
       tools=new PaymentTools(this.analytics,query,context,dataset,id,dto.sessionId,request.question,this.mode,this.runtime?.model.id??null,budget,{
         phase:name=>this.phase(id,name),saveEvidence:e=>this.repository.saveEvidence(e),
-        event:(type,payload)=>this.repository.event(id,{type,payload} as Pick<RunEventDTO,'type'|'payload'> as Parameters<Repository['event']>[1]),
-      });
+        event:async(type,payload)=>{await this.repository.patch(id,{usage:{...budget.usage}});await this.repository.event(id,{type,payload} as Pick<RunEventDTO,'type'|'payload'> as Parameters<Repository['event']>[1]);},
+      },this.signals);
       if(this.mode==='agent')await this.runtime!.analyze(tools);
       else{
         const comparison=await tools.execute('compare_metric',{...query,groupBy:'none'});
         const contribution=query.groupBy==='none'?undefined:await tools.execute('decompose_change',query);
-        await tools.execute('submit_report',{comparisonEvidenceId:comparison.evidenceId,...(contribution?{contributionEvidenceId:contribution.evidenceId}:{})});
+        const signalIds:string[]=[];
+        const declining=tools.evidences.find(e=>e.kind==='contribution')?.contributors?.find(c=>c.delta!<0 && !c.isOther);
+        const slice=declining && query.groupBy==='sku'?{...query,filters:{...query.filters,skuId:[declining.key]}}:query;
+        for(const type of query.metricId==='refund_amount'?['refund_reason'] as const:['inventory','traffic','promotion'] as const){
+          const signal=await tools.execute('inspect_signals',{signalType:type,query:type==='inventory'?slice:query});
+          if(signal.evidenceId)signalIds.push(signal.evidenceId);
+        }
+        await tools.execute('submit_report',{comparisonEvidenceId:comparison.evidenceId,...(contribution?{contributionEvidenceId:contribution.evidenceId}:{}),signalEvidenceIds:signalIds});
       }
       budget.check();await this.phase(id,'persisting');
       await this.repository.saveReport(tools.render(),budget.usage);
@@ -70,7 +84,8 @@ export class Runs {
       if(aborted){await this.repository.finish(id,timedOut?'timed_out':'cancelled',timedOut?'任务超过时间预算':'用户取消',budget.usage);return;}
       const code=error instanceof DomainError?error.code:'INTERNAL_ERROR';
       const message=error instanceof DomainError?error.message:'分析失败，服务端保留错误类型，响应不包含内部堆栈';
-      const partial=tools?.fallback();
+      let partial;
+      try{partial=tools?.fallback();}catch{await this.repository.finish(id,'failed','报告校验失败，未输出不可信事实',budget.usage);return;}
       if(partial && code!=='INSUFFICIENT_DATA'){
         partial.limitations.push(`分析未完整完成：${message}`);
         await this.repository.saveReport(partial,budget.usage);
@@ -83,6 +98,13 @@ export class Runs {
     const dto=await this.repository.finish(id,'cancelled','用户取消',row.dto.usage);
     if(dto.status==='cancelled')this.running.get(id)?.controller.abort();
     return dto;
+  }
+  async deleteSession(id:string){
+    for(const runId of await this.repository.activeRuns(id)){
+      await this.cancel(runId);await this.running.get(runId)?.promise;
+      const index=this.queue.indexOf(runId);if(index>=0)this.queue.splice(index,1);
+    }
+    await this.repository.deleteSession(id);
   }
   async close(){
     this.closed=true;

@@ -1,6 +1,6 @@
 # Commerce Lens
 
-电商经营数据异常分析 Agent 求职作品集，当前已实现 **M0/M1 数据基础与支付金额后端 API 切片**。合成食品电商数据，CNY，Asia/Shanghai，固定演示业务时钟 2026-10-22。本地运行；本后端 worktree 不修改前端。
+电商经营数据异常分析 Agent 求职作品集，当前已实现 **三指标分析、辅助证据、任务与会话生命周期、离线评测和本地备份恢复后端**。合成食品电商数据，CNY，Asia/Shanghai，固定演示业务时钟 2026-10-22。本地运行；本后端 worktree 不修改前端。
 
 默认模式执行真实 PostgreSQL 查询，明确**没有执行 Agent 或调用模型**。已提供 Fastify API、任务/报告/证据持久化与 SSE，以及可配置的 Pi + DeepSeek 实现。Pi Core 使用测试传输的工具闭环已验证，真实 DeepSeek 凭证不可用，未声称真实供应商闭环通过。最新进度见 [docs/progress-backend.md](docs/progress-backend.md)，数据阶段记录见 [docs/PROGRESS.md](docs/PROGRESS.md)，实施基线见 [docs/PRD.md](docs/PRD.md)。
 
@@ -14,7 +14,7 @@ npm ci
 npm run api:dev
 ```
 
-访问 http://127.0.0.1:3000/api/catalog。该命令自动启动持久 PostgreSQL（127.0.0.1:55432）、迁移并发布小型验收数据，不需要单独运行 db:start。Ctrl+C 停止服务；下次启动保留报告与证据。不要同时启动同一目录的 db:start，或在原前端目录再启动另一个后端。
+访问 http://127.0.0.1:3000/api/catalog。该命令自动启动持久 PostgreSQL（127.0.0.1:55432）、迁移并发布 acceptance-v1、signals-v1 数据，默认后者可演示库存/流量/活动；不需要单独运行 db:start。Ctrl+C 停止服务，下次启动保留报告；同一库/身份的第二进程会被阻止。
 
 ```powershell
 # 另一个终端：自动启动临时数据库 + 空闲 HTTP 端口，执行真正的 HTTP 与 SSE 验证
@@ -23,7 +23,25 @@ npm run verify:api
 
 完整请求/响应和与前端同步的字段见 [docs/API-CONTRACT.md](docs/API-CONTRACT.md)；最小 PowerShell 示例见 [docs/BACKEND-QUICKSTART.md](docs/BACKEND-QUICKSTART.md)。
 
-真实模型模式：在本 worktree 的 .env 配置 DEEPSEEK_API_KEY、DEEPSEEK_MODEL、ANALYSIS_MODE=agent 后再启动；没有 Key 或 modelId 时拒绝启动，不自动回退。API 仅支持 paid_amount。没有提供真实模型凭证时，不把无 Key 的启动或测试当作 Agent 供应商验收。
+支持问题：“昨天华东支付金额为什么下降？”、“昨天华东退款金额为什么上升？”、“昨天华东销量为什么下降？”。支持同会话切片和“排除 A 呢？”；时间/指标不明确则澄清，核心数据不足则阻断。合成场景可运行 db:scenarios 后选择 S01—S12 的数据版本。
+
+真实模型模式须在本 worktree 的 .env 配置 DEEPSEEK_API_KEY、DEEPSEEK_MODEL、ANALYSIS_MODE=agent；无配置时拒绝启动，不自动回退。本轮按用户要求不调用外部模型，完整真实供应商验收仍待执行。
+
+## 离线验证与交付
+
+```powershell
+npm run eval:offline
+npm run benchmark:local
+npm run db:backup
+# 在已迁移的空库配置 DATABASE_URL 与 BACKUP_FILE 后：
+npm run db:restore
+# 已提交且工作区干净时生成不含密钥的源码 ZIP：
+npm run release:source
+```
+
+评测包含 120 案例（dev/frozen-test 各 60，冻结集重复三次，共 240 次执行）；结果是无模型的确定性管线成绩。性能命令采用 10 万订单、20 次预热与 100 次实际 HTTP 测量，不能代替真实模型延迟。具体原始结果见 evals/results，方法和限制见 [docs/EVALUATION.md](docs/EVALUATION.md)。
+
+保留期为 30 天，启动与每日维护清理本人过期会话数据；活跃/近期任务不删。历史分页通过 X-Next-Cursor 返回游标，删除会话先取消任务，报告反馈只做错误回收。三分钟演示与面试问答见 [docs/DEMO.md](docs/DEMO.md)。
 
 ## Windows 快速复现
 

@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve, dirname, sep } from 'node:path';
 import { createServer } from 'node:net';
-import { execFile } from 'node:child_process';
+import { execFile,spawn,type ChildProcess } from 'node:child_process';
 import { promisify } from 'node:util';
 import EmbeddedPostgres from 'embedded-postgres';
 import { Pool } from 'pg';
@@ -11,10 +11,33 @@ import { migrate } from '../db/migrate.js';
 
 class ManagedPostgres extends EmbeddedPostgres {
   private started=false;
+  private child:ChildProcess|undefined;
+  private stopping:Promise<void>|undefined;
+  beforeStop:(()=>Promise<void>)|undefined;
   constructor(private readonly directory:string,options:ConstructorParameters<typeof EmbeddedPostgres>[0]){super(options);}
-  override async start(){await super.start();this.started=true;}
-  override async stop(){
+  override async start(){
+    if(process.platform!=='win32'){await super.start();this.started=true;return;}
+    const {postgres}=await import(`@embedded-postgres/windows-${process.arch}`) as {postgres:string};
+    // Windows broadcasts Ctrl+C to an attached console process group. Isolate
+    // PostgreSQL so our API can release leases before explicitly stopping it.
+    const child=spawn(postgres,['-D',this.directory,'-p',String(this.options.port),...this.options.postgresFlags],{
+      windowsHide:true,detached:true,stdio:['ignore','ignore','pipe'],env:{...process.env,LC_MESSAGES:'C'},
+    });
+    this.child=child;
+    await new Promise<void>((resolve,reject)=>{
+      const timer=setTimeout(()=>{child.kill();reject(new Error('PostgreSQL readiness timed out'));},30000);
+      child.once('error',error=>{clearTimeout(timer);reject(error);});
+      child.once('exit',()=>{clearTimeout(timer);this.started=false;reject(new Error('PostgreSQL exited before readiness'));});
+      child.stderr!.on('data',chunk=>{
+        const text=String(chunk);this.options.onLog(text);
+        if(text.includes('database system is ready to accept connections')){clearTimeout(timer);this.started=true;resolve();}
+      });
+    });
+  }
+  override stop(){return this.stopping??=this.shutdown();}
+  private async shutdown(){
     if(!this.started)return;
+    await this.beforeStop?.();
     const target=process.platform==='win32'?'windows':process.platform;
     const {pg_ctl}=await import(`@embedded-postgres/${target}-${process.arch}`) as {pg_ctl:string};
     // pg_ctl waits for the cluster shutdown, unlike taskkill's parent-only exit event.
@@ -63,9 +86,11 @@ export async function startLocalPostgres(persistent=false) {
     if(persistent) await writeFile(resolve(localRoot,'connection.env'),`DATABASE_URL=postgresql://lens_admin:${credentials.admin}@127.0.0.1:${port}/postgres\nREADONLY_DATABASE_URL=postgresql://lens_query:${credentials.reader}@127.0.0.1:${port}/postgres\nAPP_DATABASE_URL=postgresql://lens_state:${credentials.state}@127.0.0.1:${port}/postgres\n`,{mode:0o600});
     const adminPool=admin,readerPool=reader,statePool=state;
     let closed=false;
-    return {admin:adminPool,reader:readerPool,state:statePool,port,async stop(){
+    let beforeStop:(()=>Promise<void>)|undefined;
+    database.beforeStop=async()=>{await beforeStop?.();await readerPool.end();await statePool.end();await adminPool.end();};
+    return {admin:adminPool,reader:readerPool,state:statePool,port,beforeStop(handler:()=>Promise<void>){beforeStop=handler;},async stop(){
       if(closed)return;closed=true;
-      await readerPool.end();await statePool.end();await adminPool.end();await database.stop();
+      await database.stop();
       // Windows can retain file handles briefly after the process exit event.
       // fs.rm retries only transient EBUSY/EPERM/ENOTEMPTY, with a bounded delay.
       if(!persistent) await rm(directory,{recursive:true,force:true,maxRetries:10,retryDelay:100});

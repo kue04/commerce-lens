@@ -21,7 +21,7 @@ after(async()=>{await db?.stop();});
 test('runs on real PostgreSQL 18 and migrations are idempotent',async()=>{
   const version=await db.admin.query('SHOW server_version_num');assert.ok(Number(version.rows[0].server_version_num)>=180000);
   await migrate(db.admin);
-  const result=await db.admin.query('SELECT count(*) FROM public.schema_migrations');assert.equal(result.rows[0].count,'2');
+  const result=await db.admin.query('SELECT count(*) FROM public.schema_migrations');assert.equal(result.rows[0].count,'4');
 });
 test('PRD hand-verified payment/units/order/AOV/refund/net amounts match',async()=>{
   const expected:Record<MetricId,[number,number]>={paid_amount:[7000000,10000000],sold_units:[70,100],paid_orders:[1,1],aov:[7000000,10000000],refund_amount:[300000,0],net_receipts:[6700000,10000000]};

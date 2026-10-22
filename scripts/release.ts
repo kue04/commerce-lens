@@ -1,0 +1,13 @@
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+const git=promisify(execFile);
+await git('git',['diff','--quiet','HEAD']);
+const revision=(await git('git',['rev-parse','--short','HEAD'])).stdout.trim();
+const tracked=(await git('git',['ls-tree','-r','--name-only','HEAD'])).stdout.split(/\r?\n/);
+if(tracked.some(p=>p!=='.env.example' && /(^|\/)(\.env(?:\.|\/|$)|\.local(?:\/|$)|node_modules(?:\/|$)|\.tools(?:\/|$))/.test(p)))throw new Error('Refusing to archive local configuration/dependencies');
+const directory=resolve('.local/releases');await mkdir(directory,{recursive:true});
+const path=resolve(directory,`commerce-lens-backend-${revision}.zip`);
+await git('git',['archive','--format=zip',`--output=${path}`,'HEAD']);
+console.log(JSON.stringify({revision,path,content:'tracked source only; excludes API keys, database passwords and local runtime/data'}));

@@ -60,3 +60,11 @@ test('missing auxiliary signals return explicit missing evidence and cannot supp
   await tools.execute('inspect_signals',{signalType:'inventory',query});
   assert.equal(saved[0]!.status,'missing');assert.equal(saved[0]!.coverage,null);assert.deepEqual(saved[0]!.rows,[]);
 });
+test('429 model retry is counted in the same budget and is limited to one extra attempt',async()=>{
+  const {runtime,faux,tools}=setup();
+  faux.setResponses([fauxAssistantMessage('',{stopReason:'error',errorMessage:'429 Too Many Requests'}),fauxAssistantMessage(JSON.stringify({kind:'analysis',query}))]);
+  assert.equal((await runtime.intent('昨天支付金额','2026-10-22',tools.budget))?.metricId,'paid_amount');
+  assert.equal(faux.state.callCount,2);assert.equal(tools.budget.usage.modelRequests,2);
+  const other=setup();other.faux.setResponses([fauxAssistantMessage('',{stopReason:'error',errorMessage:'401 Unauthorized'})]);
+  await assert.rejects(()=>other.runtime.intent('昨天支付金额','2026-10-22',other.tools.budget),/模型调用失败/);assert.equal(other.faux.state.callCount,1);
+});

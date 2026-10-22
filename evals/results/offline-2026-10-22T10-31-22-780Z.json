@@ -1,0 +1,2186 @@
+{
+  "at": "2026-10-22T10:31:22.778Z",
+  "mode": "deterministic",
+  "externalModelCalls": 0,
+  "agentAccuracyMeasured": false,
+  "caseHash": "419a7a00c93fea94b27fc401399766c7059c8dd8d4e9445d8fe868fb25637d18",
+  "cases": 120,
+  "runs": 240,
+  "passed": 240,
+  "failed": 0,
+  "splitPolicy": "Families disjoint; frozen-test repeated 3 times, dev once. No model is used. Multiple phrasings of a family remain in one split.",
+  "baselines": {
+    "A": "Fixed rule parser + deterministic SQL, measured by this run. Additional verification uses independent SQL values frozen in cases.",
+    "B": "NOT_RUN: single model tool choice requires external API",
+    "C": "NOT_RUN: real Pi model benchmark requires external API"
+  },
+  "environment": {
+    "node": "v24.22.1",
+    "postgres": "18.4",
+    "cpu": "AMD Ryzen 5 9600X 6-Core Processor             ",
+    "memoryBytes": 33996894208,
+    "concurrency": 1
+  },
+  "results": [
+    {
+      "id": "dev-sku-decline-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 276.34,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-sku-decline-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 93.22,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-sku-decline-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 85.25,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-sku-decline-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 81.91,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-sku-decline-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 82.83,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-channel-traffic-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 94.71,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-channel-traffic-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 83.27,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-channel-traffic-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 83.86,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-channel-traffic-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 82.78,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-channel-traffic-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 80.54,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-stock-only-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 84.18,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-stock-only-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 85.76,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-stock-only-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 80.03,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-stock-only-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 86.75,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-stock-only-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 82.77,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-historical-refund-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.62,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-historical-refund-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 61.18,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-historical-refund-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 60.71,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-historical-refund-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 60.82,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-historical-refund-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 60.86,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-partial-refund-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 62.77,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-partial-refund-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 61.5,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-partial-refund-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 61.27,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-partial-refund-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 56.51,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-partial-refund-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 62.44,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-offset-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 75.45,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-offset-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 73.85,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-offset-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 76.21,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-offset-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 75.11,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-offset-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 75.26,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-units-no-stock-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 76.62,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-units-no-stock-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 76.17,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-units-no-stock-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 74.79,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-units-no-stock-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 74.88,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-units-no-stock-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.59,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-normal-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 70.52,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-normal-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 70.76,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-normal-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.26,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-normal-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.24,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-normal-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 68.6,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-metric-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 19.19,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-metric-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 18.61,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-metric-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 18.05,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-metric-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 18.45,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-metric-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 17.58,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-time-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 16.92,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-time-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 17.9,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-time-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 17.71,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-time-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 17.42,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-ambiguous-time-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 22.54,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "dev-override-store-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 5.11,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-override-store-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 5.35,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-override-store-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.9,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-override-store-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.53,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-override-store-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 5.19,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-raw-sql-0",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.58,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-raw-sql-1",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 6.07,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-raw-sql-2",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.46,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-raw-sql-3",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.77,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "dev-raw-sql-4",
+      "split": "dev",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.7,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 70.95,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 75.48,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 71.82,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.11,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 76.72,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.24,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 68.79,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.49,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.4,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 68.98,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.74,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 69.95,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 76.17,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.64,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-new-sku-total-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 68.28,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 54.16,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 60.73,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 60.86,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 59.92,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 61.26,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 62.04,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 61.09,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 55.78,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 58.4,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 59.93,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 53.88,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 59.46,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 58.34,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 54.97,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-unknown-refund-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 65.18,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 76.5,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 75.96,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 75.74,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 75.76,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 74.96,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 74.88,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 77.68,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 75.84,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 90.35,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 81.41,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 77.33,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 76.34,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 76.56,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 74.51,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-mixed-stock-traffic-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 73.46,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 74.88,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 68.74,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 68.58,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 75.62,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 68.85,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 71.76,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 71.2,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 70.07,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.96,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 71.05,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.44,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.62,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 65.1,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 72.23,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-units-channel-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.39,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 53.58,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 61.17,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 54.24,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 54.08,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 54.39,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 54.48,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 53.66,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 53.51,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 59.53,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 54.84,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 56.28,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 53.62,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 53.38,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 54.19,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-refund-channel-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 55.82,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 70.01,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 70.67,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.77,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.23,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 71.27,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.01,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.44,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 70.83,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.04,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 71.01,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.9,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 74.38,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.32,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 70.27,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-region-contribution-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 69.99,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 69.73,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 70.69,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 69.94,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 70.31,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 70.6,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.53,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 70.85,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.25,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 68.77,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 74.79,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 74.55,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 75.93,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 76.69,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 75.3,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-rolling-week-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 69.95,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 73.45,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.96,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 70.12,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 74.78,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.06,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 74.35,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 88.76,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 69.84,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 71.64,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 75.06,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 74.86,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 76.47,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 70.43,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 75.69,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-week-units-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 68.79,
+      "status": "completed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 17.84,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 18.59,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 17.35,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.08,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 17.96,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 22.94,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 19.59,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 23.48,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 18.49,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.47,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 24.11,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 23.21,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.21,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 22.44,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-filter-without-context-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 18.09,
+      "status": "needs_clarification",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.87,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 23.07,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 22.75,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 22.69,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 23.63,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 23.11,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 24.76,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 24.09,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 22.06,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.35,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 23.27,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 22.75,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 24,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 22.6,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-missing-core-partition-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 21.85,
+      "status": "insufficient_data",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.53,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 23.01,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 22.96,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 22.74,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 21.77,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 23.5,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 22.11,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 22.89,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 23.08,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.58,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 22.8,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 23.54,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 23.28,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 22.81,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-filter-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 22.39,
+      "status": "failed",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-0",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.73,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-0",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 4.82,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-0",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 4.37,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-1",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.95,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-1",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 5,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-1",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 4.52,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-2",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.86,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-2",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 4.57,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-2",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 4.4,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-3",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 5.38,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-3",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 4.54,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-3",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 4.6,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-4",
+      "split": "frozen-test",
+      "repeat": 0,
+      "passed": true,
+      "elapsedMs": 4.99,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-4",
+      "split": "frozen-test",
+      "repeat": 1,
+      "passed": true,
+      "elapsedMs": 4.46,
+      "status": "rejected",
+      "errors": []
+    },
+    {
+      "id": "frozen-test-sql-in-dimension-4",
+      "split": "frozen-test",
+      "repeat": 2,
+      "passed": true,
+      "elapsedMs": 4.97,
+      "status": "rejected",
+      "errors": []
+    }
+  ]
+}

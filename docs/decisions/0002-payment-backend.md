@@ -2,6 +2,8 @@
 
 2026-10-22，已采用。沿用 http.ts v1.0.0，与原 QuerySpec 共同作为唯一契约；本轮只做 paid_amount，不并行扩展退款/销量入口。
 
+本记录保留支付金额初版的历史取舍；后续三指标与生命周期补齐见 ADR 0003，不再以本记录的“尚未实现”清单作为最新进度。
+
 前后端会话最初共享原目录，已建立 backend/payment-api worktree D:/llm/Commerce Lens-backend。后端不修改 apps/web，不在未审查的情况下把根依赖同步回 main。根新增 Fastify 5.12.7 与 API scripts；HTTP 契约不作破坏性变更。
 
 ## 执行与权限

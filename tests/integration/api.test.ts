@@ -49,7 +49,7 @@ test('catalog, session, payment run, report, evidence, history and exports use a
   assert.equal(report.comparison.current,7000000);assert.equal(report.comparison.baseline,10000000);assert.equal(report.comparison.delta,-3000000);
   assert.equal(report.contributors[0]!.share,4/3);assert.equal(report.contributors[1]!.share,-1/3);
   assert.equal(report.provenance.agentExecuted,false);assert.equal(report.hypotheses.length,0);
-  assert.equal(report.evidences.length,2);
+  assert.equal(report.evidences.filter(e=>e.kind==='comparison'||e.kind==='contribution').length,2);
   for(const evidence of report.evidences){
     const result=await app.inject(`/api/evidences/${evidence.id}`);assert.equal(result.statusCode,200);
     assert.ok(Value.Check(EvidenceSchema,result.json()));assert.deepEqual(result.json(),evidence);
@@ -107,7 +107,7 @@ test('unknown fields, SQL-like filters, unsupported metrics, today and nonlocal 
   }
   for(const payload of [
     {question:'今天支付金额为什么下降？'},
-    {question:'退款金额上升了'},
+    {question:'昨天利润上升了'},
     {...request,confirmedIntent:{...query,filters:{skuId:["A'); DROP TABLE business.orders;--"]}}},
   ]){const run=await terminal(await start(sid,payload));assert.equal(run.status,'failed');assert.equal(run.reportId,undefined);}
   const forbidden=await app.inject({url:'/api/catalog',headers:{origin:'https://evil.example'}});assert.equal(forbidden.statusCode,403);
@@ -157,7 +157,7 @@ test('saved reports survive app rebuild and orphaned running jobs become interru
 });
 test('agent mode without a configured runtime returns 503 instead of mock output',async()=>{
   const agent=await buildApp({statePool:db.state,readerPool:db.reader,mode:'agent',recover:false});
-  try{const sid=await session(agent);const response=await agent.inject({method:'POST',url:`/api/sessions/${sid}/runs`,headers:{'idempotency-key':randomUUID()},payload:request});assert.equal(response.statusCode,503);assert.equal(response.json().code,'MODEL_NOT_CONFIGURED');}
+  try{assert.equal((await agent.inject('/api/health/ready')).statusCode,503);const sid=await session(agent);const response=await agent.inject({method:'POST',url:`/api/sessions/${sid}/runs`,headers:{'idempotency-key':randomUUID()},payload:request});assert.equal(response.statusCode,503);assert.equal(response.json().code,'MODEL_NOT_CONFIGURED');}
   finally{await agent.close();}
 });
 test('a failed decomposition preserves observed payment evidence in an explicitly partial report',async()=>{
@@ -179,4 +179,10 @@ test('wall-clock timeout persists timed_out instead of completing a delayed anal
     const run=await terminal(await start(await session(timed),request,timed),timed);
     assert.equal(run.status,'timed_out');assert.equal(run.reportId,undefined);
   }finally{await timed.close();}
+});
+test('explicit SKU exclusion is expanded from authorized catalog and re-queries remaining products',async()=>{
+  const sid=await session();await terminal(await start(sid));
+  const run=await terminal(await start(sid,{question:'排除 A 呢？'}));assert.equal(run.status,'completed',run.message);
+  const report=(await app.inject(`/api/reports/${run.reportId}`)).json();assert.deepEqual(report.query.filters.skuId,['B','C']);
+  assert.equal(report.comparison.current,5000000);assert.equal(report.comparison.baseline,4000000);assert.equal(report.comparison.changeRate,0.25);
 });
