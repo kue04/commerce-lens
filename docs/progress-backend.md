@@ -2,20 +2,21 @@
 
 更新：2026-10-22，Asia/Shanghai。新会话先读根 AGENTS.md；本文保留当前有效状态，历史细节查 Git，不继续追加聊天流水账。
 
-## 本轮执行快照（恢复自 f5cb3d5）
+## 本轮执行快照（恢复自 dbffd01）
 
-- 本轮开始分支 backend/payment-api、HEAD f5cb3d5、工作区干净，worktree 位置已核实。恢复 AGENTS.md、本文、PRD 信号/解释边界、API-CONTRACT 与相关 ADR，实际代码核对后继续子范围信号切片。仅操作后端目录，真实模型持续跳过。
-- 已复现并修复：华东库存被用于解释跨大区 SKU 下降；tmall 或华东流量被用于解释全渠道/全大区总量下降。修复前定向 3 测试中 2 失败、同范围正例通过。packages/agent/src/report.ts 新增解释时的渠道/大区集合匹配；不匹配保留明确范围的事实，解释进入 unknown，库存仍是共享池、流量仍不支持 SKU 归因。
-- 当前验证对象 f5cb3d5 加本次提交差异：npm run typecheck、npm test（72/72，0 跳过，44.85 秒）、npm run build 均通过；此前 agent + signal-scope 专项 14/14 通过。新真实 PostgreSQL/Pi faux-provider/HTTP 测试用独立 SQL 和手工预期确认华东 A +500000、华北 A -4500000 分，华东库存零值/背景流量不能解释其他范围下降；验证持久化报告、证据读取和 JSON 导出；同范围正例保留。覆盖筛选顺序、SKU-only 背景、部分覆盖与退款下降。不代表 DeepSeek 验收。
-- 本轮全部修改归本会话，随本次修复提交：report.ts、tests/unit/agent.test.ts、tests/integration/signal-scope.test.ts、ADR 0004、API-CONTRACT 和本文；未改前端、冻结标签或历史报告，无新增依赖/DTO/迁移。临时数据库已正常停止，收尾以 git status 核实无遗留改动。
-- 当前停留点：子范围解释切片及当前质量门禁完成。未重跑 240 次离线集、规模性能或 socket smoke；未运行真实模型/B/C、人工复核、前后端浏览器验收、视频/全新环境复现。下一步核查还未完整验证的事实导出范围与本地复现证据，不扩展 P1。
+- 本轮开始分支 backend/payment-api、HEAD dbffd01、工作区干净，worktree 位置已核实。读取 AGENTS.md、本文、PRD 导出/证据要求、API-CONTRACT、ADR 0001/0004 后核对代码，继续导出核查。仅后端，真实模型持续跳过。
+- 核查结果与修复详见 docs/EXPORT-REVIEW.md：JSON 与保存报告一致；旧 Markdown 漏掉证据 QuerySpec/列名/覆盖率/signal/note 与报告状态。新增 apps/api/src/report-export.ts，由原 export 路由调用，完整保留报告口径/状态/原始比较贡献/来源/trace，以及每条证据完整 JSON，自身子范围不再依赖报告总范围猜测。导出不重新查数或覆写报告。
+- 进一步修复模板自身范围：退款原因事实明确本期、SKU/渠道/大区；活动假设与 SignalService note 明确 SKU/渠道匹配、包含全范围活动、无大区归因、仅本期或基期重叠。JSON/Markdown 共用同一保存的报告，不分别改写语义。
+- 当前验证对象 dbffd01 加本次提交差异：npm run typecheck、npm test（75/75，0 跳过，49.08 秒）、npm run build 通过。生产代码未再变动，之后新增的旧版/转义专项单元 1/1 通过，最终 typecheck 再次通过；没有把该新增用例冒称为完整 npm test 的 76/76。tests/integration/report-export.test.ts 真实 PostgreSQL + Pi faux + HTTP：独立 SQL/手工预期确认总退款 350000 分、A 子范围 300000 分/2 事件；验证退款、活动子范围、partial、missing 的 JSON 与落库 DTO、Markdown 代码块与证据 GET 一致。
+- 本轮全部修改归本会话，随修复提交：app.ts/report-export.ts、agent/report.ts、analytics/signals.ts、两个导出测试、API-CONTRACT、EXPORT-REVIEW 和本文；未改前端、冻结标签、历史报告，无新增依赖/DTO/迁移。临时数据库均正常停止，收尾以 git status 核实。
+- 当前停留点：报告导出内容与证据范围切片完成。未重跑 240 次冻结评测、规模性能、socket smoke、浏览器 Markdown 渲染；真实模型/B/C、人工复核、前后端浏览器验收、视频/全新环境复现仍未完成。后续优先验证现有本地启动/备份恢复说明的实际复现缺口，不扩展 P1。
 
 ## 1. 职责、目录、分支和提交
 
 - 负责后端、数据库、指标计算、Pi runtime、API、共享契约与后端验证/交付；不修改前端页面或 docs/progress-frontend.md。
 - 工作目录 D:/llm/Commerce Lens-backend，分支 backend/payment-api。主 worktree D:/llm/Commerce Lens 的 main 在 25a18ec，由前端会话使用，未合入最新后端。
-- 最近已提交实现 f5cb3d5（库存解释引用/合池限制），此前 c4885cf 为三指标、信号、生命周期、离线评测、恢复，ec08b13 是支付金额初版，不能作为当前能力上限。
-- 本轮开始 HEAD=f5cb3d5，git status --short 为空；修改范围与本次验证见顶部快照。最终提交自身用 git log -1 查询，不在文件中循环记录自身 hash。
+- 最近已提交实现 dbffd01（子范围解释与指标匹配）、f5cb3d5（库存解释引用/合池限制），此前 c4885cf 为三指标、信号、生命周期、离线评测、恢复，ec08b13 是支付金额初版，不能作为当前能力上限。
+- 本轮开始 HEAD=dbffd01，git status --short 为空；修改范围与本次验证见顶部快照。最终提交自身用 git log -1 查询，不在文件中循环记录自身 hash。
 - 用户当前要求：继续非外部真实 API 的后端工作；不等待前端页面。真实模型调用仍被排除，即使日后本机有 Key 也不能自动调用。公网部署不在当前范围。
 
 ## 2. 已完成功能与主要文件
@@ -26,7 +27,7 @@
 | 库存、渠道大区流量、活动、退款原因 | packages/analytics/src/signals.ts；db/migrations/004-signals.sql |
 | 证据/hash/范围/数值校验、模板事实和有限解释 | packages/agent/src/report.ts、tools.ts；packages/analytics/src/hash.ts |
 | Pi 六工具、预算和重试 | packages/agent/src/pi.ts、budget.ts；packages/analytics/src/retry.ts |
-| REST/SSE、同源限制、模式标识、导出 | apps/api/src/app.ts |
+| REST/SSE、同源限制、模式标识、导出 | apps/api/src/app.ts、report-export.ts |
 | 持久化、owner/store 归属、幂等、会话/报告/证据 | apps/api/src/repository.ts；db/migrations/002-app.sql |
 | 队列、取消、超时、重启中断、SQL 取消 | apps/api/src/runs.ts；packages/analytics/src/cancellation.ts |
 | 删除会话、反馈、cursor 分页、30 天清理、SSE 410 | repository.ts、app.ts；db/migrations/003-session-lifecycle.sql |
@@ -39,6 +40,10 @@
 数据均为合成食品电商；CNY/Asia/Shanghai，业务时钟固定 2026-10-22。默认 signals-v1 有辅助信号；acceptance-v1 为小型人工验收集；固定种子支持 90 天 10 万订单/20 万行。API 主入口 paid_amount/refund_amount/sold_units，其他底层指标不代表已开放自然语言入口。
 
 ## 3. 验证结果与对应版本
+
+### 上轮 dbffd01（历史，非本轮）
+
+子范围库存/流量解释修复，ADR 0004；typecheck、npm test 72/72（0 跳过，44.85 秒）、build 通过。真实 PostgreSQL/Pi faux/HTTP 验证华东 A 增长、华北下降的反例，支持同范围正例，不把子范围观测当作其他范围的解释。当前导出切片验证见顶部，不能用本段代替。
 
 ### 上轮 f5cb3d5（历史，非本轮）
 
@@ -62,7 +67,7 @@
 
 ## 4. 进行中任务和停留点
 
-子范围信号解释切片的当前实现与验证见顶部快照；旧报告 2 份引用缺口仍保留。下一会话先核对 Git，再按第 8 节处理明确的非模型证据缺口，不重新搭架构或重复抽样来凑通过。
+导出内容/证据范围切片已完成，当前实现与验证见顶部快照；旧报告 2 份引用缺口仍保留，历史内容不会在导出时悄悄重新生成。下一会话先核对 Git，再按第 8 节处理明确的非模型证据缺口，不重新搭架构或重复抽样来凑通过。
 
 ## 5. 未提交修改、归属与进程
 
@@ -93,7 +98,7 @@
 
 1. 按 AGENTS.md 恢复，核对 Git/实际实现；优先处理真实复现的失败和非模型 PRD 验收缺口。不要重新搭建已完成模块，不重复大规模验证来凑进度。
 2. 本轮已完成 20 报告独立自动核查、PRD 出口核对及 dev/专项修复，详见 REPORT-REVIEW.md。保留人工复核缺口，不能把自动核查重复改称人工完成；旧报告核查仍应报出 2 例 F1。
-3. 库存/流量子范围解释已修复并经真实 SQL/Pi faux/HTTP 验证，详见 ADR 0004。后续优先核查 Markdown/JSON 导出的事实、假设、unknown 与证据范围是否完整一致（特别是退款原因和活动子范围），或验证现有本地启动/恢复说明的实际复现缺口；先构造可复现反馈，不凭假想风险扩展。真实模型/人工/前端/视频出口不由自动审计代填。
+3. 库存/流量子范围解释和 Markdown/JSON 导出范围已验证，见 ADR 0004、EXPORT-REVIEW。下一步优先实际核查 BACKEND-QUICKSTART/DEMO 的本地构建启动、备份到空库恢复与构建产物复现证据；先识别未验证路径，不机械重跑通过的规模测试。真实模型/人工/前端/视频出口不由自动审计代填。
 4. 若推进联调，先只读比较 main 与 backend/payment-api 的契约/根配置，给具体提交同步清单；不覆盖前端页面或未提交修改，不盲目合并。
 5. 真模型与 B/C 评测持续延期，直到用户明确改变要求。前端/视频由其负责会话处理，不把这些当成本地工作的阻塞。
 
@@ -105,6 +110,7 @@
 - Evidence.signal/hashAlgorithm 可选；Fact.templateId 新增 signal；hypothesis 含 missingEvidence 和可选 contradictingEvidenceIds；ReportDraft 可选 signalEvidenceIds，旧 provenance 1.0.0 可读取。证据数量可变、rows 原值未格式化。
 - 本轮仅行为同步：库存供应约束假设现在引用 comparison、contribution、inventory 三类证据；仅单个下降 SKU 可获该解释，多 SKU 合池保留事实与 unknown；退款下降不解释为销售供应约束。原 QuerySpec/HTTP 1.1.0 schema、路由、迁移和依赖未变；API-CONTRACT.md 已说明 evidenceIds 不固定为两个。不向另一聊天发消息或自动合并。
 - 子范围补充：渠道/大区筛选与指标证据不匹配时不生成库存/流量解释，但保留带实际范围的 facts 并增加 unknown；同集合不同顺序等价，SKU-only 流量仅为背景。仅文本与解释生成条件改变，不新增契约字段，见 ADR 0004。
+- 本轮导出同步：Markdown 现为可独立阅读的完整证据导出，包含每条原 EvidenceDTO JSON 与报告状态/原始值/执行记录；机器消费仍用原 JSON。退款/活动文本补充范围和粒度限制。HTTP 1.1.0/QuerySpec/路由不变，无根依赖或迁移同步；见 API-CONTRACT 和 EXPORT-REVIEW。不自动合并前端或向其聊天发消息。
 - DELETE /api/sessions/:id；POST /api/reports/:id/feedback；历史 cursor 在 X-Next-Cursor，原数组响应不变；SSE 过期 410 REPLAY_EXPIRED，details.reportUrl 可读最终报告。
 - 迁移增加 003/004，不改旧 SQL。原目录 main 仅到 25a18ec，合并需审查 package.json、package-lock.json、tsconfig.json、.env.example；Fastify 5.12.7/API scripts 为后端引入，前端独立 package/lockfile 保留。
 - 用 catalog 数据版本和字典，禁止发送 scenario/storeId/ownerId/SQL。前端 fixture nuts/oats、mall/live 不是后端 A/B/C、douyin 等授权 ID。

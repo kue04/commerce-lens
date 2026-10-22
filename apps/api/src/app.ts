@@ -10,6 +10,7 @@ import type { PiPaymentRuntime } from '../../../packages/agent/src/pi.js';
 import { Repository,active,type Identity } from './repository.js';
 import { Runs } from './runs.js';
 import { SignalService } from '../../../packages/analytics/src/signals.js';
+import { reportMarkdown } from './report-export.js';
 
 type AppOptions={statePool:Pool;readerPool:Pool;mode?:contracts.ExecutionMode;runtime?:PiPaymentRuntime;identity?:Identity;analytics?:AnalyticsService;timeoutMs?:number;recover?:boolean;defaultDataset?:string;runRateLimit?:number};
 const object=(properties:Record<string,import('typebox').TSchema>)=>Type.Object(properties,{additionalProperties:false});
@@ -100,9 +101,7 @@ export async function buildApp(options:AppOptions){
     if(format!=='md'&&format!=='json')throw new DomainError('INVALID_REQUEST','导出格式仅支持 md/json');
     reply.header('Content-Disposition',`attachment; filename="commerce-lens-${report.id}.${format}"`);
     if(format==='json')return reply.type('application/json; charset=utf-8').send(report);
-    return reply.type('text/markdown; charset=utf-8').send([`# ${report.title}`,'> 合成数据',`模式：${report.provenance.executionMode}；Agent 执行：${report.provenance.agentExecuted}`,`范围：${JSON.stringify(report.query)}`,`时区：${report.dataset.timezone}；数据水位：${report.dataset.updatedAt}`,`版本：${JSON.stringify(report.provenance)}`,
-      '## 事实',...report.facts.map(f=>`- ${f.text} [${f.evidenceIds.join(', ')}]`),'## 可能解释',...report.hypotheses.map(h=>`- ${h.text} [${h.evidenceIds.join(', ')}]；反证引用：${h.contradictingEvidenceIds?.join(', ')||'未提供'}；缺失信息：${h.missingEvidence.join('；')}`),
-      '## 未知',...report.unknowns.map(t=>`- ${t}`),'## 建议核实',...report.nextActions.map(t=>`- ${t}`),'## 限制',...report.limitations.map(t=>`- ${t}`),'## 证据',...report.evidences.map(e=>`- ${e.id} | ${e.source} | ${e.datasetVersion} | ${e.status} | ${e.resultHash} | ${JSON.stringify(e.rows)}`)].join('\n'));
+    return reply.type('text/markdown; charset=utf-8').send(reportMarkdown(report));
   });
   app.get<{Params:{id:string}}>('/api/runs/:id/events',{schema:{params}},async(request,reply)=>{
     const id=request.params.id,header=request.headers['last-event-id']??'0';

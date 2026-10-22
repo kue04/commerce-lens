@@ -52,7 +52,7 @@ export class SignalService {
           AND ($7::text[] IS NULL OR channel_id IS NULL OR channel_id=ANY($7)) AND ($8::text[] IS NULL OR sku_id IS NULL OR sku_id=ANY($8)) ORDER BY campaign_id LIMIT 201`,values)).rows;
         if(campaigns.length>200)throw new DomainError('TOO_MANY_GROUPS','活动超过 200 项，请缩小范围');
         const records=campaigns.map(c=>({id:c.id,startAt:c.start_at.toISOString(),endAt:c.end_at.toISOString(),eventType:c.event_type}));
-        result={status:'success',signal:{type,campaigns:records},coverage:1,baselineCoverage:1,columns:['活动','开始','结束','事件类型'],rows:records.map(c=>[c.id,c.startAt,c.endAt,c.eventType]),note:'活动与比较窗口重叠仅为时间佐证，不能推断活动增量或结束造成的销售损失。'};
+        result={status:'success',signal:{type,campaigns:records},coverage:1,baselineCoverage:1,columns:['活动','开始','结束','事件类型'],rows:records.map(c=>[c.id,c.startAt,c.endAt,c.eventType]),note:'按 SKU/渠道选择匹配活动，包含全范围活动；活动无大区粒度，不支持大区归因。与本期或基期窗口重叠仅为时间佐证，不能推断活动增量或结束造成的销售损失。'};
       }else{
         const conditions:string[]=[];
         for(const [key,column]of [['channelId','o.channel_id'],['regionId','o.region_id'],['skuId','i.sku_id']]as const)if(query.filters[key]){values.push(query.filters[key]);conditions.push(`${column}=ANY($${values.length}::text[])`);}

@@ -90,9 +90,9 @@ export function buildReport(options:{draft:unknown;evidences:EvidenceDTO[];query
       if(e.coverage!==1||e.baselineCoverage!==1)unknowns.push('流量覆盖不足，已观测会话数不代表完整窗口总量。');
       if(matched && query.metricId!=='refund_amount' && e.coverage===1 && e.baselineCoverage===1 && s.attributionMatched && s.current.sessions<s.baseline.sessions && comparison.delta<0)hypotheses.push({text:'同口径渠道流量下降与经营指标下降同时出现，支持流量相关解释；不能直接归因到单个 SKU。',evidenceIds:ref,missingEvidence:['缺少 SKU 曝光和访问，尚不能证明因果。']});
     }else if(e.signal.type==='promotion'){
-      if(e.signal.campaigns.length)hypotheses.push({text:'发现与比较窗口重叠的活动记录，需核实活动结束时间及影响；不能据此确定活动效果。',evidenceIds:ref,missingEvidence:['缺少活动曝光、价格和对照实验数据。']});
+      if(e.signal.campaigns.length)hypotheses.push({text:`在活动核查选择（SKU：${e.query.filters.skuId?.join('、')??'全部'}；渠道：${e.query.filters.channelId?.join('、')??'全部'}；含全范围活动，不支持大区归因）内发现与本期或基期窗口重叠的活动记录，需核实活动结束时间及影响；不能据此确定活动效果。`,evidenceIds:ref,missingEvidence:['缺少活动曝光、价格和对照实验数据。']});
     }else{
-      facts.push({templateId:'signal',text:`成功退款按客户原因码分组，共 ${e.signal.reasons.reduce((s,r)=>s+r.events,0)} 个退款事件；事件数不等于订单数。`,evidenceIds:[e.id],valueRefs:['signal.reasons']});
+      facts.push({templateId:'signal',text:`本期成功退款核查范围（SKU：${e.query.filters.skuId?.join('、')??'全部'}；渠道：${e.query.filters.channelId?.join('、')??'全部'}；大区：${e.query.filters.regionId?.join('、')??'全部'}）按客户原因码分组，共 ${e.signal.reasons.reduce((s,r)=>s+r.events,0)} 个退款事件；事件数不等于订单数。`,evidenceIds:[e.id],valueRefs:['signal.reasons']});
       unknowns.push('退款原因码是客户选择分类，不能证明产品质量事故；缺失原因码单列 unknown。');
     }
   }

@@ -31,6 +31,8 @@
 
 错误统一 ErrorSchema：code/message/retryable/traceId，details 可选。禁止原始 SQL、堆栈、连接串和 Key 进入响应。
 
+导出行为：JSON 返回保存的完整 ReportSchema，不重新查数或渲染报告。Markdown 从同一保存报告生成，显示 completed/partial、单位、口径、总量/贡献、事实引用、假设支持/反证/缺失信息、unknown、建议、限制与执行记录；每条证据附完整 JSON，包含其自身 QuerySpec、两期窗口/筛选、列名、原始 rows、覆盖率、signal、note 和 hash。子范围证据不能按报告总范围解读；null 不补零，分/件与未舍入比例保持原值。旧 1.0.0 报告可读取导出，不覆写已保存文本或补造缺失字段。Markdown 文案与布局不是机器解析契约，结构化消费继续使用 JSON。
+
 ## 与现有前端适配模型的关系
 
 - 保留 Run.id、sessionId、question、reportId、status；phase 为 0—7 数字，供现有界面兼容，新增 phaseName 为权威阶段名。前端四阶段展示应将 interpreting/received→0、checking_data/comparing→1、decomposing→2、inspecting/validating/persisting→3；不要用 phase 直接索引长度为 4 的数组。
@@ -39,6 +41,7 @@
 - Evidence.signal 按 type 区分 inventory/traffic/promotion/refund_reason。status=missing 时没有 signal，coverage=null，不能当作零库存或零流量。库存小时是 SKU×大区池观测数；流量只有渠道×大区粒度，skuAttributionSupported=false。hypotheses 由已验证信号规则模板生成，最多 3 条，不能确认因果。
 - 库存供应约束解释仅适用于被核查的单个下降 SKU，并引用总量、SKU 贡献和库存三类证据；多 SKU 合池保留观测事实，单 SKU 归因进入 unknowns。hypotheses.evidenceIds 数量可变，前端不能假定只有两个引用。退款下降不会生成“销售供应约束”解释；HTTP/QuerySpec schema 仍为原版本。
 - 信号查询可合法缩小范围，但解释还须匹配指标证据：库存的渠道/大区选择须匹配 SKU 贡献；流量的渠道/大区选择须匹配总量，SKU 选择只表示背景用途。子范围观测仍进入 facts 并显示实际 SKU/渠道/大区，范围不匹配时进入 unknowns，不输出“同口径”解释。筛选值顺序不影响匹配；覆盖不足或退款下降不生成流量解释。
+- 退款原因事实明确“本期”和实际 SKU/渠道/大区，不把子范围事件数当作报告总事件数。活动解释和证据说明明确按 SKU/渠道匹配（包含全范围活动），仅与本期或基期重叠，无大区粒度，不能归因到查询大区或证明活动效果。只变更模板/说明，Signal/Report DTO 不变。
 - 本地数据版本以 catalog 为准；前端 fixture 使用的 web-demo-v1、nuts/oats、mall/live 不属于服务端数据字典。canonical 样例使用 acceptance-v1、A/B/C、douyin、east。confirmedIntent 的筛选必须来自当前版本，未知值返回失败，不能静默替换。
 - HTTP 请求不包含前端 scenario。该字段仅用于前端 mock；后端拒绝额外字段。confirmedIntent 是明确结构化查询，仍由服务端验证，不赋予权限。
 
