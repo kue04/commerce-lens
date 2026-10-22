@@ -12,6 +12,8 @@ expectedIntent 为人工指定的指标、窗口和维度，expectedValues 从 e
 
 输出 offline-*.json 保留逐例结果、caseHash、环境和失败信息，不覆盖旧结果。audit-*.json 包含 20 份用于人工抽样复核的完整报告；当前标记 automated-evidence-audit 与 humanReviewCompleted=false，不能据此声称两名人员已审核。
 
+后续独立自动核查见 [REPORT-REVIEW.md](REPORT-REVIEW.md)：对保存的 20 份报告重新用真实 PostgreSQL/独立 SQL 核对，发现 2 份库存解释漏引 SKU 贡献证据。新增 `scripts/audit-report-samples.ts` 保留逐例检查和问题；原报告不覆写，历史 240/240 不包含这项新增语义检查。修复在 dev 重放及专项回归验证，不修改冻结标签，不声称已完成人工复核。
+
 ## 基线与不能推导的结论
 
 - A 固定规则解析+SQL：本次实际测量的确定性系统，不具备开放式语言泛化能力。

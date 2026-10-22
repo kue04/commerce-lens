@@ -1,0 +1,281 @@
+{
+  "mode": "independent-automated-saved-report-review",
+  "humanReviewCompleted": false,
+  "externalModelCalls": 0,
+  "at": "2026-10-22T11:26:39.828Z",
+  "source": "evals/results/audit-2026-10-22T10-43-12-334Z.json",
+  "sourceSha256": "bccfb2f8ae926511c963b7a3bcc4d1d2cec624c3b02c8a77b9632d1208f66009",
+  "revision": "e69f3604e3a1c9380a7dbde866bd3e153a051725",
+  "reviewScriptSha256": "41c82429d28fec2497061d3b00a0da788fcc2d81c6a80a3b0d5e4857c4a685ab",
+  "postgres": "18.4",
+  "scope": "Saved reports only; independent SQL checks totals and every contribution. Signal semantics and prose reviewed separately in docs/REPORT-REVIEW.md. No current API/model quality claim.",
+  "samples": 20,
+  "structuralFailures": 0,
+  "reportsWithSemanticIssues": 2,
+  "results": [
+    {
+      "caseId": "dev-sku-decline-0",
+      "family": "sku-decline",
+      "comparison": {
+        "current": 6000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-channel-traffic-0",
+      "family": "channel-traffic",
+      "comparison": {
+        "current": 7000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 2,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-stock-only-0",
+      "family": "stock-only",
+      "comparison": {
+        "current": 7000000,
+        "baseline": 10000000
+      },
+      "facts": 4,
+      "hypotheses": 2,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": [
+        "STOCK_DECLINE_REFERENCE_MISSING"
+      ]
+    },
+    {
+      "caseId": "dev-historical-refund-0",
+      "family": "historical-refund",
+      "comparison": {
+        "current": 300000,
+        "baseline": 0
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-partial-refund-0",
+      "family": "partial-refund",
+      "comparison": {
+        "current": 300000,
+        "baseline": 0
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-offset-0",
+      "family": "offset",
+      "comparison": {
+        "current": 7000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-units-no-stock-0",
+      "family": "units-no-stock",
+      "comparison": {
+        "current": 70,
+        "baseline": 100
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-normal-0",
+      "family": "normal",
+      "comparison": {
+        "current": 10000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "frozen-test-new-sku-total-0",
+      "family": "new-sku-total",
+      "comparison": {
+        "current": 7012345,
+        "baseline": 10000000
+      },
+      "facts": 4,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "frozen-test-unknown-refund-0",
+      "family": "unknown-refund",
+      "comparison": {
+        "current": 300000,
+        "baseline": 0
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "frozen-test-mixed-stock-traffic-0",
+      "family": "mixed-stock-traffic",
+      "comparison": {
+        "current": 7000000,
+        "baseline": 10000000
+      },
+      "facts": 5,
+      "hypotheses": 3,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": [
+        "STOCK_DECLINE_REFERENCE_MISSING"
+      ]
+    },
+    {
+      "caseId": "frozen-test-units-channel-0",
+      "family": "units-channel",
+      "comparison": {
+        "current": 70,
+        "baseline": 100
+      },
+      "facts": 2,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "frozen-test-refund-channel-0",
+      "family": "refund-channel",
+      "comparison": {
+        "current": 300000,
+        "baseline": 0
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "frozen-test-region-contribution-0",
+      "family": "region-contribution",
+      "comparison": {
+        "current": 7000000,
+        "baseline": 10000000
+      },
+      "facts": 2,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "frozen-test-rolling-week-0",
+      "family": "rolling-week",
+      "comparison": {
+        "current": 7012345,
+        "baseline": 10000000
+      },
+      "facts": 4,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "frozen-test-week-units-0",
+      "family": "week-units",
+      "comparison": {
+        "current": 71,
+        "baseline": 100
+      },
+      "facts": 4,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-sku-decline-1",
+      "family": "sku-decline",
+      "comparison": {
+        "current": 6000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-sku-decline-2",
+      "family": "sku-decline",
+      "comparison": {
+        "current": 6000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-sku-decline-3",
+      "family": "sku-decline",
+      "comparison": {
+        "current": 6000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    },
+    {
+      "caseId": "dev-sku-decline-4",
+      "family": "sku-decline",
+      "comparison": {
+        "current": 6000000,
+        "baseline": 10000000
+      },
+      "facts": 3,
+      "hypotheses": 0,
+      "numericAndReferenceChecksPassed": true,
+      "errors": [],
+      "issues": []
+    }
+  ]
+}

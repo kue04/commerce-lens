@@ -2,12 +2,20 @@
 
 更新：2026-10-22，Asia/Shanghai。新会话先读根 AGENTS.md；本文保留当前有效状态，历史细节查 Git，不继续追加聊天流水账。
 
+## 本轮执行快照（恢复自 e69f360）
+
+- 已按顺序读取 AGENTS.md、本文、PRD 相关验收/契约/出口、API-CONTRACT 与 ADR 0001—0003；核实分支 backend/payment-api、HEAD e69f360、开始时工作区干净。只操作 D:/llm/Commerce Lens-backend，未改前端 worktree。
+- 已完成保存报告的独立自动核查切片：新增 scripts/audit-report-samples.ts、docs/REPORT-REVIEW.md 和 evals/results/report-review-2026-10-22T11-26-39-851Z.json。真实 PostgreSQL 18.4 重新发布对应种子，20 份总量/逐贡献与独立 SQL 一致，结构/hash/引用检查 20/20 通过，2 份库存解释漏引贡献证据；humanReviewCompleted=false，不是人工复核。原始报告/冻结标签保持不变。
+- 验证版本为 e69f360 加本次提交差异：packages/agent/src/report.ts 已修复库存解释引用及单 SKU 粒度要求，合池事实保留而归因进入 unknown，退款下降不生成“销售供应约束”解释。先前专项 0/2 失败、修复后 2/2 通过；最终 npm run typecheck、npm test（64/64，0 跳过，40.84 秒）、npm run build 均通过。tests/integration/signals.test.ts 验证持久化报告三类引用，以及独立 SQL/手工预期确认仅增长 B 有 10 小时零库存时 A/B 合池不能支持 A 缺货。
+- 本轮全部改动归本会话，随本次修复提交：报告生成、两测试文件、审查脚本/文档/JSON、EVALUATION/API-CONTRACT 说明与本文。没有外部模型调用，没有新增依赖、DTO、路由或迁移。3000/55432 初查未有监听，本轮临时数据库均正常停止。
+- 当前停留点：审查和库存解释修复切片完成。未重跑 240 次离线集、规模性能或 socket smoke；下方历史成绩不可作为当前版本重新测量。PRD 出口缺口详见 REPORT-REVIEW：真实模型/B/C、人工复核、前后端浏览器验收、视频/全新环境复现仍未完成。
+
 ## 1. 职责、目录、分支和提交
 
 - 负责后端、数据库、指标计算、Pi runtime、API、共享契约与后端验证/交付；不修改前端页面或 docs/progress-frontend.md。
 - 工作目录 D:/llm/Commerce Lens-backend，分支 backend/payment-api。主 worktree D:/llm/Commerce Lens 的 main 在 25a18ec，由前端会话使用，未合入最新后端。
 - 最近实现提交 c4885cf（三指标、信号、生命周期、离线评测、恢复）；此前 ec08b13 是支付金额初版，不能作为当前能力上限。
-- 本次交接开始 HEAD=0bc9e9c（源码包证据记录），git status --short 为空。业务代码与 c4885cf 一致。本次修改 AGENTS.md、本文，以及验证脚本重新生成的 evals/results/backend-api-smoke.json；交接提交自身用 git log -1 查询，不在文件中循环记录自身 hash。
+- 本轮开始 HEAD=e69f360（上一会话交接），git status --short 为空；修改范围与本次验证见顶部快照。最终提交自身用 git log -1 查询，不在文件中循环记录自身 hash。
 - 用户当前要求：继续非外部真实 API 的后端工作；不等待前端页面。真实模型调用仍被排除，即使日后本机有 Key 也不能自动调用。公网部署不在当前范围。
 
 ## 2. 已完成功能与主要文件
@@ -32,7 +40,7 @@
 
 ## 3. 验证结果与对应版本
 
-### 本次交接核验
+### 上一会话交接核验（历史，非本轮）
 
 已核对 worktree、Git、实际文件与原始结果；本次未修改业务代码，验证对象为 c4885cf 的实现（交接前 HEAD=0bc9e9c）。2026-10-22 实际重新运行：npm run typecheck 通过；npm test 60/60 通过、0 跳过（约 44.2 秒）；npm run build 通过；node dist/scripts/verify-api.js 的真实 HTTP/SSE、25 个事件、断点重放与报告/证据持久化均通过，比较为 7000000/10000000 分，agentExecuted=false。最新 smoke 证据已重新生成在 evals/results/backend-api-smoke.json，随本次交接保存。
 
@@ -50,12 +58,12 @@
 
 ## 4. 进行中任务和停留点
 
-本次会话恢复机制已完成，验证已通过。业务功能已提交，没有半个未完成的业务功能；本文替换旧进度中互相冲突的新旧状态，AGENTS.md 增补恢复与持续更新规则，smoke 证据同步保存。停留点为交接提交后结束；下一会话先核实 Git，再从第 8 节的非模型审查/验收缺口继续，不重新搭架构。
+本轮已独立核查 20 份保存报告并完成库存解释的小切片，未遗留半个业务功能。原始 2 份报告的引用缺口保留；修复后通过 dev/专项及当前完整测试验证，没有重写历史报告或冻结标签。下一会话先核对 Git，再按第 8 节处理明确的非模型证据缺口，不重新搭架构或重复抽样来凑通过。
 
 ## 5. 未提交修改、归属与进程
 
-- 交接开始后端 worktree 干净；本次提交范围仅 AGENTS.md、本文和重新生成的 evals/results/backend-api-smoke.json，全部为本会话交接/验证成果。三文件收尾提交后应无未提交修改；新会话以 git status --short 为准，若有新增修改先识别来源。
-- 原目录 D:/llm/Commerce Lens 有 `?? apps/`、`?? docs/progress-frontend.md`，属于前端会话；本会话未修改、暂存或清理。该目录不含最新后端，不能把其 v1.0.0 文档视作当前后端。
+- 本轮开始后端 worktree 干净；本轮提交范围见顶部快照，全部为本会话成果。收尾后以 git status --short 核实，不 reset/clean 新出现的来源不明修改。
+- 原目录 D:/llm/Commerce Lens 的前端未提交成果归另一会话；本轮没有读取或修改其页面/进度、暂存或清理，仅 git worktree list 读取分支位置。不能把 main 的 v1.0.0 文档视作当前后端。
 - .local/.tools/node_modules/dist 为忽略文件；本地数据库、备份、少量历史失败临时库不入 Git。不要打印 .env 或 connection.env。本文不保存密钥或连接密码。
 - API 不保证常驻，新会话需核对 3000/55432 端口和进程归属，不误停前端 Vite 或其他 worktree 服务。
 
@@ -80,8 +88,8 @@
 ## 8. 下一步优先级
 
 1. 按 AGENTS.md 恢复，核对 Git/实际实现；优先处理真实复现的失败和非模型 PRD 验收缺口。不要重新搭建已完成模块，不重复大规模验证来凑进度。
-2. 独立审查 audit-*.json 中 20 份报告的事实/假设/unknown、范围和证据，记录可核查结论；修复先在 dev 或专项回归，冻结标签不得修改。
-3. 核对 PRD 第一部分验收、第三部分契约、第五部分出口条件，列出尚有证据缺口，选最早未完成且收益明确的小切片。不能把“继续”解释为扩展 P1。
+2. 本轮已完成 20 报告独立自动核查、PRD 出口核对及 dev/专项修复，详见 REPORT-REVIEW.md。保留人工复核缺口，不能把自动核查重复改称人工完成；旧报告核查仍应报出 2 例 F1。
+3. 如继续非模型工作，先检查报告其他信号解释在缩小筛选后的证据范围是否仍匹配，再选可真实复现的小切片；当前样本核查不能证明任意筛选组合都正确。若无新复现，不扩展 P1，也不机械重跑规模测试。真实模型/人工/前端/视频出口不由自动审计代填。
 4. 若推进联调，先只读比较 main 与 backend/payment-api 的契约/根配置，给具体提交同步清单；不覆盖前端页面或未提交修改，不盲目合并。
 5. 真模型与 B/C 评测持续延期，直到用户明确改变要求。前端/视频由其负责会话处理，不把这些当成本地工作的阻塞。
 
@@ -91,6 +99,7 @@
 
 - 三主指标；金额 unit=fen、件数 unit=units，null 不显示为 0。phaseName 映射四个前端阶段；0—7 phase 不直接索引四项数组。
 - Evidence.signal/hashAlgorithm 可选；Fact.templateId 新增 signal；hypothesis 含 missingEvidence 和可选 contradictingEvidenceIds；ReportDraft 可选 signalEvidenceIds，旧 provenance 1.0.0 可读取。证据数量可变、rows 原值未格式化。
+- 本轮仅行为同步：库存供应约束假设现在引用 comparison、contribution、inventory 三类证据；仅单个下降 SKU 可获该解释，多 SKU 合池保留事实与 unknown；退款下降不解释为销售供应约束。原 QuerySpec/HTTP 1.1.0 schema、路由、迁移和依赖未变；API-CONTRACT.md 已说明 evidenceIds 不固定为两个。不向另一聊天发消息或自动合并。
 - DELETE /api/sessions/:id；POST /api/reports/:id/feedback；历史 cursor 在 X-Next-Cursor，原数组响应不变；SSE 过期 410 REPLAY_EXPIRED，details.reportUrl 可读最终报告。
 - 迁移增加 003/004，不改旧 SQL。原目录 main 仅到 25a18ec，合并需审查 package.json、package-lock.json、tsconfig.json、.env.example；Fastify 5.12.7/API scripts 为后端引入，前端独立 package/lockfile 保留。
 - 用 catalog 数据版本和字典，禁止发送 scenario/storeId/ownerId/SQL。前端 fixture nuts/oats、mall/live 不是后端 A/B/C、douyin 等授权 ID。
@@ -120,6 +129,8 @@ npm run typecheck
 npm test
 npm run build
 node dist/scripts/verify-api.js
+# 独立核查保存的旧报告（发现 2 项已记录 F1，预期非零退出；不改写旧报告）：
+node --import tsx scripts/audit-report-samples.ts
 # 仅在相关改动/失败/疑点需要时扩展：
 npm run eval:offline
 npm run benchmark:local

@@ -10,6 +10,9 @@ import { buildApp } from '../../apps/api/src/app.js';
 import type { MetricId } from '../../packages/contracts/src/index.js';
 import { Value } from 'typebox/value';
 import { ReportSchema } from '../../packages/contracts/src/http.js';
+import { AnalyticsService } from '../../packages/analytics/src/service.js';
+import { PaymentTools } from '../../packages/agent/src/tools.js';
+import { RunBudget } from '../../packages/agent/src/budget.js';
 
 let db:Awaited<ReturnType<typeof startLocalPostgres>>,signals:SignalService,app:Awaited<ReturnType<typeof buildApp>>;
 const query={metricId:'paid_amount' as MetricId,...defaultWindows('2026-10-22'),filters:{regionId:['east'],skuId:['A']},groupBy:'sku' as const};
@@ -55,8 +58,44 @@ test('three primary metrics each complete full HTTP report with correct units an
     const response=await app.inject(`/api/reports/${reportId}`),report=response.json();assert.equal(response.statusCode,200,response.body);assert.ok(Value.Check(ReportSchema,report));
     assert.equal(report.unit,unit);assert.equal(report.comparison.current,current);assert.equal(report.comparison.baseline,baseline);
     assert.equal(report.provenance.contractVersion,'1.1.0');
-    if(metric==='paid_amount'){assert.ok(report.hypotheses.some(h=>h.text.includes('供应约束')));assert.ok(report.facts.some(f=>f.templateId==='signal'));}
+    if(metric==='paid_amount'){
+      const stock=report.hypotheses.find(h=>h.text.includes('供应约束'));assert.ok(stock);
+      assert.deepEqual(stock.evidenceIds.map(id=>report.evidences.find(e=>e.id===id)?.kind).sort(),['comparison','contribution','inventory']);
+      assert.ok(report.facts.some(f=>f.templateId==='signal'));
+    }
     if(metric==='refund_amount'){assert.equal(report.comparison.changeRate,null);assert.ok(report.evidences.some(e=>e.kind==='refund_reason'));assert.match(report.unknowns.join(' '),/质量事故/);}
     if(metric==='sold_units')assert.match(report.facts[0]!.text,/70 件/);
+  }
+});
+test('real SQL stock pools keep growing-SKU zeros out of a declining-SKU explanation',async()=>{
+  const data=signalSeed('stock-growing-sku');
+  for(const row of data.inventory!){
+    row.units=row.at.startsWith('2026-10-21') && row.region==='east' && row.sku==='B' && Number(row.at.slice(11,13))<10?0:100;
+  }
+  await publishSeed(db.admin,data);
+  // Independent SQL and hand expectation: only the growing B has ten zero hours.
+  const counts=(await db.admin.query(`SELECT sku_id,COUNT(*) FILTER(WHERE available_units=0 AND is_observed)::int AS zeros
+    FROM business.inventory_hourly WHERE dataset_version=$1 AND store_id=$2 AND region_id='east'
+    AND hour_at>='2026-10-21T00:00:00+08:00' AND hour_at<'2026-10-22T00:00:00+08:00' AND sku_id IN ('A','B')
+    GROUP BY sku_id ORDER BY sku_id`,[data.version,'store-demo'])).rows;
+  assert.deepEqual(counts,[{sku_id:'A',zeros:0},{sku_id:'B',zeros:10}]);
+  const spec={...query,filters:{regionId:['east']}};
+  const tools=new PaymentTools(new AnalyticsService(db.reader),spec,{...ctx,datasetVersion:data.version},
+    {version:data.version,storeName:'模拟',synthetic:true,businessClock:data.clock,updatedAt:'2026-10-22T00:00:00+08:00',timezone:'Asia/Shanghai'},
+    randomUUID(),randomUUID(),'昨天华东支付金额','deterministic',null,new RunBudget(new AbortController().signal),
+    {phase:async()=>{},event:async()=>{},saveEvidence:async()=>{}},signals);
+  await tools.execute('compare_metric',{...spec,groupBy:'none'});
+  await tools.execute('decompose_change',spec);
+  for(const skuId of [['A'],['B'],['A','B']])await tools.execute('inspect_signals',{signalType:'inventory',query:{...spec,filters:{...spec.filters,skuId}}});
+  const comparison=tools.evidences.find(e=>e.kind==='comparison')!,contribution=tools.evidences.find(e=>e.kind==='contribution')!;
+  assert.equal(comparison.comparison!.delta,-3000000);
+  assert.equal(contribution.contributors!.find(c=>c.key==='A')!.delta,-4000000);
+  assert.equal(contribution.contributors!.find(c=>c.key==='B')!.delta,1000000);
+  for(const inventory of tools.evidences.filter(e=>e.kind==='inventory')){
+    await tools.execute('submit_report',{comparisonEvidenceId:comparison.id,contributionEvidenceId:contribution.id,signalEvidenceIds:[inventory.id]});
+    const report=tools.render();
+    assert.equal(report.hypotheses.length,0,'A has no zeros, B grew, and the combined pool cannot locate the zeros');
+    assert.ok(report.facts.some(f=>f.evidenceIds.includes(inventory.id)));
+    if(inventory.query.filters.skuId!.length>1)assert.match(report.unknowns.join(' '),/单个下降 SKU/);
   }
 });

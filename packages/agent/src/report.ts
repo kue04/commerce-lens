@@ -74,7 +74,9 @@ export function buildReport(options:{draft:unknown;evidences:EvidenceDTO[];query
     if(e.signal.type==='inventory'){
       const s=e.signal;
       facts.push({templateId:'signal',text:`被核查库存池本期观测 ${s.current.observedHours}/${s.current.expectedHours} 小时，零库存 ${s.current.zeroHours} 小时；基期零库存 ${s.baseline.zeroHours} 小时。`,evidenceIds:[e.id],valueRefs:['signal.current','signal.baseline']});
-      if(s.current.coverage>=0.95 && s.baseline.coverage>=0.95 && s.current.zeroHours>s.baseline.zeroHours && comparison.delta<0 && query.groupBy==='sku' && e.query.filters.skuId?.some(id=>contributors.some(c=>c.key===id && c.delta!<0)))hypotheses.push({text:'下降商品的零库存观测增加，与销售下降在时间上重叠，可能存在供应约束；不能证明全部下降由缺货造成。',evidenceIds:ref,missingEvidence:['缺少曝光、需求与精确补货数据，无法估计因果损失。']});
+      const skuIds=e.query.filters.skuId;
+      if(!skuIds || skuIds.length!==1)unknowns.push('库存为多个或未分 SKU 的聚合观测，无法判断单个下降 SKU 的零库存变化。');
+      if(query.metricId!=='refund_amount' && decomp && s.current.coverage>=0.95 && s.baseline.coverage>=0.95 && s.current.zeroHours>s.baseline.zeroHours && comparison.delta<0 && query.groupBy==='sku' && skuIds?.length===1 && contributors.some(c=>c.key===skuIds[0] && !c.isOther && c.delta!<0))hypotheses.push({text:'下降商品的零库存观测增加，与销售下降在时间上重叠，可能存在供应约束；不能证明全部下降由缺货造成。',evidenceIds:[...ref,decomp.id],missingEvidence:['缺少曝光、需求与精确补货数据，无法估计因果损失。']});
       if(s.current.coverage<0.95||s.baseline.coverage<0.95)unknowns.push('库存观测覆盖不足 95%，不能声称全天未缺货。');
     }else if(e.signal.type==='traffic'){
       const s=e.signal;facts.push({templateId:'signal',text:`已观测渠道与大区背景会话数由 ${s.baseline.sessions} 变为 ${s.current.sessions}，不代表 SKU 流量。`,evidenceIds:[e.id],valueRefs:['signal.baseline.sessions','signal.current.sessions']});
