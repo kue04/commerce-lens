@@ -6,6 +6,8 @@
 
 本节更新此前支付金额切片的历史记录。本轮始终在 D:/llm/Commerce Lens-backend、backend/payment-api 分支开发，未修改/合并前端工作目录。本轮没有调用 verify:pi 或任何外部模型接口，也未读取本机其他会话的凭证。
 
+本轮可接入实现提交 c4885cf。源码包已实际生成并检查：.local/releases/commerce-lens-backend-c4885cf.zip，123 个归档项、305683 bytes，SHA256 4461f472ffd3810cc1ed2512af558e926d857b226a197e77365e59a51a243078；包含已提交的代码/契约/案例/验证结果，不包含 .env、.local、node_modules、数据库凭证或模型 Key。该包对应实现提交，后续纯进度记录不在该包中。
+
 ### 按优先级完成
 
 1. 生命周期与可靠性：DELETE session 先取消运行再删除关联数据；报告反馈、历史 cursor 分页、每日/启动时 30 天保留清理；过期 SSE 返回 410 和 reportUrl；同身份实例锁、60/min 任务请求限流、2 个执行+10 个排队、取消/完成竞态、实际 SQL 取消。
