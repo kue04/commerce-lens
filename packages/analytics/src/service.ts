@@ -1,15 +1,43 @@
 import type { Pool, PoolClient } from 'pg';
 import { DomainError, parseQuerySpec, safeInteger, sumIntegers, type Catalog, type Comparison, type QueryContext, type QuerySpec } from '../../contracts/src/index.js';
-import { METRIC_VERSION, metrics, validateWindows } from '../../metrics/src/index.js';
+import { METRIC_VERSION, metrics, validateWindows,shiftDate,windowDays,parseDate } from '../../metrics/src/index.js';
 import { compare, contributions } from './compare.js';
-import { compileQuery } from './query-compiler.js';
+import { compileQuery,compileDailyQuery } from './query-compiler.js';
+import { qualityReason,type Watermark } from './quality.js';
 import { watchQueryAbort } from './cancellation.js';
 import { resultHash as hashResult } from './hash.js';
 
 type AggregateRow = { period: 'current' | 'baseline'; key: string; paid: string; units: string; orders: string; refund: string };
-type Watermark = { source: string; coverage_start: string; complete_through: string; missing_partitions: string[] };
 export class AnalyticsService {
   constructor(private readonly pool: Pool) {}
+
+  async overviewData(input:unknown,context:QueryContext){
+    const spec=parseQuerySpec(input);
+    if(!context.storeId||!context.datasetVersion)throw new DomainError('INVALID_CONTEXT','缺少服务端访问范围');
+    if(!['paid_amount','refund_amount','sold_units'].includes(spec.metricId))throw new DomainError('INVALID_QUERY','概览仅支持三个主指标');
+    const days=windowDays(spec.currentWindow),offset=days===1?7:days;
+    if(![1,7,30].includes(days)||spec.baselineWindow.startDate!==shiftDate(spec.currentWindow.startDate,-offset)||spec.baselineWindow.endDateExclusive!==shiftDate(spec.currentWindow.endDateExclusive,-offset))
+      throw new DomainError('INVALID_WINDOW','概览使用1天对上周同日、7天对前7天或30天对前30天，请传入实际窗口');
+    const client=await this.pool.connect();
+    try{
+      await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');await client.query("SET LOCAL statement_timeout='3s'");
+      await client.query("SELECT set_config('lens.store',$1,true),set_config('lens.dataset',$2,true)",[context.storeId,context.datasetVersion]);
+      const dataset=(await client.query<{clock:string}>("SELECT business_clock::text AS clock FROM business.datasets WHERE dataset_version=$1 AND status='published'",[context.datasetVersion])).rows[0];
+      if(!dataset)throw new DomainError('DATASET_NOT_FOUND','数据集不存在或尚未发布');
+      validateWindows(spec,dataset.clock);await this.validateCatalog(client,spec,context);
+      const watermarks=(await client.query<Watermark>(`SELECT source,coverage_start::text,complete_through::text,ARRAY(SELECT unnest(missing_partitions)::text) AS missing_partitions FROM business.source_watermarks WHERE dataset_version=$1 AND store_id=$2`,[context.datasetVersion,context.storeId])).rows;
+      const trendStart=shiftDate(spec.currentWindow.endDateExclusive,-30),start=shiftDate(trendStart,-offset);
+      // Validate the derived date range as well as client-supplied dates.
+      parseDate(start);
+      const dailyQuery=compileDailyQuery(spec,context,start,spec.currentWindow.endDateExclusive);
+      const daily=(await client.query<{date:string;paid:string;units:string;refund:string}>(dailyQuery)).rows;
+      const reason=qualityReason(spec.metricId,[spec.currentWindow,spec.baselineWindow],watermarks);
+      const groupedQuery=reason===null&&spec.groupBy!=='none'?compileQuery(spec,context,true):null;
+      const grouped=groupedQuery?(await client.query<AggregateRow>(groupedQuery)).rows:[];
+      await client.query('COMMIT');
+      return {spec,offset,trendStart,daily,watermarks,grouped,queryTemplateIds:[dailyQuery.queryTemplateId,...(groupedQuery?[groupedQuery.queryTemplateId]:[])]};
+    }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
+  }
 
   async excludeSku(previous:QuerySpec,sku:string,context:QueryContext):Promise<QuerySpec|null>{
     const client=await this.pool.connect();
@@ -99,14 +127,8 @@ export class AnalyticsService {
     const result=await client.query<Watermark>(`SELECT source,coverage_start::text,complete_through::text,
       ARRAY(SELECT unnest(missing_partitions)::text) AS missing_partitions FROM business.source_watermarks
       WHERE dataset_version=$1 AND store_id=$2`,[context.datasetVersion,context.storeId]);
-    for(const source of metrics[spec.metricId].sources) {
-      const watermark=result.rows.find(r=>r.source===source);
-      for(const window of [spec.currentWindow,spec.baselineWindow]) {
-        if(!watermark || watermark.coverage_start>window.startDate || watermark.complete_through<window.endDateExclusive || watermark.missing_partitions.some(day=>day>=window.startDate && day<window.endDateExclusive)) {
-          throw new DomainError('INSUFFICIENT_DATA',`${source} 在 ${window.startDate} 至 ${window.endDateExclusive} 覆盖不完整，禁止生成变化结论`);
-        }
-      }
-    }
+    const reason=qualityReason(spec.metricId,[spec.currentWindow,spec.baselineWindow],result.rows);
+    if(reason)throw new DomainError('INSUFFICIENT_DATA',reason);
     return result.rows.filter(r=>(metrics[spec.metricId].sources as readonly string[]).includes(r.source));
   }
   private async validateCatalog(client:PoolClient,spec:QuerySpec,context:QueryContext) {

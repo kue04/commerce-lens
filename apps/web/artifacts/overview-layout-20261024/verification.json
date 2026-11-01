@@ -1,0 +1,201 @@
+{
+  "date": "2026-10-24",
+  "slice": "Business overview reading order and responsive layout",
+  "frontendHead": "25a18ec3e64ae2d8384a101eb6fd403d5bb9038f",
+  "committed": false,
+  "changes": [
+    "Compact page heading, friendly dataset labels, collapsible authorized filters with visible applied scope",
+    "Metric values followed immediately by backend change rate, baseline and delta",
+    "Trend and rule prompts side by side on desktop; stacked on small screens",
+    "Original rule text, definitions, dates and computation provenance available in disclosure details"
+  ],
+  "checks": {
+    "typecheck": "passed",
+    "unit": "12/12 passed",
+    "e2e": "36/36 passed, 22.0s",
+    "realBrowser": "1/1 passed, 11.5s, latest Fastify/PostgreSQL through Vite, no routing doubles",
+    "sqlOracle": {
+      "cards": 69,
+      "dailyPairs": 690,
+      "ruleComparisons": 30
+    },
+    "build": "passed; existing charts chunk 562.50 kB warning retained",
+    "responsive": [
+      {
+        "name": "small-mobile",
+        "width": 320,
+        "height": 740,
+        "overflow": false,
+        "pageErrors": [],
+        "cards": {
+          "x": 20,
+          "y": 343.984375,
+          "width": 280,
+          "height": 480.765625
+        },
+        "chart": {
+          "x": 20,
+          "y": 928.34375,
+          "width": 280,
+          "height": 280
+        },
+        "rules": {
+          "x": 20,
+          "y": 1240.140625,
+          "width": 280,
+          "height": 434.5625
+        }
+      },
+      {
+        "name": "mobile",
+        "width": 390,
+        "height": 844,
+        "overflow": false,
+        "pageErrors": [],
+        "cards": {
+          "x": 20,
+          "y": 343.984375,
+          "width": 350,
+          "height": 480.765625
+        },
+        "chart": {
+          "x": 20,
+          "y": 928.34375,
+          "width": 350,
+          "height": 280
+        },
+        "rules": {
+          "x": 20,
+          "y": 1240.140625,
+          "width": 350,
+          "height": 412.96875
+        }
+      },
+      {
+        "name": "tablet",
+        "width": 820,
+        "height": 1180,
+        "overflow": false,
+        "pageErrors": [],
+        "cards": {
+          "x": 215,
+          "y": 272.390625,
+          "width": 580,
+          "height": 238.96875
+        },
+        "chart": {
+          "x": 215,
+          "y": 622.953125,
+          "width": 580,
+          "height": 280
+        },
+        "rules": {
+          "x": 215,
+          "y": 934.75,
+          "width": 580,
+          "height": 412.96875
+        }
+      },
+      {
+        "name": "laptop",
+        "width": 1280,
+        "height": 800,
+        "overflow": false,
+        "pageErrors": [],
+        "cards": {
+          "x": 229,
+          "y": 272.390625,
+          "width": 1027,
+          "height": 201.984375
+        },
+        "chart": {
+          "x": 229,
+          "y": 585.96875,
+          "width": 703,
+          "height": 280
+        },
+        "rules": {
+          "x": 956,
+          "y": 499.375,
+          "width": 300,
+          "height": 433.5625
+        }
+      },
+      {
+        "name": "desktop",
+        "width": 1440,
+        "height": 960,
+        "overflow": false,
+        "pageErrors": [],
+        "cards": {
+          "x": 247,
+          "y": 272.390625,
+          "width": 1164,
+          "height": 201.984375
+        },
+        "chart": {
+          "x": 247,
+          "y": 585.96875,
+          "width": 840,
+          "height": 280
+        },
+        "rules": {
+          "x": 1111,
+          "y": 499.375,
+          "width": 300,
+          "height": 433.5625
+        }
+      },
+      {
+        "name": "wide",
+        "width": 1920,
+        "height": 1080,
+        "overflow": false,
+        "pageErrors": [],
+        "cards": {
+          "x": 450,
+          "y": 272.390625,
+          "width": 1280,
+          "height": 201.984375
+        },
+        "chart": {
+          "x": 450,
+          "y": 585.96875,
+          "width": 956,
+          "height": 280
+        },
+        "rules": {
+          "x": 1430,
+          "y": 499.375,
+          "width": 300,
+          "height": 433.5625
+        }
+      }
+    ]
+  },
+  "externalBrowserRequests": [],
+  "browserErrors": [],
+  "appCountsBeforeAfter": {
+    "before": {
+      "sessions": 13,
+      "runs": 16,
+      "reports": 16,
+      "events": 399,
+      "evidences": 80
+    },
+    "after": {
+      "sessions": 13,
+      "runs": 16,
+      "reports": 16,
+      "events": 399,
+      "evidences": 80
+    }
+  },
+  "businessDataChanged": false,
+  "contractChanged": false,
+  "backendChanged": false,
+  "remaining": "analysisQuery confirmation and explicit datasetVersion new-session/run/SSE flow remains a separate slice. No external model calls or new business runs tested. No portfolio data published.",
+  "services": "Reused user-requested running deterministic preview on ports 5173/3000/55432; no service stopped or restarted.",
+  "failures": "No failed verification in this slice; visual iteration fixed narrow-screen filter wrapping and shortened metadata.",
+  "legacyArtifacts": "Original budget banner restored byte for byte from snapshot; new screenshot saved separately."
+}

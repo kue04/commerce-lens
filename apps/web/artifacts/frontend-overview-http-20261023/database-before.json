@@ -1,0 +1,12 @@
+{
+  "counts": {
+    "sessions": 12,
+    "runs": 15,
+    "reports": 15,
+    "events": 374,
+    "evidences": 75
+  },
+  "snapshot": {
+    "datasets": "cb0743a60b2c6b660174f8629804797a"
+  }
+}

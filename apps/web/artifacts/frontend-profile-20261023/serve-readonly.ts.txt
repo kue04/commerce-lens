@@ -1,0 +1,13 @@
+import { readFile } from 'node:fs/promises';
+import { parseEnv } from 'node:util';
+import { Pool } from 'pg';
+import { buildApp } from './apps/api/src/app.ts';
+const env = parseEnv(await readFile('D:/llm/Commerce Lens-backend/.local/connection.env', 'utf8'));
+const state = new Pool({ connectionString: env.APP_DATABASE_URL, options: '-c default_transaction_read_only=on', max: 4 });
+const reader = new Pool({ connectionString: env.READONLY_DATABASE_URL, options: '-c default_transaction_read_only=on', max: 4 });
+const app = await buildApp({ statePool: state, readerPool: reader, mode: 'deterministic', recover: false, defaultDataset: 'signals-v1' });
+await app.listen({ host: '127.0.0.1', port: 3000 });
+console.log('Profile verification API ready; deterministic; all DB sessions default read-only; no recovery, migrations or seed.');
+let closing = false;
+const close = async () => { if (closing) return; closing = true; await app.close(); await reader.end(); await state.end(); };
+process.once('SIGINT', () => { void close(); }); process.once('SIGTERM', () => { void close(); });

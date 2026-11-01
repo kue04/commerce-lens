@@ -111,11 +111,12 @@ export async function publishSeed(pool: Pool, data: SeedData, onProgress?: (stag
     if(data.traffic)await insert('traffic_daily',['dataset_version','store_id','channel_id','region_id','business_date','sessions','attribution_version'],data.traffic.map(r=>[data.version,r.store,r.channel,r.region,r.date,r.sessions,r.attribution]));
     if(data.promotions)await insert('promotion_events',['dataset_version','store_id','campaign_id','start_at','end_at','channel_id','sku_id','event_type'],data.promotions.map(r=>[data.version,r.store,r.id,r.start,r.end,r.channel,r.sku,r.type]));
     const sources=['orders','order_items','refund_events',...(data.inventory?['inventory']:[]),...(data.traffic?['traffic']:[]),...(data.promotions?['promotion']:[])] as const;
+    const checkedAt=new Date().toISOString();
     for(const store of new Set(data.products.map(p=>p.store))) for(const source of sources) {
       const override=data.sourceOverrides?.[source as keyof NonNullable<SeedData['sourceOverrides']>];
-      await client.query(`INSERT INTO business.source_watermarks(dataset_version,store_id,source,coverage_start,complete_through,missing_partitions,checked_at) VALUES($1,$2,$3,$4,$5,$6,$7)`,[data.version,store,source,data.start,override?.completeThrough??data.completeThrough,override?.missing??data.missing,`${data.clock}T00:00:00+08:00`]);
+      await client.query(`INSERT INTO business.source_watermarks(dataset_version,store_id,source,coverage_start,complete_through,missing_partitions,checked_at) VALUES($1,$2,$3,$4,$5,$6,$7)`,[data.version,store,source,data.start,override?.completeThrough??data.completeThrough,override?.missing??data.missing,checkedAt]);
     }
-    await client.query("UPDATE business.datasets SET status='published',published_at=$2 WHERE dataset_version=$1",[data.version,`${data.clock}T00:00:00+08:00`]);
+    await client.query("UPDATE business.datasets SET status='published',published_at=$2 WHERE dataset_version=$1",[data.version,new Date().toISOString()]);
     onProgress?.('validated');
     await client.query('COMMIT');
   } catch(error) { await client.query('ROLLBACK'); throw error; }

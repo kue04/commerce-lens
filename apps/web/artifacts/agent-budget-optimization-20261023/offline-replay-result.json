@@ -1,0 +1,771 @@
+{
+  "mode": "offline replay: four recorded responses plus one synthetic submit_report response",
+  "sourceRunId": "57b2f2ae-90d1-4592-8f78-32fef1439701",
+  "networkCalls": 0,
+  "run": {
+    "id": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+    "sessionId": "52360363-dbdd-4f76-828e-7bedc3f6cb08",
+    "question": "昨天华东支付金额为什么下降？",
+    "status": "completed",
+    "phase": 7,
+    "phaseName": "persisting",
+    "executionMode": "agent",
+    "createdAt": "2026-10-23T08:03:26.729Z",
+    "usage": {
+      "modelRequests": 5,
+      "toolCalls": 8,
+      "tokens": 14689,
+      "costUsd": 0
+    },
+    "endedAt": "2026-10-23T08:03:26.879Z",
+    "reportId": "e21e562f-4c4d-49e0-9c58-e31e3091d186"
+  },
+  "contexts": [
+    {
+      "call": 1,
+      "inputUpperBound": 3842,
+      "tools": [],
+      "modelRequests": 1
+    },
+    {
+      "call": 2,
+      "inputUpperBound": 9255,
+      "tools": [
+        "get_metric_definition",
+        "check_data_quality",
+        "compare_metric",
+        "decompose_change",
+        "inspect_signals",
+        "submit_report"
+      ],
+      "modelRequests": 2
+    },
+    {
+      "call": 3,
+      "inputUpperBound": 11677,
+      "tools": [
+        "get_metric_definition",
+        "check_data_quality",
+        "compare_metric",
+        "decompose_change",
+        "inspect_signals",
+        "submit_report"
+      ],
+      "modelRequests": 3
+    },
+    {
+      "call": 4,
+      "inputUpperBound": 13746,
+      "tools": [
+        "get_metric_definition",
+        "check_data_quality",
+        "compare_metric",
+        "decompose_change",
+        "inspect_signals",
+        "submit_report"
+      ],
+      "modelRequests": 4
+    },
+    {
+      "call": 5,
+      "inputUpperBound": 4068,
+      "tools": [
+        "submit_report"
+      ],
+      "modelRequests": 5
+    }
+  ],
+  "report": {
+    "id": "e21e562f-4c4d-49e0-9c58-e31e3091d186",
+    "runId": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+    "sessionId": "52360363-dbdd-4f76-828e-7bedc3f6cb08",
+    "question": "昨天华东支付金额为什么下降？",
+    "title": "支付金额变化分析",
+    "status": "completed",
+    "query": {
+      "metricId": "paid_amount",
+      "currentWindow": {
+        "startDate": "2026-10-21",
+        "endDateExclusive": "2026-10-22"
+      },
+      "baselineWindow": {
+        "startDate": "2026-10-14",
+        "endDateExclusive": "2026-10-15"
+      },
+      "filters": {
+        "regionId": [
+          "east"
+        ]
+      },
+      "groupBy": "sku",
+      "topN": 10
+    },
+    "scopeLabel": "east · 全部商品",
+    "metricLabel": "支付金额",
+    "unit": "fen",
+    "dataset": {
+      "version": "signals-v1",
+      "storeName": "禾味食品演示店",
+      "synthetic": true,
+      "businessClock": "2026-10-22",
+      "updatedAt": "2026-10-21T16:00:00.000Z",
+      "timezone": "Asia/Shanghai"
+    },
+    "comparison": {
+      "current": 7000000,
+      "baseline": 10000000,
+      "delta": -3000000,
+      "changeRate": -0.3
+    },
+    "contributors": [
+      {
+        "key": "A",
+        "label": "A",
+        "isOther": false,
+        "current": 2000000,
+        "baseline": 6000000,
+        "delta": -4000000,
+        "changeRate": -0.6666666666666666,
+        "share": 1.3333333333333333
+      },
+      {
+        "key": "B",
+        "label": "B",
+        "isOther": false,
+        "current": 5000000,
+        "baseline": 4000000,
+        "delta": 1000000,
+        "changeRate": 0.25,
+        "share": -0.3333333333333333
+      }
+    ],
+    "finding": "支付金额变化达到业务规则提示阈值，请核实。",
+    "facts": [
+      {
+        "text": "支付金额由 100000.00 元 变为 70000.00 元，变化 -30000.00 元。",
+        "templateId": "comparison",
+        "evidenceIds": [
+          "d4febb77-2b91-4592-8ac2-bf87f41ac889"
+        ],
+        "valueRefs": [
+          "comparison.baseline",
+          "comparison.current",
+          "comparison.delta"
+        ]
+      },
+      {
+        "text": "A 支付金额变化 -40000.00 元。",
+        "templateId": "contribution",
+        "evidenceIds": [
+          "b8ab4946-df69-428c-b787-e31f9be1e410"
+        ],
+        "valueRefs": [
+          "contributors.0.delta"
+        ]
+      },
+      {
+        "text": "B 支付金额变化 10000.00 元。",
+        "templateId": "contribution",
+        "evidenceIds": [
+          "b8ab4946-df69-428c-b787-e31f9be1e410"
+        ],
+        "valueRefs": [
+          "contributors.1.delta"
+        ]
+      },
+      {
+        "text": "被核查库存池（SKU：A；大区：east；大区共享，不区分渠道）本期观测 24/24 小时，零库存 10 小时；基期零库存 0 小时。",
+        "templateId": "signal",
+        "evidenceIds": [
+          "737d4bd0-57cb-43f2-9c75-3de7c5f84515"
+        ],
+        "valueRefs": [
+          "signal.current",
+          "signal.baseline"
+        ]
+      },
+      {
+        "text": "已观测渠道与大区背景（渠道：全部；大区：east）会话数由 3000 变为 2100，不代表 SKU 流量。",
+        "templateId": "signal",
+        "evidenceIds": [
+          "4e0dc7e7-2523-4fa4-9c73-88e9cd692fc9"
+        ],
+        "valueRefs": [
+          "signal.baseline.sessions",
+          "signal.current.sessions"
+        ]
+      },
+      {
+        "text": "本期成功退款核查范围（SKU：A；渠道：全部；大区：east）按客户原因码分组，共 2 个退款事件；事件数不等于订单数。",
+        "templateId": "signal",
+        "evidenceIds": [
+          "b63e2428-16f0-43fe-bb4b-481a84abc7c3"
+        ],
+        "valueRefs": [
+          "signal.reasons"
+        ]
+      }
+    ],
+    "hypotheses": [
+      {
+        "text": "下降商品的零库存观测增加，与销售下降在时间上重叠，可能存在供应约束；不能证明全部下降由缺货造成。",
+        "evidenceIds": [
+          "d4febb77-2b91-4592-8ac2-bf87f41ac889",
+          "737d4bd0-57cb-43f2-9c75-3de7c5f84515",
+          "b8ab4946-df69-428c-b787-e31f9be1e410"
+        ],
+        "missingEvidence": [
+          "缺少曝光、需求与精确补货数据，无法估计因果损失。"
+        ],
+        "contradictingEvidenceIds": []
+      },
+      {
+        "text": "同口径渠道流量下降与经营指标下降同时出现，支持流量相关解释；不能直接归因到单个 SKU。",
+        "evidenceIds": [
+          "d4febb77-2b91-4592-8ac2-bf87f41ac889",
+          "4e0dc7e7-2523-4fa4-9c73-88e9cd692fc9"
+        ],
+        "missingEvidence": [
+          "缺少 SKU 曝光和访问，尚不能证明因果。"
+        ],
+        "contradictingEvidenceIds": []
+      },
+      {
+        "text": "在活动核查选择（SKU：A；渠道：全部；含全范围活动，不支持大区归因）内发现与本期或基期窗口重叠的活动记录，需核实活动结束时间及影响；不能据此确定活动效果。",
+        "evidenceIds": [
+          "d4febb77-2b91-4592-8ac2-bf87f41ac889",
+          "34c9420f-9230-41b4-af19-38d4143f6cf4"
+        ],
+        "missingEvidence": [
+          "缺少活动曝光、价格和对照实验数据。"
+        ],
+        "contradictingEvidenceIds": []
+      }
+    ],
+    "unknowns": [
+      "退款原因码是客户选择分类，不能证明产品质量事故；缺失原因码单列 unknown。",
+      "可观测关联不能证明因果，无法估计因果损失。"
+    ],
+    "nextActions": [
+      "核实贡献较大的商品与渠道，补充相关源数据。"
+    ],
+    "limitations": [
+      "合成食品电商数据；固定演示业务时钟。",
+      "贡献分解表示变化来源，相关性不等于因果。",
+      "报告事实由真实数据库工具结果渲染。"
+    ],
+    "evidences": [
+      {
+        "id": "d4febb77-2b91-4592-8ac2-bf87f41ac889",
+        "runId": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+        "code": "E01",
+        "title": "支付金额周期比较",
+        "kind": "comparison",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ]
+          },
+          "groupBy": "none",
+          "topN": 10
+        },
+        "source": "PostgreSQL 支付订单行聚合",
+        "datasetVersion": "signals-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-23T08:03:26.792Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "本期（分）",
+          "基期（分）",
+          "变化（分）",
+          "变化率"
+        ],
+        "rows": [
+          [
+            7000000,
+            10000000,
+            -3000000,
+            -0.3
+          ]
+        ],
+        "note": "支付按 paid_at；金额为分整数、件数不扣后续退款，绑定不可变版本。",
+        "resultHash": "920bf0d922845932113108bfb8d136170edd33708d32da8d5306f81f2d25e7f7",
+        "queryTemplateIds": [
+          "aggregate-v1:paid_amount:none"
+        ],
+        "comparison": {
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        "hashAlgorithm": "sha256-canonical-json-v1"
+      },
+      {
+        "id": "b8ab4946-df69-428c-b787-e31f9be1e410",
+        "runId": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+        "code": "E02",
+        "title": "支付金额变化贡献",
+        "kind": "contribution",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL 支付订单行聚合",
+        "datasetVersion": "signals-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-23T08:03:26.804Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "分组",
+          "本期（分）",
+          "基期（分）",
+          "变化（分）",
+          "贡献份额"
+        ],
+        "rows": [
+          [
+            "A",
+            2000000,
+            6000000,
+            -4000000,
+            1.3333333333333333
+          ],
+          [
+            "B",
+            5000000,
+            4000000,
+            1000000,
+            -0.3333333333333333
+          ]
+        ],
+        "note": "支付按 paid_at；金额为分整数、件数不扣后续退款，绑定不可变版本。",
+        "resultHash": "a5e596ed5650465899722fc33cf19ea2bda543f5bc2478f8b93c693224507aa4",
+        "queryTemplateIds": [
+          "aggregate-v1:paid_amount:none",
+          "aggregate-v1:paid_amount:sku"
+        ],
+        "comparison": {
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        "contributors": [
+          {
+            "key": "A",
+            "label": "A",
+            "isOther": false,
+            "current": 2000000,
+            "baseline": 6000000,
+            "delta": -4000000,
+            "changeRate": -0.6666666666666666,
+            "share": 1.3333333333333333
+          },
+          {
+            "key": "B",
+            "label": "B",
+            "isOther": false,
+            "current": 5000000,
+            "baseline": 4000000,
+            "delta": 1000000,
+            "changeRate": 0.25,
+            "share": -0.3333333333333333
+          }
+        ],
+        "hashAlgorithm": "sha256-canonical-json-v1"
+      },
+      {
+        "id": "737d4bd0-57cb-43f2-9c75-3de7c5f84515",
+        "runId": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+        "code": "E03",
+        "title": "inventory 核查",
+        "kind": "inventory",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ],
+            "skuId": [
+              "A"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL inventory 受控查询",
+        "datasetVersion": "signals-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-23T08:03:26.819Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "周期",
+          "预期库存池小时",
+          "已观测小时",
+          "零库存小时"
+        ],
+        "rows": [
+          [
+            "本期",
+            24,
+            24,
+            10
+          ],
+          [
+            "基期",
+            24,
+            24,
+            0
+          ]
+        ],
+        "note": "大区共享库存池；小时为 SKU×大区观测数，不推断单渠道独享库存。覆盖不足 95% 不得声称全天未缺货。",
+        "resultHash": "35d96ebedb8740c263b336ef0c955acff3076e768f168bcad3282e49eb2c66d8",
+        "queryTemplateIds": [
+          "signal-v1:inventory"
+        ],
+        "signal": {
+          "type": "inventory",
+          "current": {
+            "expectedHours": 24,
+            "observedHours": 24,
+            "zeroHours": 10,
+            "coverage": 1
+          },
+          "baseline": {
+            "expectedHours": 24,
+            "observedHours": 24,
+            "zeroHours": 0,
+            "coverage": 1
+          }
+        }
+      },
+      {
+        "id": "4e0dc7e7-2523-4fa4-9c73-88e9cd692fc9",
+        "runId": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+        "code": "E04",
+        "title": "traffic 核查",
+        "kind": "traffic",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ],
+            "skuId": [
+              "A"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL traffic 受控查询",
+        "datasetVersion": "signals-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-23T08:03:26.832Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "周期",
+          "会话数",
+          "同渠道大区支付订单数",
+          "转化率"
+        ],
+        "rows": [
+          [
+            "本期",
+            2100,
+            1,
+            0.0004761904761904762
+          ],
+          [
+            "基期",
+            3000,
+            1,
+            0.0003333333333333333
+          ]
+        ],
+        "note": "仅为渠道×大区背景，忽略 SKU 筛选，不支持 SKU 转化或归因；归因口径不匹配或覆盖不足时转化率为 null。",
+        "resultHash": "0e18ddc1375b09653a4a676e4b74ddda25bb7a155bffd04681c421f60b6d1154",
+        "queryTemplateIds": [
+          "signal-v1:traffic"
+        ],
+        "signal": {
+          "type": "traffic",
+          "current": {
+            "sessions": 2100,
+            "paidOrders": 1,
+            "conversion": 0.0004761904761904762
+          },
+          "baseline": {
+            "sessions": 3000,
+            "paidOrders": 1,
+            "conversion": 0.0003333333333333333
+          },
+          "attributionMatched": true,
+          "skuAttributionSupported": false
+        }
+      },
+      {
+        "id": "34c9420f-9230-41b4-af19-38d4143f6cf4",
+        "runId": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+        "code": "E05",
+        "title": "promotion 核查",
+        "kind": "promotion",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ],
+            "skuId": [
+              "A"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL promotion 受控查询",
+        "datasetVersion": "signals-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-23T08:03:26.845Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "活动",
+          "开始",
+          "结束",
+          "事件类型"
+        ],
+        "rows": [
+          [
+            "promotion-A",
+            "2026-10-09T16:00:00.000Z",
+            "2026-10-20T16:00:00.000Z",
+            "discount_ended"
+          ]
+        ],
+        "note": "按 SKU/渠道选择匹配活动，包含全范围活动；活动无大区粒度，不支持大区归因。与本期或基期窗口重叠仅为时间佐证，不能推断活动增量或结束造成的销售损失。",
+        "resultHash": "a9248acdd5b4143e19907c0fe6c371f2ed2616be18e3cc156a4f20d587778924",
+        "queryTemplateIds": [
+          "signal-v1:promotion"
+        ],
+        "signal": {
+          "type": "promotion",
+          "campaigns": [
+            {
+              "id": "promotion-A",
+              "startAt": "2026-10-09T16:00:00.000Z",
+              "endAt": "2026-10-20T16:00:00.000Z",
+              "eventType": "discount_ended"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b63e2428-16f0-43fe-bb4b-481a84abc7c3",
+        "runId": "16b83b8d-1332-4d1b-91ea-7439ea1556bf",
+        "code": "E06",
+        "title": "refund_reason 核查",
+        "kind": "refund_reason",
+        "status": "success",
+        "metricId": "paid_amount",
+        "query": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "regionId": [
+              "east"
+            ],
+            "skuId": [
+              "A"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "source": "PostgreSQL refund_reason 受控查询",
+        "datasetVersion": "signals-v1",
+        "metricVersion": "1.0.0",
+        "createdAt": "2026-10-23T08:03:26.856Z",
+        "coverage": 1,
+        "baselineCoverage": 1,
+        "columns": [
+          "原因码",
+          "成功退款金额（分）",
+          "退款事件数"
+        ],
+        "rows": [
+          [
+            "damaged",
+            100000,
+            1
+          ],
+          [
+            "unknown",
+            200000,
+            1
+          ]
+        ],
+        "note": "按退款成功时间；事件数不是退款订单数；原因码只表示客户选择分类，不证明产品质量事故。",
+        "resultHash": "7e9a9ec7b70b7483bbc0483b0de8f40864389936fc68b9a753516dcee95c362c",
+        "queryTemplateIds": [
+          "signal-v1:refund_reason"
+        ],
+        "signal": {
+          "type": "refund_reason",
+          "reasons": [
+            {
+              "code": "damaged",
+              "amountCents": 100000,
+              "events": 1
+            },
+            {
+              "code": "unknown",
+              "amountCents": 200000,
+              "events": 1
+            }
+          ],
+          "missingShare": 0.6666666666666666
+        }
+      }
+    ],
+    "trace": [
+      {
+        "name": "check_data_quality",
+        "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}",
+        "status": "success",
+        "durationMs": 8.327900000000227
+      },
+      {
+        "name": "compare_metric",
+        "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}",
+        "status": "success",
+        "durationMs": 9.686200000000099,
+        "evidenceId": "d4febb77-2b91-4592-8ac2-bf87f41ac889"
+      },
+      {
+        "name": "decompose_change",
+        "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}",
+        "status": "success",
+        "durationMs": 9.270899999999529,
+        "evidenceId": "b8ab4946-df69-428c-b787-e31f9be1e410"
+      },
+      {
+        "name": "inspect_signals",
+        "params": "{\"signalType\":\"inventory\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"],\"skuId\":[\"A\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "status": "success",
+        "durationMs": 10.377699999999095,
+        "evidenceId": "737d4bd0-57cb-43f2-9c75-3de7c5f84515"
+      },
+      {
+        "name": "inspect_signals",
+        "params": "{\"signalType\":\"traffic\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"],\"skuId\":[\"A\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "status": "success",
+        "durationMs": 10.03900000000067,
+        "evidenceId": "4e0dc7e7-2523-4fa4-9c73-88e9cd692fc9"
+      },
+      {
+        "name": "inspect_signals",
+        "params": "{\"signalType\":\"promotion\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"],\"skuId\":[\"A\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "status": "success",
+        "durationMs": 10.70850000000064,
+        "evidenceId": "34c9420f-9230-41b4-af19-38d4143f6cf4"
+      },
+      {
+        "name": "inspect_signals",
+        "params": "{\"signalType\":\"refund_reason\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"],\"skuId\":[\"A\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "status": "success",
+        "durationMs": 8.204799999999523,
+        "evidenceId": "b63e2428-16f0-43fe-bb4b-481a84abc7c3"
+      },
+      {
+        "name": "submit_report",
+        "params": "{\"comparisonEvidenceId\":\"d4febb77-2b91-4592-8ac2-bf87f41ac889\",\"contributionEvidenceId\":\"b8ab4946-df69-428c-b787-e31f9be1e410\",\"signalEvidenceIds\":[\"737d4bd0-57cb-43f2-9c75-3de7c5f84515\",\"4e0dc7e7-2523-4fa4-9c73-88e9cd692fc9\",\"34c9420f-9230-41b4-af19-38d4143f6cf4\",\"b63e2428-16f0-43fe-bb4b-481a84abc7c3\"]}",
+        "status": "success",
+        "durationMs": 7.330299999999625
+      }
+    ],
+    "createdAt": "2026-10-23T08:03:26.875Z",
+    "provenance": {
+      "contractVersion": "1.1.0",
+      "executionMode": "agent",
+      "agentExecuted": true,
+      "modelId": "deepseek-flash",
+      "promptVersion": "analysis-v3",
+      "metricVersion": "1.0.0",
+      "datasetVersion": "signals-v1"
+    }
+  },
+  "independentSqlPassed": true,
+  "originalRecordedFifthInputUpperBound": 24476,
+  "originalRemainingBudget": 16461
+}

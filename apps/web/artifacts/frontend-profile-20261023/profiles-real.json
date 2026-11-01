@@ -1,0 +1,386 @@
+[
+  {
+    "contractVersion": "1.2.0",
+    "dataset": {
+      "version": "signals-v1",
+      "storeName": "禾味食品演示店",
+      "synthetic": true,
+      "businessClock": "2026-10-22",
+      "updatedAt": "2026-10-21T16:00:00.000Z",
+      "timezone": "Asia/Shanghai"
+    },
+    "publishedAt": "2026-10-21T16:00:00.000Z",
+    "coverageStart": "2026-07-24",
+    "completeThrough": "2026-10-22",
+    "lastCompleteDate": "2026-10-21",
+    "counts": {
+      "orders": 4,
+      "orderItems": 6,
+      "refundEvents": 3,
+      "inventoryHours": 576,
+      "trafficDays": 24,
+      "promotionEvents": 1,
+      "skus": 3,
+      "channels": 3,
+      "regions": 4
+    },
+    "sources": [
+      {
+        "source": "orders",
+        "grain": "订单",
+        "rowCount": 4,
+        "actualStartDate": "2026-10-14",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "order_items",
+        "grain": "订单行",
+        "rowCount": 6,
+        "actualStartDate": "2026-10-14",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "refund_events",
+        "grain": "订单行退款事件",
+        "rowCount": 3,
+        "actualStartDate": "2026-10-21",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "inventory",
+        "grain": "SKU × 大区库存池 × 小时",
+        "rowCount": 576,
+        "actualStartDate": "2026-10-14",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "traffic",
+        "grain": "渠道 × 大区 × 自然日",
+        "rowCount": 24,
+        "actualStartDate": "2026-10-14",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "promotion",
+        "grain": "活动生效范围",
+        "rowCount": 1,
+        "actualStartDate": "2026-10-10",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      }
+    ],
+    "metrics": [
+      {
+        "metricId": "paid_amount",
+        "label": "支付金额",
+        "unit": "fen",
+        "metricVersion": "1.0.0",
+        "definition": "按支付时间统计支付成功订单的订单行实付金额，单位为整数分；不扣退款。",
+        "timeField": "paid_at",
+        "requiredSources": [
+          "orders",
+          "order_items"
+        ]
+      },
+      {
+        "metricId": "refund_amount",
+        "label": "成功退款金额",
+        "unit": "fen",
+        "metricVersion": "1.0.0",
+        "definition": "按退款成功时间统计成功退款事件的金额，单位为整数分；允许跨支付期退款，支付与退款分别聚合。",
+        "timeField": "succeeded_at",
+        "requiredSources": [
+          "orders",
+          "order_items",
+          "refund_events"
+        ]
+      },
+      {
+        "metricId": "sold_units",
+        "label": "支付件数",
+        "unit": "units",
+        "metricVersion": "1.0.0",
+        "definition": "按支付时间统计支付成功订单的订单行购买件数；不扣退款件数。",
+        "timeField": "paid_at",
+        "requiredSources": [
+          "orders",
+          "order_items"
+        ]
+      }
+    ],
+    "filters": {
+      "skuId": [
+        {
+          "value": "A",
+          "label": "食品 A",
+          "category": "零食"
+        },
+        {
+          "value": "B",
+          "label": "食品 B",
+          "category": "零食"
+        },
+        {
+          "value": "C",
+          "label": "食品 C",
+          "category": "新品"
+        }
+      ],
+      "channelId": [
+        {
+          "value": "douyin",
+          "label": "抖音"
+        },
+        {
+          "value": "jd",
+          "label": "京东"
+        },
+        {
+          "value": "tmall",
+          "label": "天猫"
+        }
+      ],
+      "regionId": [
+        {
+          "value": "east",
+          "label": "华东"
+        },
+        {
+          "value": "north",
+          "label": "华北"
+        },
+        {
+          "value": "south",
+          "label": "华南"
+        },
+        {
+          "value": "west",
+          "label": "西部"
+        }
+      ]
+    }
+  },
+  {
+    "contractVersion": "1.2.0",
+    "dataset": {
+      "version": "acceptance-v1",
+      "storeName": "禾味食品演示店",
+      "synthetic": true,
+      "businessClock": "2026-10-22",
+      "updatedAt": "2026-10-21T16:00:00.000Z",
+      "timezone": "Asia/Shanghai"
+    },
+    "publishedAt": "2026-10-21T16:00:00.000Z",
+    "coverageStart": "2026-07-24",
+    "completeThrough": "2026-10-22",
+    "lastCompleteDate": "2026-10-21",
+    "counts": {
+      "orders": 4,
+      "orderItems": 6,
+      "refundEvents": 3,
+      "inventoryHours": 0,
+      "trafficDays": 0,
+      "promotionEvents": 0,
+      "skus": 3,
+      "channels": 1,
+      "regions": 1
+    },
+    "sources": [
+      {
+        "source": "orders",
+        "grain": "订单",
+        "rowCount": 4,
+        "actualStartDate": "2026-10-14",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "order_items",
+        "grain": "订单行",
+        "rowCount": 6,
+        "actualStartDate": "2026-10-14",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "refund_events",
+        "grain": "订单行退款事件",
+        "rowCount": 3,
+        "actualStartDate": "2026-10-21",
+        "actualEndDate": "2026-10-21",
+        "status": "available",
+        "coverageStart": "2026-07-24",
+        "completeThrough": "2026-10-22",
+        "lastCompleteDate": "2026-10-21",
+        "missingPartitions": [],
+        "checkedAt": "2026-10-21T16:00:00.000Z",
+        "reason": null
+      },
+      {
+        "source": "inventory",
+        "grain": "SKU × 大区库存池 × 小时",
+        "rowCount": 0,
+        "actualStartDate": null,
+        "actualEndDate": null,
+        "status": "missing",
+        "coverageStart": null,
+        "completeThrough": null,
+        "lastCompleteDate": null,
+        "missingPartitions": [],
+        "checkedAt": null,
+        "reason": "未发布该数据源的覆盖检查，行数为零不代表业务零值。"
+      },
+      {
+        "source": "traffic",
+        "grain": "渠道 × 大区 × 自然日",
+        "rowCount": 0,
+        "actualStartDate": null,
+        "actualEndDate": null,
+        "status": "missing",
+        "coverageStart": null,
+        "completeThrough": null,
+        "lastCompleteDate": null,
+        "missingPartitions": [],
+        "checkedAt": null,
+        "reason": "未发布该数据源的覆盖检查，行数为零不代表业务零值。"
+      },
+      {
+        "source": "promotion",
+        "grain": "活动生效范围",
+        "rowCount": 0,
+        "actualStartDate": null,
+        "actualEndDate": null,
+        "status": "missing",
+        "coverageStart": null,
+        "completeThrough": null,
+        "lastCompleteDate": null,
+        "missingPartitions": [],
+        "checkedAt": null,
+        "reason": "未发布该数据源的覆盖检查，行数为零不代表业务零值。"
+      }
+    ],
+    "metrics": [
+      {
+        "metricId": "paid_amount",
+        "label": "支付金额",
+        "unit": "fen",
+        "metricVersion": "1.0.0",
+        "definition": "按支付时间统计支付成功订单的订单行实付金额，单位为整数分；不扣退款。",
+        "timeField": "paid_at",
+        "requiredSources": [
+          "orders",
+          "order_items"
+        ]
+      },
+      {
+        "metricId": "refund_amount",
+        "label": "成功退款金额",
+        "unit": "fen",
+        "metricVersion": "1.0.0",
+        "definition": "按退款成功时间统计成功退款事件的金额，单位为整数分；允许跨支付期退款，支付与退款分别聚合。",
+        "timeField": "succeeded_at",
+        "requiredSources": [
+          "orders",
+          "order_items",
+          "refund_events"
+        ]
+      },
+      {
+        "metricId": "sold_units",
+        "label": "支付件数",
+        "unit": "units",
+        "metricVersion": "1.0.0",
+        "definition": "按支付时间统计支付成功订单的订单行购买件数；不扣退款件数。",
+        "timeField": "paid_at",
+        "requiredSources": [
+          "orders",
+          "order_items"
+        ]
+      }
+    ],
+    "filters": {
+      "skuId": [
+        {
+          "value": "A",
+          "label": "食品 A",
+          "category": "零食"
+        },
+        {
+          "value": "B",
+          "label": "食品 B",
+          "category": "零食"
+        },
+        {
+          "value": "C",
+          "label": "食品 C",
+          "category": "新品"
+        }
+      ],
+      "channelId": [
+        {
+          "value": "douyin",
+          "label": "抖音"
+        }
+      ],
+      "regionId": [
+        {
+          "value": "east",
+          "label": "华东"
+        }
+      ]
+    }
+  }
+]

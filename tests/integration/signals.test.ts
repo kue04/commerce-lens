@@ -57,7 +57,7 @@ test('three primary metrics each complete full HTTP report with correct units an
     for(let n=0;n<200;n++){const run=(await app.inject(`/api/runs/${id}`)).json();if(!['queued','running'].includes(run.status)){assert.equal(run.status,'completed',run.message);reportId=run.reportId;break;}await delay(10);}
     const response=await app.inject(`/api/reports/${reportId}`),report=response.json();assert.equal(response.statusCode,200,response.body);assert.ok(Value.Check(ReportSchema,report));
     assert.equal(report.unit,unit);assert.equal(report.comparison.current,current);assert.equal(report.comparison.baseline,baseline);
-    assert.equal(report.provenance.contractVersion,'1.1.0');
+    assert.equal(report.provenance.contractVersion,'1.2.0');
     if(metric==='paid_amount'){
       const stock=report.hypotheses.find(h=>h.text.includes('供应约束'));assert.ok(stock);
       assert.deepEqual(stock.evidenceIds.map(id=>report.evidences.find(e=>e.id===id)?.kind).sort(),['comparison','contribution','inventory']);

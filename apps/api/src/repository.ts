@@ -129,16 +129,16 @@ export class Repository {
       await client.query('INSERT INTO app.evidences(evidence_id,run_id,owner_id,store_id,dto) VALUES($3,$4,$1,$2,$5)',[...this.args(),evidence.id,evidence.runId,evidence]);
     });
   }
-  async saveReport(report:ReportDTO,usage:RunDTO['usage']){
+  async saveReport(report:ReportDTO,usage:RunDTO['usage'],failure?:{code:string;message:string}){
     return this.transaction(async client=>{
       const row=(await client.query<{dto:RunDTO}>('SELECT dto FROM app.runs WHERE owner_id=$1 AND store_id=$2 AND run_id=$3 FOR UPDATE',[...this.args(),report.runId])).rows[0];
       if(!row || row.dto.status!=='running')throw new DomainError('RUN_STOPPED','任务已经停止');
       await client.query('INSERT INTO app.reports(report_id,run_id,owner_id,store_id,dto) VALUES($3,$4,$1,$2,$5)',[...this.args(),report.id,report.runId,report]);
-      const dto:RunDTO={...row.dto,status:report.status,phase:7,phaseName:'persisting',reportId:report.id,endedAt:new Date().toISOString(),usage};
+      const dto:RunDTO={...row.dto,status:report.status,phase:7,phaseName:'persisting',reportId:report.id,endedAt:new Date().toISOString(),usage,...(failure?{message:failure.message}:{})};
       await client.query('UPDATE app.runs SET status=$2,dto=$3,state_version=state_version+1 WHERE run_id=$1',[report.runId,report.status,dto]);
       await client.query('UPDATE app.sessions SET state_json=$2 WHERE session_id=$1',[report.sessionId,report.query]);
       await this.append(client,report.runId,{type:'report.ready',payload:{reportId:report.id,status:report.status}});
-      await this.append(client,report.runId,{type:'run.finished',payload:{status:report.status,usage,reason:'report_validated'}});
+      await this.append(client,report.runId,{type:'run.finished',payload:{status:report.status,usage,reason:failure?.code??'report_validated',...(failure?{message:failure.message}:{})}});
       return dto;
     });
   }

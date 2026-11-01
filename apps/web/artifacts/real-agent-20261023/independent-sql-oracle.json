@@ -1,0 +1,64 @@
+{
+  "serverVersion": "18.4",
+  "periods": [
+    {
+      "window": {
+        "startDate": "2026-10-21",
+        "endDateExclusive": "2026-10-22"
+      },
+      "params": [
+        "signals-v1",
+        "store-demo",
+        "2026-10-21T00:00:00+08:00",
+        "2026-10-22T00:00:00+08:00"
+      ],
+      "totalSql": "SELECT coalesce(sum(paid_amount_cents),0)::text AS total FROM business.orders WHERE dataset_version=$1 AND store_id=$2 AND region_id='east' AND payment_status='succeeded' AND paid_at >= $3 AND paid_at < $4",
+      "skuSql": "SELECT i.sku_id,sum(i.paid_amount_cents)::text AS total FROM business.order_items i JOIN business.orders o USING(dataset_version,store_id,order_id) WHERE o.dataset_version=$1 AND o.store_id=$2 AND o.region_id='east' AND o.payment_status='succeeded' AND o.paid_at >= $3 AND o.paid_at < $4 GROUP BY i.sku_id ORDER BY i.sku_id",
+      "total": 7000000,
+      "skuTotals": [
+        {
+          "sku_id": "A",
+          "total": "2000000"
+        },
+        {
+          "sku_id": "B",
+          "total": "5000000"
+        }
+      ]
+    },
+    {
+      "window": {
+        "startDate": "2026-10-14",
+        "endDateExclusive": "2026-10-15"
+      },
+      "params": [
+        "signals-v1",
+        "store-demo",
+        "2026-10-14T00:00:00+08:00",
+        "2026-10-15T00:00:00+08:00"
+      ],
+      "totalSql": "SELECT coalesce(sum(paid_amount_cents),0)::text AS total FROM business.orders WHERE dataset_version=$1 AND store_id=$2 AND region_id='east' AND payment_status='succeeded' AND paid_at >= $3 AND paid_at < $4",
+      "skuSql": "SELECT i.sku_id,sum(i.paid_amount_cents)::text AS total FROM business.order_items i JOIN business.orders o USING(dataset_version,store_id,order_id) WHERE o.dataset_version=$1 AND o.store_id=$2 AND o.region_id='east' AND o.payment_status='succeeded' AND o.paid_at >= $3 AND o.paid_at < $4 GROUP BY i.sku_id ORDER BY i.sku_id",
+      "total": 10000000,
+      "skuTotals": [
+        {
+          "sku_id": "A",
+          "total": "6000000"
+        },
+        {
+          "sku_id": "B",
+          "total": "4000000"
+        }
+      ]
+    }
+  ],
+  "manualExpected": {
+    "current": 7000000,
+    "baseline": 10000000,
+    "delta": -3000000,
+    "A": -4000000,
+    "B": 1000000
+  },
+  "allChecksPassed": true,
+  "reportId": "d5b35706-6f6e-4c70-b8c7-3dc058b74c1a"
+}

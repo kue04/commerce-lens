@@ -1,0 +1,40 @@
+import { chromium } from '../../apps/web/node_modules/@playwright/test/index.mjs';
+import { writeFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const dir='apps/web/artifacts/overview-layout-20261024';
+const browser=await chromium.launch({headless:true,executablePath:'C:/Users/kk/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe'});
+const results=[];
+try{
+ for(const [name,width,height] of [['small-mobile',320,740],['mobile',390,844],['tablet',820,1180],['laptop',1280,800],['desktop',1440,960],['wide',1920,1080]]){
+  const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('http://127.0.0.1:5173/?dataset=signals-v1');
+  await page.locator('.overview-value').first().waitFor();await page.waitForTimeout(200);
+  const initial={cards:await page.locator('.overview-metrics').boundingBox(),chart:await page.locator('.overview-trend-chart').boundingBox(),rules:await page.locator('.overview-changes').boundingBox()};
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);assert.equal(overflow,false);
+  if(width>=1440)assert.ok(initial.chart.y+initial.chart.height<=height,'Chart fully visible on desktop first screen');
+  await page.screenshot({path:dir+'/'+name+'.png'});
+  if(width===390){
+   const filter=page.locator('.overview-filter-toggle');await filter.focus();await page.keyboard.press('Enter');
+   assert.equal(await filter.getAttribute('aria-expanded'),'true');
+   await page.getByLabel('SKU筛选').selectOption('A');
+   await page.locator('[data-metric="paid_amount"] .overview-value').filter({hasText:'20,000.00'}).waitFor();
+   await page.screenshot({path:dir+'/mobile-filters.png'});
+   await page.getByText('查看30天趋势数据表',{exact:true}).click();
+   await page.locator('.overview-trend-table').scrollIntoViewIfNeeded();
+   await page.screenshot({path:dir+'/mobile-table.png'});
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+   const region=page.getByRole('region',{name:'30天趋势数据表，可横向滚动'});await region.focus();await page.keyboard.press('ArrowRight');
+   await page.getByText('数据与口径详情',{exact:true}).click();
+   await page.locator('.overview-provenance').scrollIntoViewIfNeeded();
+   await page.screenshot({path:dir+'/mobile-details.png'});
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  }
+  assert.deepEqual(errors,[]);results.push({name,width,height,overflow,pageErrors:errors,...initial});await page.close();
+ }
+ const page=await browser.newPage({viewport:{width:1440,height:960},reducedMotion:'reduce'});
+ await page.goto('http://127.0.0.1:5173/?dataset=scenario-S08-v1');
+ await page.locator('[data-metric="paid_amount"] .overview-value').filter({hasText:'—'}).waitFor();
+ await page.screenshot({path:dir+'/missing-coverage.png'});await page.close();
+ await writeFile(dir+'/responsive.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results));
+}finally{await browser.close();}

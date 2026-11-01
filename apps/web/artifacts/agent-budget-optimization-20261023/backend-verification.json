@@ -1,0 +1,49 @@
+{
+  "verifiedAt": "2026-10-23T08:06:16.207Z",
+  "baseline": "a250286",
+  "contractVersion": "1.1.0",
+  "isolation": "git archive baseline + 14 budget-owned/preexisting Windows-launch files; shared node_modules junction",
+  "cwd": "D:\\llm\\Commerce Lens-backend\\.local\\budget-verification-20261023",
+  "unrelatedConcurrentChangesIncluded": false,
+  "externalModelCalls": 0,
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "start": "2026-10-23T08:03:11.290Z",
+      "end": "2026-10-23T08:03:14.228Z",
+      "exitCode": 0,
+      "stdoutLog": "backend-typecheck.log"
+    },
+    {
+      "command": "npm run test",
+      "start": "2026-10-23T08:03:14.228Z",
+      "end": "2026-10-23T08:06:11.309Z",
+      "exitCode": 0,
+      "stdoutLog": "backend-test.log"
+    },
+    {
+      "command": "npm run build",
+      "start": "2026-10-23T08:06:11.309Z",
+      "end": "2026-10-23T08:06:16.206Z",
+      "exitCode": 0,
+      "stdoutLog": "backend-build.log"
+    }
+  ],
+  "sha256": {
+    "packages/agent/src/pi.ts": "9f334b614608efd9b5cb8b4cfa070b73bc3d92e762f0ac23bcb6cc051ebb2e9f",
+    "packages/agent/src/budget.ts": "5501720d13c9e8831d1a9f3e977fe9fe17a07177a1e7068798608aa223791a9a",
+    "packages/agent/src/model-context.ts": "1961a83733c1e8e23500f2438df3a9516e77f35f78a96b4a7772aeaff06b16a4",
+    "packages/agent/src/report.ts": "358e2d146045af3ec05229b7ec3b5ea728f0c0f9d2694bb2b48f6a6536ce8c1a",
+    "apps/api/src/repository.ts": "bb4b7730b01b57db5b2e8f2a94738a7b37409a06a5b8db444c031e30ad67b69e",
+    "apps/api/src/runs.ts": "b13241280034ee51362a939a1b3219868aff8663c99125c09a8e3574ab6ffd55",
+    "tests/integration/pi.test.ts": "b49692917a7823fec5dc457d7917f5875d7011494a751da06799e3b1cdec1631",
+    "tests/integration/agent-budget-replay.test.ts": "fa47d3a395217aa33b7053c6aacf2b27e8bd2cd0a1e681ba37b371bfb7bf0b27",
+    "tests/integration/report-export.test.ts": "dd365946dbf54f70b9b20989abfdb3929534dbb3c1991b08255c32643ce6011f",
+    "tests/unit/model-context.test.ts": "626f738b78d36b94f8d1d858461e0432c813860e1eaa470e19ae718a614e7ae6",
+    "tests/fixtures/agent-budget-20261023.json": "0ae58e6593ef1d5bf5d3bbfd6c2c7ef6a880d31bbb2ff7c3c6148f68a1de081c",
+    "scripts/local-postgres.ts": "cb6377031e2987d22819eaf6a00be70f2fd17e2799a08bd849d5a79c949a36f1",
+    "scripts/check-postgres-windows.ps1": "34bba6ce9c5e4cd16afdbceee6d78f4e3d9cc979d2ad2e986a94652b175b08a4",
+    "tests/integration/windows-console.test.ts": "a45881a9b3b3f080882b531df7d49fbd1e938795f798887da226d49a01cda760"
+  },
+  "sourceUnchangedDuringChecks": true
+}

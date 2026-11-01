@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-23",
+  "slice": "deterministic HTTP business overview, accepted",
+  "frontendHead": "25a18ec3e64ae2d8384a101eb6fd403d5bb9038f",
+  "backendHead": "a2502869f663029dd15f0512a7d51e5ecad61924",
+  "committed": false,
+  "checks": [
+    {
+      "command": "npm run typecheck --prefix apps/web",
+      "result": "passed"
+    },
+    {
+      "command": "npm run test --prefix apps/web",
+      "result": "12/12 passed, 0 skipped"
+    },
+    {
+      "command": "npm run test:e2e --prefix apps/web -- --output=artifacts/frontend-overview-http-20261023/e2e-verified",
+      "result": "36/36 passed, 21.8s"
+    },
+    {
+      "command": "npm run test:integration --prefix apps/web -- overview-read.spec.ts profile-read.spec.ts --output=artifacts/frontend-overview-http-20261023/real-browser-verified",
+      "result": "2/2 passed, 13.0s; no response interception"
+    },
+    {
+      "command": "npm run test:integration:overview:oracle --prefix apps/web -- --before; same command without --before",
+      "result": "69 cards / 690 daily pairs / 30 rule comparisons matched; app counts and publication fingerprint unchanged"
+    },
+    {
+      "command": "npm run build --prefix apps/web",
+      "result": "passed; chart chunk 562.50 kB (gzip 190.71 kB) warning retained"
+    }
+  ],
+  "postgresVersion": "18.4",
+  "apiResponsesRecorded": 23,
+  "appCounts": {
+    "sessions": 12,
+    "runs": 15,
+    "reports": 15,
+    "events": 374,
+    "evidences": 75
+  },
+  "externalBrowserRequests": [],
+  "pageErrors": [],
+  "modelRequestsCreated": 0,
+  "businessDataWritten": false,
+  "contractSync": "No copies needed: http.ts, schemas.json, overview.json, dataset-profile.json, payment-flow.json and API-CONTRACT.md byte-identical; QuerySpec index.ts text-identical except line endings",
+  "notRun": [
+    "new session/run analysisQuery confirmation loop",
+    "portfolio-90d-v1 publication or 100000-order browser validation",
+    "external model calls",
+    "backend full suite, frozen eval and scale benchmark"
+  ],
+  "resolvedFailures": [
+    "First e2e: 34/36. New fault fixture mutated shared dataset; portfolio example expectation used small-data amount. Fixed clone and fixture-derived expectation.",
+    "First real browser: accessible button name had an intervening space. Added explicit accessible labels, all checks retained.",
+    "New test DTO literal typing errors corrected before final typecheck.",
+    "Initial independent SQL oracle treated refund_events as the only refund dependency. Actual published metric requires orders/order_items/refund_events; corrected oracle coverage check, kept exact numeric assertions."
+  ],
+  "visualReview": [
+    "desktop cards",
+    "desktop trend and rules",
+    "390px mobile trend/table: no document overflow; legend moved to top"
+  ],
+  "services": "Only owned verification API 16016 and PostgreSQL 36352 stopped; DB with pg_ctl fast/wait. Ports 3000/5173/55432 released."
+}

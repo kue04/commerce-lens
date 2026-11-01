@@ -8,8 +8,8 @@ const optionalText=()=>Type.Optional(text());
 const nullableNumber=()=>Type.Union([Type.Number(),Type.Null()]);
 const integer=()=>Type.Integer({minimum:-Number.MAX_SAFE_INTEGER,maximum:Number.MAX_SAFE_INTEGER});
 const nullableInteger=()=>Type.Union([integer(),Type.Null()]);
-export const CONTRACT_VERSION='1.1.0';
-const ContractVersionSchema=Type.Union([Type.Literal('1.0.0'),Type.Literal('1.1.0')]);
+export const CONTRACT_VERSION='1.2.0';
+const ContractVersionSchema=Type.Union([Type.Literal('1.0.0'),Type.Literal('1.1.0'),Type.Literal('1.2.0')]);
 export const PrimaryMetricSchema=Type.Union([Type.Literal('paid_amount'),Type.Literal('refund_amount'),Type.Literal('sold_units')]);
 export const ExecutionModeSchema=Type.Union([Type.Literal('deterministic'),Type.Literal('agent')]);
 export const RunStatusSchema=Type.Union([Type.Literal('queued'),Type.Literal('running'),Type.Literal('completed'),Type.Literal('partial'),Type.Literal('needs_clarification'),Type.Literal('insufficient_data'),Type.Literal('failed'),Type.Literal('cancelled'),Type.Literal('timed_out'),Type.Literal('interrupted')]);
@@ -21,6 +21,44 @@ export const UsageSchema=object({modelRequests:Type.Integer({minimum:0}),toolCal
 export const ComparisonSchema=object({current:nullableNumber(),baseline:nullableNumber(),delta:nullableNumber(),changeRate:nullableNumber()});
 export const ContributorSchema=object({key:text(),label:text(),isOther:Type.Boolean(),current:nullableInteger(),baseline:nullableInteger(),delta:nullableInteger(),changeRate:nullableNumber(),share:nullableNumber()});
 export const DatasetSchema=object({version:text(),storeName:text(),synthetic:Type.Literal(true),businessClock:Type.String(),updatedAt:instant(),timezone:Type.Literal('Asia/Shanghai')});
+const date=()=>Type.String({pattern:'^\\d{4}-\\d{2}-\\d{2}$'});
+const nullableDate=()=>Type.Union([date(),Type.Null()]);
+const count=()=>Type.Integer({minimum:0,maximum:Number.MAX_SAFE_INTEGER});
+export const SourceIdSchema=Type.Union([Type.Literal('orders'),Type.Literal('order_items'),Type.Literal('refund_events'),Type.Literal('inventory'),Type.Literal('traffic'),Type.Literal('promotion')]);
+export const SourceProfileSchema=object({
+  source:SourceIdSchema,grain:text(),rowCount:Type.Integer({minimum:0,maximum:Number.MAX_SAFE_INTEGER}),
+  actualStartDate:nullableDate(),actualEndDate:nullableDate(),
+  status:Type.Union([Type.Literal('available'),Type.Literal('partial'),Type.Literal('missing')]),
+  coverageStart:nullableDate(),completeThrough:nullableDate(),lastCompleteDate:nullableDate(),
+  missingPartitions:Type.Array(date()),checkedAt:Type.Union([instant(),Type.Null()]),reason:Type.Union([text(),Type.Null()]),
+});
+const filterOption=object({value:text(),label:text()});
+export const DatasetProfileSchema=object({
+  contractVersion:Type.Literal(CONTRACT_VERSION),dataset:DatasetSchema,publishedAt:instant(),
+  coverageStart:nullableDate(),completeThrough:nullableDate(),lastCompleteDate:nullableDate(),
+  counts:object({orders:count(),orderItems:count(),refundEvents:count(),inventoryHours:count(),trafficDays:count(),promotionEvents:count(),skus:count(),channels:count(),regions:count()}),
+  sources:Type.Array(SourceProfileSchema,{minItems:6,maxItems:6}),
+  metrics:Type.Array(object({metricId:PrimaryMetricSchema,label:text(),unit:Type.Union([Type.Literal('fen'),Type.Literal('units')]),metricVersion:text(),definition:text(),timeField:text(),requiredSources:Type.Array(SourceIdSchema)}),{minItems:3,maxItems:3}),
+  filters:object({skuId:Type.Array(object({value:text(),label:text(),category:text()})),channelId:Type.Array(filterOption),regionId:Type.Array(filterOption)}),
+});
+export type SourceProfileDTO=Static<typeof SourceProfileSchema>;
+export type DatasetProfileDTO=Static<typeof DatasetProfileSchema>;
+// Overview uses the original QuerySpec without permission/version fields.
+export const OverviewRequestSchema=QuerySpecSchema;
+export const AvailabilitySchema=object({available:Type.Boolean(),reason:Type.Union([text(),Type.Null()])});
+const OverviewComparisonSchema=object({current:nullableInteger(),baseline:nullableInteger(),delta:nullableInteger(),changeRate:nullableNumber()});
+export const OverviewMetricSchema=object({metricId:PrimaryMetricSchema,label:text(),unit:Type.Union([Type.Literal('fen'),Type.Literal('units')]),comparison:OverviewComparisonSchema,availability:AvailabilitySchema});
+export const OverviewSchema=object({
+  contractVersion:Type.Literal(CONTRACT_VERSION),dataset:DatasetSchema,query:QuerySpecSchema,metricVersion:text(),ruleVersion:text(),generatedAt:instant(),
+  executionMode:Type.Literal('deterministic'),agentExecuted:Type.Literal(false),
+  metrics:Type.Array(OverviewMetricSchema,{minItems:3,maxItems:3}),
+  trend:object({metricId:PrimaryMetricSchema,currentWindow:QuerySpecSchema.properties.currentWindow,baselineWindow:QuerySpecSchema.properties.baselineWindow,offsetDays:Type.Integer({minimum:1}),
+    points:Type.Array(object({date:date(),baselineDate:date(),comparison:OverviewComparisonSchema,currentAvailability:AvailabilitySchema,baselineAvailability:AvailabilitySchema,analysisQuery:QuerySpecSchema}),{minItems:30,maxItems:30})}),
+  availability:AvailabilitySchema,contributors:Type.Array(ContributorSchema),
+  changes:Type.Array(object({ruleId:text(),title:text(),comparison:OverviewComparisonSchema,contributor:Type.Optional(ContributorSchema),analysisQuery:QuerySpecSchema}),{maxItems:5}),
+  queryTemplateIds:Type.Array(text()),
+});
+export type OverviewDTO=Static<typeof OverviewSchema>;
 export const CatalogSchema=object({
   ...DatasetSchema.properties,contractVersion:Type.Literal(CONTRACT_VERSION),executionMode:ExecutionModeSchema,
   supportedMetrics:Type.Array(MetricIdSchema),datasets:Type.Array(DatasetSchema),

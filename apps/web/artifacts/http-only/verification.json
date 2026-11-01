@@ -1,0 +1,49 @@
+{
+  "verifiedDate": "2026-10-23",
+  "timezone": "Asia/Shanghai",
+  "frontendDataSource": "HTTP-only; reports, runs, evidence and history are server-owned",
+  "backend": {
+    "branch": "backend/payment-api",
+    "handoffCommit": "a250286",
+    "businessCommit": "6411a0b",
+    "analysisMode": "deterministic",
+    "postgresVersion": "18.4",
+    "datasetVersion": "signals-v1",
+    "externalModelRequests": 0
+  },
+  "results": {
+    "typecheck": "passed",
+    "unitTests": "7/7 passed",
+    "browserHttpLifecycleAndUi": "23/23 passed",
+    "realChromiumPaymentAndChannelFollowup": "1/1 passed without network interception",
+    "independentPostgresSqlOracle": "passed",
+    "build": "passed; ECharts chunk 517.03 kB warning retained",
+    "realReportId": "4ddabdc2-790a-44f7-bbcc-33c178342528",
+    "channelFollowupReportId": "c03caf9f-0cdf-4b6b-9461-187784c9e9da",
+    "realSseEvents": 25,
+    "evidenceCount": 5,
+    "currentFen": 7000000,
+    "baselineFen": 10000000,
+    "deltaFen": -3000000,
+    "contributionsFen": { "A": -4000000, "B": 1000000 },
+    "inventoryPool": { "observedHours": 24, "expectedHours": 24, "zeroHours": 10 },
+    "channelFollowupVerified": true,
+    "parentRunIdVerified": true,
+    "refreshAndHistoryRecoveryVerified": true,
+    "jsonMarkdownExportsVerified": true,
+    "agentExecuted": false,
+    "externalBrowserRequests": 0
+  },
+  "processes": {
+    "vitePort": 5173,
+    "apiPort": 3000,
+    "postgresPort": 55432,
+    "apiReady": true,
+    "visiblePostgresWindows": 0
+  },
+  "scope": {
+    "removedFromProduct": ["MockApi", "frontend report/run fixtures", "scenario selector", "mode switch", "browser report/run/query storage"],
+    "archivedLegacySource": "tests/archive/20261022/*.txt",
+    "remainingUnverified": ["real clarification confirmation", "SKU exclusion", "refund and sold-units workflows", "real unavailable/partial/cancel/restart recovery", "real external model"]
+  }
+}

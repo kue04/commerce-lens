@@ -6,3 +6,14 @@ dist/
 .env.*
 !.env.example
 *.log
+
+# Local browser outputs and raw captures are not source deliverables.
+test-results/
+playwright-report/
+.last-run.json
+*.har
+*.pcap
+*.pcapng
+*.dmp
+*.dump
+*.zip

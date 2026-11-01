@@ -1,0 +1,145 @@
+import { useEffect, useState } from "react";
+import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
+import { baseQuery, demoChannels, demoProducts } from "../lib/fixtures";
+import type { QuerySpec } from "../lib/types";
+import { Button, Modal } from "./ui";
+
+export function ScopeDialog({
+  open,
+  onOpenChange,
+  query,
+  onAnalyze,
+  busy,
+  needsConfirmation = false,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  query: QuerySpec;
+  onAnalyze: (query: QuerySpec) => void;
+  busy: boolean;
+  needsConfirmation?: boolean;
+}) {
+  const [product, setProduct] = useState("all");
+  const [channel, setChannel] = useState("all");
+  const [dimension, setDimension] = useState("sku");
+  useEffect(() => {
+    if (!open) return;
+    setProduct(
+      query.filters.skuId?.length === 1 ? query.filters.skuId[0]! : "all",
+    );
+    setChannel(
+      query.filters.channelId?.length === 1
+        ? query.filters.channelId[0]!
+        : "all",
+    );
+    setDimension(query.groupBy === "channel" ? "channel" : "sku");
+  }, [open, query]);
+  function apply() {
+    const next = structuredClone(baseQuery);
+    if (product !== "all") next.filters.skuId = [product];
+    if (channel !== "all") next.filters.channelId = [channel];
+    next.groupBy = dimension as "sku" | "channel";
+    onAnalyze(next);
+  }
+  return (
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="调整分析范围"
+      description={
+        needsConfirmation
+          ? "原分析范围无法恢复，请重新选择商品和渠道。确认后才会创建新任务。"
+          : "选择商品和渠道，按相同口径重新分析。已有报告保留原始范围与数值。"
+      }
+    >
+      <form
+        className="scope-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          apply();
+        }}
+      >
+        <div className="fixed-scope">
+          <span>
+            <MapPin size={15} />
+            华东
+          </span>
+          <span>
+            <CalendarDays size={15} />
+            2026-10-21
+          </span>
+          <small>对比上周同日 · 2026-10-14</small>
+        </div>
+        <label>
+          商品范围
+          <select
+            aria-label="商品范围"
+            value={product}
+            onChange={(event) => setProduct(event.target.value)}
+          >
+            <option value="all">全部商品</option>
+            {demoProducts.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          渠道范围
+          <select
+            aria-label="渠道范围"
+            value={channel}
+            onChange={(event) => setChannel(event.target.value)}
+          >
+            <option value="all">全渠道</option>
+            {demoChannels.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <fieldset className="dimension-field">
+          <legend>贡献拆解方式</legend>
+          <label>
+            <input
+              type="radio"
+              name="dimension"
+              value="sku"
+              checked={dimension === "sku"}
+              onChange={() => setDimension("sku")}
+            />
+            按商品拆解
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="dimension"
+              value="channel"
+              checked={dimension === "channel"}
+              onChange={() => setDimension("channel")}
+            />
+            按渠道拆解
+          </label>
+        </fieldset>
+        <p className="scope-footnote">
+          当前为固定模拟数据，仅覆盖上述日期和地区。应用后会新增一轮分析，并重新计算指标、贡献图及证据。
+        </p>
+        <div className="scope-form-actions">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+          >
+            {needsConfirmation ? "暂不分析" : "保留原范围"}
+          </Button>
+          <Button type="submit" variant="primary" disabled={busy}>
+            按此范围分析
+            <ArrowRight size={16} />
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}

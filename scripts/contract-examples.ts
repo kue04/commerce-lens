@@ -7,6 +7,8 @@ import { defaultWindows } from '../packages/metrics/src/index.js';
 import { makeEvidence,buildReport } from '../packages/agent/src/report.js';
 import * as schemas from '../packages/contracts/src/http.js';
 import type { TSchema } from 'typebox';
+import { portfolioSeed } from '../db/seeds/portfolio.js';
+import { buildApp } from '../apps/api/src/app.js';
 
 const db=await startLocalPostgres();
 try {
@@ -39,5 +41,16 @@ try {
   await writeFile('packages/contracts/examples/payment-flow.json',JSON.stringify(samples,null,2)+'\n');
   const exportedSchemas=Object.fromEntries(Object.entries(schemas).filter(([key])=>key.endsWith('Schema')) as [string,TSchema][]);
   await writeFile('packages/contracts/examples/schemas.json',JSON.stringify(exportedSchemas,null,2)+'\n');
+  const portfolio=portfolioSeed();await publishSeed(db.admin,portfolio);
+  const app=await buildApp({statePool:db.state,readerPool:db.reader,mode:'deterministic',recover:false,defaultDataset:portfolio.version});
+  try{
+    const response=await app.inject(`/api/datasets/${portfolio.version}/profile`);
+    if(response.statusCode!==200||!Value.Check(schemas.DatasetProfileSchema,response.json()))throw new Error('Invalid actual HTTP profile example');
+    await writeFile('packages/contracts/examples/dataset-profile.json',JSON.stringify(response.json(),null,2)+'\n');
+    const overviewRequest={...query,filters:{},...defaultWindows(portfolio.clock)};
+    const overview=await app.inject({method:'POST',url:`/api/datasets/${portfolio.version}/overview`,payload:overviewRequest});
+    if(overview.statusCode!==200||!Value.Check(schemas.OverviewSchema,overview.json()))throw new Error(`Invalid actual HTTP overview example: ${overview.body}`);
+    await writeFile('packages/contracts/examples/overview.json',JSON.stringify({request:overviewRequest,response:overview.json()},null,2)+'\n');
+  }finally{await app.close();}
   console.log('Shared schemas and actual-PostgreSQL examples validated and saved. Agent was not executed.');
 } finally {await db.stop();}

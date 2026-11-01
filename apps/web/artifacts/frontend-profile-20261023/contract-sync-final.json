@@ -1,0 +1,8 @@
+{
+  "packages/contracts/src/http.ts": "d3277a8deecd648361227ddb70d62d033237fbbbac28dd4e7c6d8539c126071d",
+  "packages/contracts/examples/schemas.json": "e13c023517fad0b8f3565c17324b0247dcec78a9b7cee2b6b4c7deddcde4bb14",
+  "packages/contracts/examples/dataset-profile.json": "eb50ede08daf0cdaf21b1fa7b7b0c1cf337d0e025ba141a9ffe708aae9c823d6",
+  "packages/contracts/examples/payment-flow.json": "163687b29a186d921f6ce5f9f112de2fb4d7a4a64a0d9fca88ac46eaa141686e",
+  "packages/contracts/examples/overview.json": "57387f5bd272ae2aad1e6959118bcdc321ddac4b7fe4010b04a800449f62ada5",
+  "docs/API-CONTRACT.md": "86352b359e371dd215ddf55d116d684ee79fc19658d022842811eb950483c4a9"
+}

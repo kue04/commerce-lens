@@ -1,0 +1,27 @@
+{
+  "verifiedDate": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "beforeFix": {
+    "visibleWindowsInOriginalCluster": 8,
+    "regressionVisibleWindows": 11,
+    "regressionExitCode": 1
+  },
+  "afterFix": {
+    "visibleWindows": 0,
+    "targetedTestsPassed": 2,
+    "backendFullTestsPassed": 77,
+    "backendSkipped": 0,
+    "backendTestDurationMs": 154682.8332,
+    "backendTypecheckExitCode": 0,
+    "backendBuildExitCode": 0,
+    "actualCtrlCReleasedApiAndDatabasePorts": true,
+    "restartAndRealBrowserPaymentPassed": true
+  },
+  "finalProcesses": {
+    "vite": { "port": 5173, "pid": 24748, "preexisting": true },
+    "api": { "port": 3000, "pid": 30468, "analysisMode": "deterministic" },
+    "postgres": { "port": 55432, "pid": 30328 }
+  },
+  "processesLeftRunningForLocalReview": true,
+  "externalModelRequests": 0
+}

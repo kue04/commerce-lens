@@ -1,0 +1,337 @@
+{
+  "contractVersion": "1.2.0",
+  "dataset": {
+    "version": "portfolio-90d-v1",
+    "storeName": "禾味食品演示店",
+    "synthetic": true,
+    "businessClock": "2026-10-22",
+    "updatedAt": "2026-10-23T13:05:19.587Z",
+    "timezone": "Asia/Shanghai"
+  },
+  "publishedAt": "2026-10-23T13:05:19.587Z",
+  "coverageStart": "2026-07-24",
+  "completeThrough": "2026-10-22",
+  "lastCompleteDate": "2026-10-21",
+  "counts": {
+    "orders": 100000,
+    "orderItems": 200000,
+    "refundEvents": 4795,
+    "inventoryHours": 259200,
+    "trafficDays": 1080,
+    "promotionEvents": 2,
+    "skus": 30,
+    "channels": 3,
+    "regions": 4
+  },
+  "sources": [
+    {
+      "source": "orders",
+      "grain": "订单",
+      "rowCount": 100000,
+      "actualStartDate": "2026-07-24",
+      "actualEndDate": "2026-10-21",
+      "status": "available",
+      "coverageStart": "2026-07-24",
+      "completeThrough": "2026-10-22",
+      "lastCompleteDate": "2026-10-21",
+      "missingPartitions": [],
+      "checkedAt": "2026-10-23T13:05:19.586Z",
+      "reason": null
+    },
+    {
+      "source": "order_items",
+      "grain": "订单行",
+      "rowCount": 200000,
+      "actualStartDate": "2026-07-24",
+      "actualEndDate": "2026-10-21",
+      "status": "available",
+      "coverageStart": "2026-07-24",
+      "completeThrough": "2026-10-22",
+      "lastCompleteDate": "2026-10-21",
+      "missingPartitions": [],
+      "checkedAt": "2026-10-23T13:05:19.586Z",
+      "reason": null
+    },
+    {
+      "source": "refund_events",
+      "grain": "订单行退款事件",
+      "rowCount": 4795,
+      "actualStartDate": "2026-07-24",
+      "actualEndDate": "2026-10-21",
+      "status": "available",
+      "coverageStart": "2026-07-24",
+      "completeThrough": "2026-10-22",
+      "lastCompleteDate": "2026-10-21",
+      "missingPartitions": [],
+      "checkedAt": "2026-10-23T13:05:19.586Z",
+      "reason": null
+    },
+    {
+      "source": "inventory",
+      "grain": "SKU × 大区库存池 × 小时",
+      "rowCount": 259200,
+      "actualStartDate": "2026-07-24",
+      "actualEndDate": "2026-10-21",
+      "status": "available",
+      "coverageStart": "2026-07-24",
+      "completeThrough": "2026-10-22",
+      "lastCompleteDate": "2026-10-21",
+      "missingPartitions": [],
+      "checkedAt": "2026-10-23T13:05:19.586Z",
+      "reason": null
+    },
+    {
+      "source": "traffic",
+      "grain": "渠道 × 大区 × 自然日",
+      "rowCount": 1080,
+      "actualStartDate": "2026-07-24",
+      "actualEndDate": "2026-10-21",
+      "status": "available",
+      "coverageStart": "2026-07-24",
+      "completeThrough": "2026-10-22",
+      "lastCompleteDate": "2026-10-21",
+      "missingPartitions": [],
+      "checkedAt": "2026-10-23T13:05:19.586Z",
+      "reason": null
+    },
+    {
+      "source": "promotion",
+      "grain": "活动生效范围",
+      "rowCount": 2,
+      "actualStartDate": "2026-09-25",
+      "actualEndDate": "2026-10-22",
+      "status": "available",
+      "coverageStart": "2026-07-24",
+      "completeThrough": "2026-10-22",
+      "lastCompleteDate": "2026-10-21",
+      "missingPartitions": [],
+      "checkedAt": "2026-10-23T13:05:19.586Z",
+      "reason": null
+    }
+  ],
+  "metrics": [
+    {
+      "metricId": "paid_amount",
+      "label": "支付金额",
+      "unit": "fen",
+      "metricVersion": "1.0.0",
+      "definition": "按支付时间统计支付成功订单的订单行实付金额，单位为整数分；不扣退款。",
+      "timeField": "paid_at",
+      "requiredSources": [
+        "orders",
+        "order_items"
+      ]
+    },
+    {
+      "metricId": "refund_amount",
+      "label": "成功退款金额",
+      "unit": "fen",
+      "metricVersion": "1.0.0",
+      "definition": "按退款成功时间统计成功退款事件的金额，单位为整数分；允许跨支付期退款，支付与退款分别聚合。",
+      "timeField": "succeeded_at",
+      "requiredSources": [
+        "orders",
+        "order_items",
+        "refund_events"
+      ]
+    },
+    {
+      "metricId": "sold_units",
+      "label": "支付件数",
+      "unit": "units",
+      "metricVersion": "1.0.0",
+      "definition": "按支付时间统计支付成功订单的订单行购买件数；不扣退款件数。",
+      "timeField": "paid_at",
+      "requiredSources": [
+        "orders",
+        "order_items"
+      ]
+    }
+  ],
+  "filters": {
+    "skuId": [
+      {
+        "value": "SKU-01",
+        "label": "坚果 1",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-02",
+        "label": "饼干 2",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-03",
+        "label": "果干 3",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-04",
+        "label": "坚果 4",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-05",
+        "label": "饼干 5",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-06",
+        "label": "果干 6",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-07",
+        "label": "坚果 7",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-08",
+        "label": "饼干 8",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-09",
+        "label": "果干 9",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-10",
+        "label": "坚果 10",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-11",
+        "label": "饼干 11",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-12",
+        "label": "果干 12",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-13",
+        "label": "坚果 13",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-14",
+        "label": "饼干 14",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-15",
+        "label": "果干 15",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-16",
+        "label": "坚果 16",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-17",
+        "label": "饼干 17",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-18",
+        "label": "果干 18",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-19",
+        "label": "坚果 19",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-20",
+        "label": "饼干 20",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-21",
+        "label": "果干 21",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-22",
+        "label": "坚果 22",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-23",
+        "label": "饼干 23",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-24",
+        "label": "果干 24",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-25",
+        "label": "坚果 25",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-26",
+        "label": "饼干 26",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-27",
+        "label": "果干 27",
+        "category": "果干"
+      },
+      {
+        "value": "SKU-28",
+        "label": "坚果 28",
+        "category": "坚果"
+      },
+      {
+        "value": "SKU-29",
+        "label": "饼干 29",
+        "category": "饼干"
+      },
+      {
+        "value": "SKU-30",
+        "label": "果干 30",
+        "category": "果干"
+      }
+    ],
+    "channelId": [
+      {
+        "value": "douyin",
+        "label": "抖音"
+      },
+      {
+        "value": "jd",
+        "label": "京东"
+      },
+      {
+        "value": "tmall",
+        "label": "天猫"
+      }
+    ],
+    "regionId": [
+      {
+        "value": "east",
+        "label": "华东"
+      },
+      {
+        "value": "north",
+        "label": "华北"
+      },
+      {
+        "value": "south",
+        "label": "华南"
+      },
+      {
+        "value": "west",
+        "label": "西部"
+      }
+    ]
+  }
+}

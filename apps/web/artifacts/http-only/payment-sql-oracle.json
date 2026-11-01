@@ -1,0 +1,34 @@
+{
+  "verifiedAt": "2026-10-22T17:39:50.576Z",
+  "readOnly": true,
+  "serverVersion": "18.4",
+  "reportId": "4ddabdc2-790a-44f7-bbcc-33c178342528",
+  "dataset": "signals-v1",
+  "totals": [
+    7000000,
+    10000000
+  ],
+  "deltas": [
+    {
+      "sku": "A",
+      "delta": -4000000
+    },
+    {
+      "sku": "B",
+      "delta": 1000000
+    }
+  ],
+  "inventory": [
+    {
+      "observed": 24,
+      "zero": 10
+    },
+    {
+      "observed": 24,
+      "zero": 0
+    }
+  ],
+  "storedReportEqualsBrowserDownload": true,
+  "modelRequests": 0,
+  "agentExecuted": false
+}

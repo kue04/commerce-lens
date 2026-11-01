@@ -1,5 +1,6 @@
 import { startLocalPostgres } from './local-postgres.js';
 import { acceptanceSeed,signalSeed,publishSeed } from '../db/seeds/generate.js';
+import { portfolioSeed,PORTFOLIO_VERSION } from '../db/seeds/portfolio.js';
 import { buildApp } from '../apps/api/src/app.js';
 import { PiPaymentRuntime } from '../packages/agent/src/pi.js';
 import { loadEnvironment } from './connections.js';
@@ -12,7 +13,8 @@ const db=await startLocalPostgres(true);
 try{
   if(!(await db.admin.query("SELECT 1 FROM business.datasets WHERE dataset_version='acceptance-v1'")).rowCount)await publishSeed(db.admin,acceptanceSeed());
   if(!(await db.admin.query("SELECT 1 FROM business.datasets WHERE dataset_version='signals-v1'")).rowCount)await publishSeed(db.admin,signalSeed());
-  const app=await buildApp({statePool:db.state,readerPool:db.reader,mode,defaultDataset:'signals-v1',...(runtime?{runtime}:{})});
+  if(!(await db.admin.query('SELECT 1 FROM business.datasets WHERE dataset_version=$1',[PORTFOLIO_VERSION])).rowCount)await publishSeed(db.admin,portfolioSeed());
+  const app=await buildApp({statePool:db.state,readerPool:db.reader,mode,defaultDataset:PORTFOLIO_VERSION,...(runtime?{runtime}:{})});
   db.beforeStop(()=>app.close());
   const url=await app.listen({host:'127.0.0.1',port:3000});
   console.log(`Commerce Lens API: ${url}/api/catalog | mode=${mode} | synthetic=true | agentExecuted=${mode==='agent'}`);

@@ -1,0 +1,64 @@
+// 浏览器存储属于可失败的本地缓存；失败不阻止本页计算，也不冒充已持久化。
+export const storageKeys = {
+  reports: "commerce-lens:demo-reports:v1",
+  runs: "commerce-lens:demo-runs:v1",
+  query: "commerce-lens:run-query:v1",
+};
+type StorageKind = "local" | "session";
+const problems = new Map<string, string>();
+const listeners = new Set<() => void>();
+let snapshot = "";
+
+function warn(key: string, message: string) {
+  if (problems.get(key) === message) return;
+  problems.set(key, message);
+  snapshot = [...new Set(problems.values())].join(" ");
+  listeners.forEach((listener) => listener());
+}
+export function subscribeStorage(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+export const storageWarning = () => snapshot;
+export function invalidStored(key: string) {
+  warn(
+    `invalid:${key}`,
+    "本地记录损坏，已跳过不兼容的记录；其他有效记录仍可使用，无法保证损坏记录的刷新恢复。",
+  );
+}
+function browserStorage(kind: StorageKind) {
+  return kind === "local" ? localStorage : sessionStorage;
+}
+export function readStored(kind: StorageKind, key: string): unknown {
+  let raw: string | null;
+  try {
+    raw = browserStorage(kind).getItem(key);
+  } catch {
+    warn(
+      `read:${kind}`,
+      "本地存储不可用，当前页面仍可分析和导出，刷新后可能无法恢复。",
+    );
+    return undefined;
+  }
+  if (raw === null) return undefined;
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    invalidStored(key);
+    return undefined;
+  }
+}
+export function writeStored(kind: StorageKind, key: string, value: unknown): boolean {
+  try {
+    browserStorage(kind).setItem(key, JSON.stringify(value));
+    return true;
+  } catch {
+    warn(
+      `write:${kind}:${key}`,
+      "本地保存失败，最新结果或分析范围可能仅在本页可用；刷新恢复无法保证，请及时导出报告。",
+    );
+    return false;
+  }
+}

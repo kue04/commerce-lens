@@ -1,0 +1,11 @@
+{
+  "apiPid": 16016,
+  "databasePid": 36352,
+  "apiStopped": true,
+  "postgresStoppedWithPgCtl": true,
+  "portsReleased": [
+    3000,
+    5173,
+    55432
+  ]
+}

@@ -1,0 +1,491 @@
+import { test, expect, type Page } from "@playwright/test";
+import flow from "../../../packages/contracts/examples/payment-flow.json" with { type: "json" };
+
+async function scenario(page: Page, value: string) {
+  await page.getByRole("button", { name: "工作区与设置", exact: true }).click();
+  await page.getByLabel("演示场景", { exact: true }).selectOption(value);
+  await page.getByRole("button", { name: "完成", exact: true }).click();
+}
+async function fresh(page: Page) {
+  await page
+    .getByRole("complementary")
+    .getByRole("button", { name: "新建分析", exact: true })
+    .click();
+}
+async function send(page: Page, text = "昨天华东支付金额为什么下降？") {
+  await page.getByRole("textbox", { name: "输入分析问题" }).fill(text);
+  await page.getByRole("textbox", { name: "输入分析问题" }).press("Enter");
+}
+test.beforeEach(async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "华东销售，哪里变了？" }),
+  ).toBeVisible();
+});
+
+test("页面、图表明细、证据切换、Esc 与焦点恢复", async ({ page }) => {
+  await page.getByRole("button", { name: "关闭证据面板" }).click();
+  await page.getByRole("tab", { name: "明细", exact: true }).click();
+  await expect(page.locator(".contribution-table")).toContainText("133.3%");
+  const evidenceButton = page
+    .getByRole("button", { name: "查看证据 E02", exact: true })
+    .first();
+  await evidenceButton.click();
+  await expect(
+    page.getByRole("heading", { name: "商品 · 变化贡献" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "执行记录", exact: true }).click();
+  await expect(
+    page.getByText("decompose_change", { exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(evidenceButton).toBeFocused();
+});
+test("欢迎、输入法、换行、防空提交、加载与完成", async ({ page }) => {
+  await fresh(page);
+  await expect(
+    page.getByRole("button", { name: "发送问题", exact: true }),
+  ).toBeDisabled();
+  const input = page.getByRole("textbox", { name: "输入分析问题" });
+  await input.fill("昨天华东支付金额为什么下降？");
+  await input.dispatchEvent("compositionstart");
+  await input.dispatchEvent("keydown", {
+    key: "Enter",
+    code: "Enter",
+    isComposing: true,
+  });
+  await expect(input).toHaveValue("昨天华东支付金额为什么下降？");
+  await expect(page.locator(".running-state")).toHaveCount(0);
+  await input.dispatchEvent("compositionend");
+  await input.press("Shift+Enter");
+  await expect(input).toHaveValue(/\n/);
+  await input.press("Enter");
+  await expect(
+    page.getByRole("heading", { name: "让变化，有据可循。" }),
+  ).toBeVisible();
+  await expect(input).toBeDisabled();
+  await expect(
+    page.getByRole("heading", { name: "华东销售，哪里变了？" }),
+  ).toBeVisible();
+});
+test("澄清后新建任务并产生报告", async ({ page }) => {
+  await scenario(page, "clarification");
+  await fresh(page);
+  await send(page, "销售");
+  await expect(
+    page.getByRole("heading", { name: "先确认，我们在看什么。" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "确认并开始分析" }).click();
+  await expect(
+    page.getByRole("heading", { name: "华东销售，哪里变了？" }),
+  ).toBeVisible();
+});
+test("追问重新计算、历史打开与刷新恢复", async ({ page }) => {
+  await page.getByRole("button", { name: "只看其他商品" }).click();
+  await expect(
+    page.getByRole("heading", { name: "排除坚果礼盒，表现如何？" }),
+  ).toBeVisible();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  await expect(page.locator(".change-badge")).toContainText("25.0%");
+  await page.reload();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  await page.getByRole("button", { name: "历史报告", exact: true }).click();
+  await page
+    .getByRole("button")
+    .filter({ has: page.getByRole("heading", { name: "渠道贡献分析" }) })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "变化来自哪些渠道" }),
+  ).toBeVisible();
+});
+for (const [value, expected] of [
+  ["error", "这次分析未完成"],
+  ["insufficient", "数据还不足以回答"],
+  ["empty", "范围内暂无交易记录"],
+  ["partial", "部分成功"],
+] as const) {
+  test(`演示状态 ${value} 明确展示`, async ({ page }) => {
+    await scenario(page, value);
+    await fresh(page);
+    await send(page);
+    const result = page.locator(value === "partial" || value === "empty" ? ".report" : ".terminal-state");
+    await expect(
+      result.getByText(expected, { exact: true }),
+    ).toBeVisible();
+    if (value === "error" || value === "insufficient")
+      await expect(page.locator(".report")).toHaveCount(0);
+    if (value === "empty")
+      await expect(page.locator(".change-badge")).toContainText("不可计算");
+    await page.reload();
+    await expect(result.getByText(expected, { exact: true })).toBeVisible();
+    if (value === "error" || value === "insufficient")
+      await expect(page.locator(".report")).toHaveCount(0);
+  });
+}
+test("取消不变为成功，断线回放可以恢复", async ({ page }) => {
+  await scenario(page, "hold");
+  await fresh(page);
+  await send(page);
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await expect(page.locator(".report")).toHaveCount(0);
+  await scenario(page, "disconnect");
+  await fresh(page);
+  await send(page);
+  await expect(
+    page.getByText("演示事件流中断", { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "华东销售，哪里变了？" }),
+  ).toBeVisible();
+});
+test("取消与完成回放竞态保持取消终态", async ({ page }) => {
+  await scenario(page, "success");
+  await fresh(page);
+  await page.clock.install();
+  await send(page);
+  await expect(page.locator(".running-state")).toBeVisible();
+  // 最后阶段前暂停浏览器时钟，取消后再跨过全部剩余回放。
+  await page.clock.runFor(1_520);
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await page.clock.runFor(2_000);
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await expect(page.locator(".report")).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await expect(page.locator(".report")).toHaveCount(0);
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+});
+test("刷新后的中断任务可重新分析，旧任务不会覆盖新报告", async ({ page }) => {
+  await scenario(page, "hold");
+  await send(page);
+  await expect(page.locator(".running-state")).toBeVisible();
+  const oldRunId = new URL(page.url()).searchParams.get("run");
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  await page.getByRole("button", { name: "重新分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "华东销售，哪里变了？" })).toBeVisible();
+  const savedRuns = await page.evaluate(() => JSON.parse(localStorage.getItem("commerce-lens:demo-runs:v1")!));
+  const interrupted = savedRuns.find((r: { id: string }) => r.id === oldRunId);
+  const completed = savedRuns.find((r: { parentRunId?: string }) => r.parentRunId === oldRunId);
+  expect(interrupted.status).toBe("interrupted");
+  expect(completed.status).toBe("completed");
+  expect(completed.id).not.toBe(oldRunId);
+});
+for (const stage of ["queued", "running", "disconnect"] as const) {
+test(`模拟 ${stage} 时刷新明确中断，不回到旧报告且释放运行锁`, async ({ page }) => {
+  await scenario(page, stage === "disconnect" ? "disconnect" : "hold");
+  await page.clock.install();
+  await send(page);
+  await expect(page.locator(".running-state")).toBeVisible();
+  if (stage === "running") await page.clock.runFor(380);
+  if (stage === "disconnect") {
+    await page.clock.runFor(1_140);
+    await expect(page.getByText("演示事件流中断", { exact: false })).toBeVisible();
+  }
+  const snapshot = await page.evaluate(() => JSON.parse(localStorage.getItem("commerce-lens:demo-runs:v1")!));
+  expect(snapshot.at(-1).status).toBe(stage === "queued" ? "queued" : "running");
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  await expect(page.locator(".report")).toHaveCount(0);
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  if (stage === "running") await page.screenshot({ path: "artifacts/interrupted-1440.png", fullPage: true, animations: "disabled" });
+});
+}
+
+test("完成落定后取消不反转，刷新仍恢复本轮报告", async ({ page }) => {
+  await page.getByRole("button", { name: "只看其他商品", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "排除坚果礼盒，表现如何？" })).toBeVisible();
+  const reportUrl = page.url();
+  const terminal = await page.evaluate(async () => {
+    const modulePath = "/src/lib/api.ts";
+    const { createApi } = await import(modulePath);
+    const api = createApi("mock");
+    const report = await api.report(new URL(location.href).searchParams.get("report")!);
+    return api.cancel(report.runId);
+  });
+  expect(terminal.status).toBe("completed");
+  await page.reload();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  expect(page.url()).toBe(reportUrl);
+});
+
+test("运行刷新后重试保留已确认的商品和渠道范围", async ({ page }) => {
+  await scenario(page, "hold");
+  await page.getByRole("button", { name: "调整分析范围", exact: true }).click();
+  await page.getByLabel("商品范围", { exact: true }).selectOption("nuts");
+  await page.getByLabel("渠道范围", { exact: true }).selectOption("mall");
+  await page.getByRole("button", { name: "按此范围分析", exact: true }).click();
+  await expect(page.locator(".running-state")).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  await page.getByRole("button", { name: "重新分析", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("15,000");
+  await expect(page.getByRole("button", { name: "调整分析范围", exact: true })).toContainText("品牌商城");
+});
+
+test("报告导出保留模拟标识及证据", async ({ page }) => {
+  await page.getByRole("button", { name: "导出报告", exact: true }).click();
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "JSON 数据", exact: false }).click();
+  const file = await download;
+  expect(file.suggestedFilename()).toMatch(/\.json$/);
+  const stream = await file.createReadStream();
+  const chunks = [];
+  for await (const chunk of stream!) chunks.push(chunk);
+  const report = JSON.parse(Buffer.concat(chunks).toString());
+  expect(report.comparison.current).toBe(7_000_000);
+  expect(report.provenance.agentExecuted).toBe(false);
+  expect(report.evidences).toHaveLength(3);
+});
+test("窄屏无整页溢出，证据为可关闭的模态抽屉", async ({ page }) => {
+  await page.getByRole("button", { name: "关闭证据面板" }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page
+    .getByRole("button", { name: "查看证据 E02", exact: true })
+    .first()
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+test("HTTP 契约样例能展示两条证据，未伪造库存与 Agent", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("commerce-lens:mode", "http");
+  });
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname === "/api/catalog")
+      return route.fulfill({ json: flow.catalog });
+    if (url.pathname === "/api/sessions")
+      return route.fulfill({
+        json:
+          route.request().method() === "POST"
+            ? { sessionId: "example-session", datasetVersion: "acceptance-v1" }
+            : [],
+      });
+    if (url.pathname.endsWith("/runs"))
+      return route.fulfill({ status: 202, json: flow.startRun });
+    if (url.pathname.endsWith("/events"))
+      return route.fulfill({
+        contentType: "text/event-stream",
+        body: [...flow.events, flow.events[2]!]
+          .map((e) => `id: ${e.seq}\ndata: ${JSON.stringify(e)}\n\n`)
+          .join(""),
+      });
+    if (url.pathname === "/api/runs/example-run")
+      return route.fulfill({ json: flow.run });
+    if (url.pathname.startsWith("/api/reports/"))
+      return route.fulfill({ json: flow.report });
+    if (url.pathname.startsWith("/api/evidences/"))
+      return route.fulfill({ json: flow.evidence });
+    return route.fulfill({ status: 404, json: flow.error });
+  });
+  await page.goto("/");
+  await send(page);
+  await expect(
+    page.getByRole("heading", { name: "支付金额变化分析" }),
+  ).toBeVisible();
+  await expect(page.locator(".hero-number")).toContainText("70,000");
+  await expect(page.getByRole("button", { name: "查看证据 E03" })).toHaveCount(
+    0,
+  );
+  await page.getByRole("button", { name: "查看分析口径" }).click();
+  await expect(page.locator(".evidence-table")).toContainText("¥70,000.00");
+});
+test("HTTP 不可用会明确失败，保持无报告", async ({ page }) => {
+  await page.route("**/api/**", (route) =>
+    route.fulfill({
+      status: 503,
+      json: {
+        code: "NOT_READY",
+        message: "本地 API 尚未启动",
+        retryable: true,
+        traceId: "test",
+      },
+    }),
+  );
+  await page.getByRole("button", { name: "工作区与设置", exact: true }).click();
+  await page
+    .getByRole("radio", { name: "本地 HTTP API", exact: false })
+    .check();
+  await page.getByRole("button", { name: "完成", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("本地 API 尚未启动");
+  await expect(page.locator(".report")).toHaveCount(0);
+});
+
+for (const status of ["cancelled", "completed"] as const) {
+  test(`report.ready 后等待权威终态，取消请求返回 ${status}`, async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("commerce-lens:mode", "http"));
+    await page.route("**/api/**", async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      if (path === "/api/catalog") return route.fulfill({ json: flow.catalog });
+      if (path === "/api/sessions") return route.fulfill({ json: route.request().method() === "POST"
+        ? { sessionId: "example-session", datasetVersion: "acceptance-v1" } : [] });
+      if (path.endsWith("/runs")) return route.fulfill({ status: 202, json: flow.startRun });
+      if (path.endsWith("/events")) return route.fulfill({ contentType: "text/event-stream",
+        body: flow.events.filter((e) => e.type !== "run.finished")
+          .map((e) => `id: ${e.seq}\ndata: ${JSON.stringify(e)}\n\n`).join("") });
+      if (path.endsWith("/cancel")) return route.fulfill({ json: { ...flow.run, status,
+        ...(status === "cancelled" ? { reportId: undefined } : {}) } });
+      if (path === "/api/runs/example-run") return route.fulfill({ json: { ...flow.run, status: "running" } });
+      if (path.startsWith("/api/reports/")) return route.fulfill({ json: flow.report });
+      return route.fulfill({ status: 404, json: flow.error });
+    });
+    await page.goto("/");
+    await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+    await send(page);
+    await expect(page.getByText("连接中断，正在从最后事件序号恢复。任务未取消。", { exact: true })).toBeVisible();
+    await expect(page.locator(".report")).toHaveCount(0);
+    await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+    if (status === "cancelled") {
+      await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+      await expect(page.locator(".report")).toHaveCount(0);
+    } else {
+      await expect(page.getByRole("heading", { name: "支付金额变化分析" })).toBeVisible();
+      await expect(page.locator(".hero-number")).toContainText("70,000");
+    }
+    await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+    await expect(page.getByText("连接中断，正在从最后事件序号恢复。任务未取消。", { exact: true })).toHaveCount(0);
+  });
+}
+
+test("调整范围会重新计算，取消编辑不更改原报告", async ({ page }) => {
+  const original = new URL(page.url()).searchParams.get("report");
+  await page.getByRole("button", { name: "调整分析范围", exact: true }).click();
+  await page.getByLabel("商品范围", { exact: true }).selectOption("nuts");
+  await page.getByRole("button", { name: "保留原范围", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("70,000");
+  expect(new URL(page.url()).searchParams.get("report")).toBe(original);
+  await page.getByRole("button", { name: "调整分析范围", exact: true }).click();
+  await page.getByLabel("商品范围", { exact: true }).selectOption("nuts");
+  await page.getByLabel("渠道范围", { exact: true }).selectOption("mall");
+  await page.getByRole("button", { name: "按此范围分析", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "坚果礼盒，销售表现如何？" }),
+  ).toBeVisible();
+  await expect(page.locator(".hero-number")).toContainText("15,000");
+  await expect(page.locator(".metric-secondary").first()).toContainText(
+    "45,000",
+  );
+  await expect(page.locator(".scope-line")).toContainText("品牌商城");
+  expect(new URL(page.url()).searchParams.get("report")).not.toBe(original);
+});
+
+test("同一会话可以回看原报告，最近会话保留轮次", async ({ page }) => {
+  await page.getByRole("button", { name: "只看其他商品", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  const trail = page.getByRole("region", { name: "本次会话分析记录" });
+  await trail.getByRole("button", { name: "本次会话", exact: false }).click();
+  await trail
+    .getByRole("button", { name: "昨天华东支付金额为什么下降？", exact: false })
+    .click();
+  await expect(page.locator(".hero-number")).toContainText("70,000");
+  await expect(page.locator(".recent-turn-count")).toContainText("2 轮");
+  await page.reload();
+  await expect(page.locator(".hero-number")).toContainText("70,000");
+  await expect(page.locator(".session-trail")).toContainText("2 轮分析");
+});
+
+test("证据选择器与执行记录都能进入对应证据", async ({ page }) => {
+  const picker = page.getByLabel("切换证据", { exact: true });
+  await picker.selectOption({ label: "E01 · 支付金额 · 周期比较" });
+  await expect(
+    page.getByRole("heading", { name: "支付金额 · 周期比较", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "执行记录", exact: true }).click();
+  await page
+    .locator(".trace-list li")
+    .filter({ hasText: "decompose_change" })
+    .getByRole("button", { name: "查看对应证据" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "商品 · 变化贡献", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("tab", { name: "证据详情", exact: true }),
+  ).toHaveAttribute("aria-selected", "true");
+});
+
+test("超范围问题先澄清，快速场景切换可操作", async ({ page }) => {
+  await fresh(page);
+  await send(page, "最近华南退款金额怎么样？");
+  await expect(
+    page.getByRole("heading", { name: "先确认，我们在看什么。" }),
+  ).toBeVisible();
+  await expect(page.locator(".clarification-state")).toContainText(
+    "仅开放支付金额",
+  );
+  await expect(page.locator(".report")).toHaveCount(0);
+  await page
+    .getByLabel("快速选择演示场景", { exact: true })
+    .selectOption("error");
+  await page.getByRole("button", { name: "确认并开始分析" }).click();
+  await expect(
+    page.getByRole("heading", { name: "这次分析未完成" }),
+  ).toBeVisible();
+});
+
+test("手机端可通过范围弹窗生成渠道报告", async ({ page }) => {
+  await page.getByRole("button", { name: "关闭证据面板" }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "调整分析范围", exact: true }).click();
+  await page.getByLabel("渠道范围", { exact: true }).selectOption("live");
+  await page.getByRole("radio", { name: "按渠道拆解" }).check();
+  await page.getByRole("button", { name: "按此范围分析", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "直播渠道，销售表现如何？" }),
+  ).toBeVisible();
+  await expect(page.locator(".hero-number")).toContainText("25,000");
+  await expect(
+    page.getByRole("heading", { name: "变化来自哪些渠道" }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});
+
+test("模拟输入不将无关问题伪装成已完成分析", async ({ page }) => {
+  await fresh(page);
+  await send(page, "请写一首诗");
+  await expect(
+    page.getByRole("heading", { name: "先确认，我们在看什么。" }),
+  ).toBeVisible();
+  await expect(page.locator(".clarification-state")).toContainText(
+    "不在当前固定演示范围内",
+  );
+  await expect(page.locator(".report")).toHaveCount(0);
+});
+
+test("本地模拟页面不依赖外部网络资源", async ({ page }) => {
+  const externalRequests: string[] = [];
+  await page.route("**/*", (route) => {
+    const origin = new URL(route.request().url()).origin;
+    if (origin !== "http://127.0.0.1:5173") {
+      externalRequests.push(route.request().url());
+      return route.abort();
+    }
+    return route.continue();
+  });
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "华东销售，哪里变了？" }),
+  ).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  expect(externalRequests).toEqual([]);
+  expect(
+    await page.evaluate(() => document.fonts.check('500 16px "DM Sans"')),
+  ).toBe(true);
+});

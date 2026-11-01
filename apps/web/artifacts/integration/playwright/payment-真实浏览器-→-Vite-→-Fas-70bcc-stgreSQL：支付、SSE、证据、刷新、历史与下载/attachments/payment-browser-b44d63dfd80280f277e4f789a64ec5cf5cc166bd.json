@@ -1,0 +1,615 @@
+{
+  "verifiedAt": "2026-10-22T13:17:57.609Z",
+  "backendBusinessCommit": "6411a0b",
+  "backendHandoffCommit": "a250286",
+  "realBrowser": true,
+  "networkInterception": false,
+  "ready": {
+    "status": "ready",
+    "executionMode": "deterministic"
+  },
+  "catalog": {
+    "version": "signals-v1",
+    "storeName": "禾味食品演示店",
+    "synthetic": true,
+    "businessClock": "2026-10-22",
+    "updatedAt": "2026-10-21T16:00:00.000Z",
+    "timezone": "Asia/Shanghai",
+    "contractVersion": "1.1.0",
+    "executionMode": "deterministic",
+    "supportedMetrics": [
+      "paid_amount",
+      "refund_amount",
+      "sold_units"
+    ],
+    "datasets": [
+      {
+        "version": "acceptance-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S01-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S02-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S03-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S04-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S05-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S06-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S07-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S08-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S09-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S10-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S11-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S12-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "signals-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      }
+    ]
+  },
+  "reportId": "8f8d755e-eec1-4b83-8bb3-daa5b4383d7e",
+  "run": {
+    "id": "08c1f184-7eab-49bc-817e-931e5f727de5",
+    "sessionId": "31de8fbb-2f0e-494e-b4dc-334eb512e6be",
+    "question": "昨天华东支付金额为什么下降？",
+    "status": "completed",
+    "phase": 7,
+    "phaseName": "persisting",
+    "executionMode": "deterministic",
+    "createdAt": "2026-10-22T13:17:54.936Z",
+    "usage": {
+      "modelRequests": 0,
+      "toolCalls": 6,
+      "tokens": 0,
+      "costUsd": null
+    },
+    "endedAt": "2026-10-22T13:17:55.066Z",
+    "reportId": "8f8d755e-eec1-4b83-8bb3-daa5b4383d7e"
+  },
+  "comparison": {
+    "current": 7000000,
+    "baseline": 10000000,
+    "delta": -3000000,
+    "changeRate": -0.3
+  },
+  "contributors": [
+    {
+      "key": "A",
+      "label": "A",
+      "isOther": false,
+      "current": 2000000,
+      "baseline": 6000000,
+      "delta": -4000000,
+      "changeRate": -0.6666666666666666,
+      "share": 1.3333333333333333
+    },
+    {
+      "key": "B",
+      "label": "B",
+      "isOther": false,
+      "current": 5000000,
+      "baseline": 4000000,
+      "delta": 1000000,
+      "changeRate": 0.25,
+      "share": -0.3333333333333333
+    }
+  ],
+  "evidenceIds": [
+    "8922292b-c50e-4b91-b713-9593027f3761",
+    "3f79f24a-62b5-4fd3-ac0f-206b72e7b428",
+    "ef9c6085-e527-499d-81f8-bc16f0558fdd",
+    "4b35e176-b4f3-4ba9-bf22-d9bb9153c34c",
+    "f50eebfb-58fa-49e8-b014-3f462fec1fe1"
+  ],
+  "events": [
+    {
+      "at": "2026-10-22T13:17:54.937Z",
+      "seq": 1,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 0,
+        "action": "接收问题",
+        "phaseName": "received"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:54.946Z",
+      "seq": 2,
+      "type": "run.started",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "status": "running",
+        "executionMode": "deterministic"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:54.949Z",
+      "seq": 3,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 1,
+        "action": "确认分析口径",
+        "phaseName": "interpreting"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:54.973Z",
+      "seq": 4,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 2,
+        "action": "检查数据覆盖",
+        "phaseName": "checking_data"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:54.982Z",
+      "seq": 5,
+      "type": "tool.started",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"none\",\"topN\":10}",
+        "toolName": "compare_metric",
+        "toolCallId": "46f6faf3-151b-4914-8d76-11345a6450b1"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:54.986Z",
+      "seq": 6,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 3,
+        "action": "比较支付金额",
+        "phaseName": "comparing"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:54.995Z",
+      "seq": 7,
+      "type": "tool.completed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "rowCount": 1,
+        "toolName": "compare_metric",
+        "durationMs": 14.038100000005215,
+        "evidenceId": "8922292b-c50e-4b91-b713-9593027f3761",
+        "toolCallId": "46f6faf3-151b-4914-8d76-11345a6450b1"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:54.998Z",
+      "seq": 8,
+      "type": "tool.started",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "params": "{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}",
+        "toolName": "decompose_change",
+        "toolCallId": "a594f160-d5b6-4c28-8f34-4c9e819f7d09"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.002Z",
+      "seq": 9,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 4,
+        "action": "拆分变化贡献",
+        "phaseName": "decomposing"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.010Z",
+      "seq": 10,
+      "type": "tool.completed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "rowCount": 2,
+        "toolName": "decompose_change",
+        "durationMs": 11.90549999999348,
+        "evidenceId": "3f79f24a-62b5-4fd3-ac0f-206b72e7b428",
+        "toolCallId": "a594f160-d5b6-4c28-8f34-4c9e819f7d09"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.013Z",
+      "seq": 11,
+      "type": "tool.started",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "params": "{\"signalType\":\"inventory\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"],\"skuId\":[\"A\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "toolName": "inspect_signals",
+        "toolCallId": "933ba8a0-4e10-4c63-9213-dcd4513b5401"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.017Z",
+      "seq": 12,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 5,
+        "action": "核查辅助证据",
+        "phaseName": "inspecting"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.024Z",
+      "seq": 13,
+      "type": "tool.completed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "rowCount": 2,
+        "toolName": "inspect_signals",
+        "durationMs": 11.050199999997858,
+        "evidenceId": "ef9c6085-e527-499d-81f8-bc16f0558fdd",
+        "toolCallId": "933ba8a0-4e10-4c63-9213-dcd4513b5401"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.027Z",
+      "seq": 14,
+      "type": "tool.started",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "params": "{\"signalType\":\"traffic\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "toolName": "inspect_signals",
+        "toolCallId": "699a906e-31bc-4b33-abd8-ba8e8189cc9b"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.030Z",
+      "seq": 15,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 5,
+        "action": "核查辅助证据",
+        "phaseName": "inspecting"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.037Z",
+      "seq": 16,
+      "type": "tool.completed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "rowCount": 2,
+        "toolName": "inspect_signals",
+        "durationMs": 10.602500000008149,
+        "evidenceId": "4b35e176-b4f3-4ba9-bf22-d9bb9153c34c",
+        "toolCallId": "699a906e-31bc-4b33-abd8-ba8e8189cc9b"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.039Z",
+      "seq": 17,
+      "type": "tool.started",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "params": "{\"signalType\":\"promotion\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+        "toolName": "inspect_signals",
+        "toolCallId": "2a52c116-7c27-4d46-9e5e-54a425fce977"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.042Z",
+      "seq": 18,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 5,
+        "action": "核查辅助证据",
+        "phaseName": "inspecting"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.047Z",
+      "seq": 19,
+      "type": "tool.completed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "rowCount": 1,
+        "toolName": "inspect_signals",
+        "durationMs": 8.05250000001979,
+        "evidenceId": "f50eebfb-58fa-49e8-b014-3f462fec1fe1",
+        "toolCallId": "2a52c116-7c27-4d46-9e5e-54a425fce977"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.049Z",
+      "seq": 20,
+      "type": "tool.started",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "params": "{\"comparisonEvidenceId\":\"8922292b-c50e-4b91-b713-9593027f3761\",\"contributionEvidenceId\":\"3f79f24a-62b5-4fd3-ac0f-206b72e7b428\",\"signalEvidenceIds\":[\"ef9c6085-e527-499d-81f8-bc16f0558fdd\",\"4b35e176-b4f3-4ba9-bf22-d9bb9153c34c\",\"f50eebfb-58fa-49e8-b014-3f462fec1fe1\"]}",
+        "toolName": "submit_report",
+        "toolCallId": "8ea92360-302a-407e-b456-9cd5166f1391"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.051Z",
+      "seq": 21,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 6,
+        "action": "验证报告",
+        "phaseName": "validating"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.060Z",
+      "seq": 22,
+      "type": "tool.completed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "rowCount": 0,
+        "toolName": "submit_report",
+        "durationMs": 9.065600000001723,
+        "toolCallId": "8ea92360-302a-407e-b456-9cd5166f1391"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.061Z",
+      "seq": 23,
+      "type": "phase.changed",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "phase": 7,
+        "action": "保存报告",
+        "phaseName": "persisting"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.067Z",
+      "seq": 24,
+      "type": "report.ready",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "status": "completed",
+        "reportId": "8f8d755e-eec1-4b83-8bb3-daa5b4383d7e"
+      }
+    },
+    {
+      "at": "2026-10-22T13:17:55.068Z",
+      "seq": 25,
+      "type": "run.finished",
+      "runId": "08c1f184-7eab-49bc-817e-931e5f727de5",
+      "payload": {
+        "usage": {
+          "tokens": 0,
+          "costUsd": null,
+          "toolCalls": 6,
+          "modelRequests": 0
+        },
+        "reason": "report_validated",
+        "status": "completed"
+      }
+    }
+  ],
+  "traffic": [
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/sessions",
+      "status": 201,
+      "body": {
+        "datasetVersion": "signals-v1"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/sessions/31de8fbb-2f0e-494e-b4dc-334eb512e6be/runs",
+      "status": 202,
+      "body": {
+        "question": "昨天华东支付金额为什么下降？"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/runs/08c1f184-7eab-49bc-817e-931e5f727de5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/runs/08c1f184-7eab-49bc-817e-931e5f727de5/events",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/8f8d755e-eec1-4b83-8bb3-daa5b4383d7e",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/8922292b-c50e-4b91-b713-9593027f3761",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/3f79f24a-62b5-4fd3-ac0f-206b72e7b428",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/8922292b-c50e-4b91-b713-9593027f3761",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/3f79f24a-62b5-4fd3-ac0f-206b72e7b428",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/ef9c6085-e527-499d-81f8-bc16f0558fdd",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/4b35e176-b4f3-4ba9-bf22-d9bb9153c34c",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/f50eebfb-58fa-49e8-b014-3f462fec1fe1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/8f8d755e-eec1-4b83-8bb3-daa5b4383d7e",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/evidences/ef9c6085-e527-499d-81f8-bc16f0558fdd",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/8f8d755e-eec1-4b83-8bb3-daa5b4383d7e",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/8f8d755e-eec1-4b83-8bb3-daa5b4383d7e/export?format=json",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/8f8d755e-eec1-4b83-8bb3-daa5b4383d7e/export?format=md",
+      "status": 200
+    }
+  ],
+  "externalRequests": [],
+  "pageErrors": []
+}

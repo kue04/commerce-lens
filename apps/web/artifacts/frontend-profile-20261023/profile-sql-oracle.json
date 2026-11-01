@@ -1,0 +1,104 @@
+{
+  "serverVersion": "18.4",
+  "readOnly": true,
+  "appCountsBefore": {
+    "sessions": 12,
+    "runs": 15,
+    "reports": 15
+  },
+  "appCountsAfter": {
+    "sessions": 12,
+    "runs": 15,
+    "reports": 15
+  },
+  "results": [
+    {
+      "version": "signals-v1",
+      "counts": {
+        "orders": {
+          "count": 4,
+          "first": "2026-10-14",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(o.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.orders o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "order_items": {
+          "count": 6,
+          "first": "2026-10-14",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(p.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(p.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.order_items o JOIN business.orders p USING(dataset_version,store_id,order_id) WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "refund_events": {
+          "count": 3,
+          "first": "2026-10-21",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(o.succeeded_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.succeeded_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.refund_events o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "inventory": {
+          "count": 576,
+          "first": "2026-10-14",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(o.hour_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.hour_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.inventory_hourly o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "traffic": {
+          "count": 24,
+          "first": "2026-10-14",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(o.business_date)::date::text AS first,max(o.business_date)::date::text AS last FROM business.traffic_daily o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "promotion": {
+          "count": 1,
+          "first": "2026-10-10",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(o.start_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.end_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.promotion_events o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        }
+      },
+      "paidOrders": 3,
+      "paidOrderFieldInContract": false,
+      "note": "总订单4与支付成功订单3不同；前端将成功订单字段显示为后端尚未提供。"
+    },
+    {
+      "version": "acceptance-v1",
+      "counts": {
+        "orders": {
+          "count": 4,
+          "first": "2026-10-14",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(o.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.orders o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "order_items": {
+          "count": 6,
+          "first": "2026-10-14",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(p.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(p.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.order_items o JOIN business.orders p USING(dataset_version,store_id,order_id) WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "refund_events": {
+          "count": 3,
+          "first": "2026-10-21",
+          "last": "2026-10-21",
+          "sql": "SELECT count(*)::int AS count,min(o.succeeded_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.succeeded_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.refund_events o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "inventory": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "sql": "SELECT count(*)::int AS count,min(o.hour_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.hour_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.inventory_hourly o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "traffic": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "sql": "SELECT count(*)::int AS count,min(o.business_date)::date::text AS first,max(o.business_date)::date::text AS last FROM business.traffic_daily o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        },
+        "promotion": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "sql": "SELECT count(*)::int AS count,min(o.start_at AT TIME ZONE 'Asia/Shanghai')::date::text AS first,max(o.end_at AT TIME ZONE 'Asia/Shanghai')::date::text AS last FROM business.promotion_events o  WHERE o.dataset_version=$1 AND o.store_id=$2"
+        }
+      },
+      "paidOrders": 3,
+      "paidOrderFieldInContract": false,
+      "note": "总订单4与支付成功订单3不同；前端将成功订单字段显示为后端尚未提供。"
+    }
+  ]
+}

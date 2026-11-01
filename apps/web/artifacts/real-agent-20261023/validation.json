@@ -1,0 +1,40 @@
+{
+  "validatedAt": "2026-10-22T18:11:34.044Z",
+  "realRunsSubmitted": 1,
+  "realAgentOutcome": "partial",
+  "browserCaptureTest": {
+    "passed": 1,
+    "interpretation": "Browser/provider/SQL/SSE/partial report/export transport passed; completed Agent task did not pass"
+  },
+  "frontend": {
+    "typecheck": "passed",
+    "unit": {
+      "passed": 7,
+      "skipped": 0
+    },
+    "e2e": {
+      "passed": 23,
+      "skipped": 0
+    },
+    "build": "passed",
+    "realAgentDirectoryExcludedFromDefaultTests": true,
+    "explicitRealRunOptInRequired": true
+  },
+  "backend": {
+    "typecheck": "passed",
+    "build": "passed",
+    "fullSuite": "not rerun: business code unchanged"
+  },
+  "independentChecks": {
+    "sqlOracle": true,
+    "recordedResponseOfflineReplay": true,
+    "offlineReplayExternalRequests": 0,
+    "schemas": true,
+    "reportEvidenceHashes": true,
+    "databaseHttpSseEquality": true,
+    "jsonMarkdownExportEquality": true
+  },
+  "productionLogicModified": false,
+  "budgetRaised": false,
+  "originalRunOverwritten": false
+}

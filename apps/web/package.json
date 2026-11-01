@@ -1,0 +1,39 @@
+{
+  "name": "@commerce-lens/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --import tsx --test tests/data.test.ts",
+    "test:e2e": "playwright test",
+    "test:integration": "playwright test --config playwright.integration.config.ts",
+    "test:integration:oracle": "node tests/real-integration/sql-oracle.mjs",
+    "test:integration:profile:oracle": "node tests/real-integration/profile-oracle.mjs",
+    "test:integration:overview:oracle": "node tests/real-integration/overview-oracle.mjs",
+    "test:agent-once": "playwright test --config playwright.real-agent.config.ts",
+    "test:agent-records": "node tests/real-agent/database-records.mjs"
+  },
+  "dependencies": {
+    "echarts": "6.1.0",
+    "lucide-react": "1.61.0",
+    "motion": "14.6.0",
+    "radix-ui": "1.8.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "typebox": "1.3.27"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.10.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vite": "8.3.5"
+  }
+}

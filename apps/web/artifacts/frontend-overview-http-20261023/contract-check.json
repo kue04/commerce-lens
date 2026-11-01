@@ -1,0 +1,51 @@
+[
+  {
+    "path": "packages/contracts/src/http.ts",
+    "identical": true,
+    "textIdentical": true,
+    "frontend": "d3277a8deecd648361227ddb70d62d033237fbbbac28dd4e7c6d8539c126071d",
+    "backend": "d3277a8deecd648361227ddb70d62d033237fbbbac28dd4e7c6d8539c126071d"
+  },
+  {
+    "path": "packages/contracts/src/index.ts",
+    "identical": false,
+    "textIdentical": true,
+    "frontend": "ffe60c0397a75abbe17081e11fde776ed7ab887632015e9ce79a94557a0ce219",
+    "backend": "e0b274ea6304ef4c4721409642b3c88492777a7716b0cbd16a2c13daab953e07"
+  },
+  {
+    "path": "packages/contracts/examples/schemas.json",
+    "identical": true,
+    "textIdentical": true,
+    "frontend": "e13c023517fad0b8f3565c17324b0247dcec78a9b7cee2b6b4c7deddcde4bb14",
+    "backend": "e13c023517fad0b8f3565c17324b0247dcec78a9b7cee2b6b4c7deddcde4bb14"
+  },
+  {
+    "path": "packages/contracts/examples/overview.json",
+    "identical": true,
+    "textIdentical": true,
+    "frontend": "57387f5bd272ae2aad1e6959118bcdc321ddac4b7fe4010b04a800449f62ada5",
+    "backend": "57387f5bd272ae2aad1e6959118bcdc321ddac4b7fe4010b04a800449f62ada5"
+  },
+  {
+    "path": "packages/contracts/examples/dataset-profile.json",
+    "identical": true,
+    "textIdentical": true,
+    "frontend": "eb50ede08daf0cdaf21b1fa7b7b0c1cf337d0e025ba141a9ffe708aae9c823d6",
+    "backend": "eb50ede08daf0cdaf21b1fa7b7b0c1cf337d0e025ba141a9ffe708aae9c823d6"
+  },
+  {
+    "path": "packages/contracts/examples/payment-flow.json",
+    "identical": true,
+    "textIdentical": true,
+    "frontend": "163687b29a186d921f6ce5f9f112de2fb4d7a4a64a0d9fca88ac46eaa141686e",
+    "backend": "163687b29a186d921f6ce5f9f112de2fb4d7a4a64a0d9fca88ac46eaa141686e"
+  },
+  {
+    "path": "docs/API-CONTRACT.md",
+    "identical": true,
+    "textIdentical": true,
+    "frontend": "86352b359e371dd215ddf55d116d684ee79fc19658d022842811eb950483c4a9",
+    "backend": "86352b359e371dd215ddf55d116d684ee79fc19658d022842811eb950483c4a9"
+  }
+]

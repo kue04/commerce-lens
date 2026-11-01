@@ -158,6 +158,30 @@
     },
     "additionalProperties": false
   },
+  "AvailabilitySchema": {
+    "type": "object",
+    "required": [
+      "available",
+      "reason"
+    ],
+    "properties": {
+      "available": {
+        "type": "boolean"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
   "CatalogSchema": {
     "type": "object",
     "required": [
@@ -198,7 +222,7 @@
       },
       "contractVersion": {
         "type": "string",
-        "const": "1.1.0"
+        "const": "1.2.0"
       },
       "executionMode": {
         "anyOf": [
@@ -456,6 +480,500 @@
             "type": "null"
           }
         ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "DatasetProfileSchema": {
+    "type": "object",
+    "required": [
+      "contractVersion",
+      "dataset",
+      "publishedAt",
+      "coverageStart",
+      "completeThrough",
+      "lastCompleteDate",
+      "counts",
+      "sources",
+      "metrics",
+      "filters"
+    ],
+    "properties": {
+      "contractVersion": {
+        "type": "string",
+        "const": "1.2.0"
+      },
+      "dataset": {
+        "type": "object",
+        "required": [
+          "version",
+          "storeName",
+          "synthetic",
+          "businessClock",
+          "updatedAt",
+          "timezone"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storeName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "synthetic": {
+            "type": "boolean",
+            "const": true
+          },
+          "businessClock": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "timezone": {
+            "type": "string",
+            "const": "Asia/Shanghai"
+          }
+        },
+        "additionalProperties": false
+      },
+      "publishedAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "coverageStart": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "completeThrough": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "lastCompleteDate": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "counts": {
+        "type": "object",
+        "required": [
+          "orders",
+          "orderItems",
+          "refundEvents",
+          "inventoryHours",
+          "trafficDays",
+          "promotionEvents",
+          "skus",
+          "channels",
+          "regions"
+        ],
+        "properties": {
+          "orders": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "orderItems": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "refundEvents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "inventoryHours": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "trafficDays": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "promotionEvents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "skus": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "channels": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "regions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "additionalProperties": false
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "source",
+            "grain",
+            "rowCount",
+            "actualStartDate",
+            "actualEndDate",
+            "status",
+            "coverageStart",
+            "completeThrough",
+            "lastCompleteDate",
+            "missingPartitions",
+            "checkedAt",
+            "reason"
+          ],
+          "properties": {
+            "source": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "orders"
+                },
+                {
+                  "type": "string",
+                  "const": "order_items"
+                },
+                {
+                  "type": "string",
+                  "const": "refund_events"
+                },
+                {
+                  "type": "string",
+                  "const": "inventory"
+                },
+                {
+                  "type": "string",
+                  "const": "traffic"
+                },
+                {
+                  "type": "string",
+                  "const": "promotion"
+                }
+              ]
+            },
+            "grain": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rowCount": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "actualStartDate": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "actualEndDate": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "status": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "available"
+                },
+                {
+                  "type": "string",
+                  "const": "partial"
+                },
+                {
+                  "type": "string",
+                  "const": "missing"
+                }
+              ]
+            },
+            "coverageStart": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "completeThrough": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "lastCompleteDate": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "missingPartitions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              }
+            },
+            "checkedAt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "minItems": 6,
+        "maxItems": 6
+      },
+      "metrics": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "metricId",
+            "label",
+            "unit",
+            "metricVersion",
+            "definition",
+            "timeField",
+            "requiredSources"
+          ],
+          "properties": {
+            "metricId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "paid_amount"
+                },
+                {
+                  "type": "string",
+                  "const": "refund_amount"
+                },
+                {
+                  "type": "string",
+                  "const": "sold_units"
+                }
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "fen"
+                },
+                {
+                  "type": "string",
+                  "const": "units"
+                }
+              ]
+            },
+            "metricVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "definition": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timeField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "requiredSources": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "orders"
+                  },
+                  {
+                    "type": "string",
+                    "const": "order_items"
+                  },
+                  {
+                    "type": "string",
+                    "const": "refund_events"
+                  },
+                  {
+                    "type": "string",
+                    "const": "inventory"
+                  },
+                  {
+                    "type": "string",
+                    "const": "traffic"
+                  },
+                  {
+                    "type": "string",
+                    "const": "promotion"
+                  }
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "minItems": 3,
+        "maxItems": 3
+      },
+      "filters": {
+        "type": "object",
+        "required": [
+          "skuId",
+          "channelId",
+          "regionId"
+        ],
+        "properties": {
+          "skuId": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "value",
+                "label",
+                "category"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "category": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "channelId": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "value",
+                "label"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "regionId": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "value",
+                "label"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
       }
     },
     "additionalProperties": false
@@ -1458,6 +1976,1392 @@
         }
       },
       "contradictingEvidenceIds": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "OverviewMetricSchema": {
+    "type": "object",
+    "required": [
+      "metricId",
+      "label",
+      "unit",
+      "comparison",
+      "availability"
+    ],
+    "properties": {
+      "metricId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "paid_amount"
+          },
+          {
+            "type": "string",
+            "const": "refund_amount"
+          },
+          {
+            "type": "string",
+            "const": "sold_units"
+          }
+        ]
+      },
+      "label": {
+        "type": "string",
+        "minLength": 1
+      },
+      "unit": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "fen"
+          },
+          {
+            "type": "string",
+            "const": "units"
+          }
+        ]
+      },
+      "comparison": {
+        "type": "object",
+        "required": [
+          "current",
+          "baseline",
+          "delta",
+          "changeRate"
+        ],
+        "properties": {
+          "current": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "baseline": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "delta": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "changeRate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "availability": {
+        "type": "object",
+        "required": [
+          "available",
+          "reason"
+        ],
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "OverviewRequestSchema": {
+    "type": "object",
+    "required": [
+      "metricId",
+      "currentWindow",
+      "baselineWindow",
+      "filters",
+      "groupBy"
+    ],
+    "properties": {
+      "metricId": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "paid_amount"
+          },
+          {
+            "type": "string",
+            "const": "paid_orders"
+          },
+          {
+            "type": "string",
+            "const": "sold_units"
+          },
+          {
+            "type": "string",
+            "const": "refund_amount"
+          },
+          {
+            "type": "string",
+            "const": "net_receipts"
+          },
+          {
+            "type": "string",
+            "const": "aov"
+          }
+        ]
+      },
+      "currentWindow": {
+        "type": "object",
+        "required": [
+          "startDate",
+          "endDateExclusive"
+        ],
+        "properties": {
+          "startDate": {
+            "type": "string"
+          },
+          "endDateExclusive": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "baselineWindow": {
+        "type": "object",
+        "required": [
+          "startDate",
+          "endDateExclusive"
+        ],
+        "properties": {
+          "startDate": {
+            "type": "string"
+          },
+          "endDateExclusive": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "filters": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "minItems": 1,
+            "maxItems": 20,
+            "uniqueItems": true
+          },
+          "regionId": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "minItems": 1,
+            "maxItems": 20,
+            "uniqueItems": true
+          },
+          "skuId": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "minItems": 1,
+            "maxItems": 20,
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "groupBy": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "none"
+          },
+          {
+            "type": "string",
+            "const": "channel"
+          },
+          {
+            "type": "string",
+            "const": "region"
+          },
+          {
+            "type": "string",
+            "const": "sku"
+          },
+          {
+            "type": "string",
+            "const": "category"
+          }
+        ]
+      },
+      "topN": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20
+      }
+    },
+    "additionalProperties": false
+  },
+  "OverviewSchema": {
+    "type": "object",
+    "required": [
+      "contractVersion",
+      "dataset",
+      "query",
+      "metricVersion",
+      "ruleVersion",
+      "generatedAt",
+      "executionMode",
+      "agentExecuted",
+      "metrics",
+      "trend",
+      "availability",
+      "contributors",
+      "changes",
+      "queryTemplateIds"
+    ],
+    "properties": {
+      "contractVersion": {
+        "type": "string",
+        "const": "1.2.0"
+      },
+      "dataset": {
+        "type": "object",
+        "required": [
+          "version",
+          "storeName",
+          "synthetic",
+          "businessClock",
+          "updatedAt",
+          "timezone"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storeName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "synthetic": {
+            "type": "boolean",
+            "const": true
+          },
+          "businessClock": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          "timezone": {
+            "type": "string",
+            "const": "Asia/Shanghai"
+          }
+        },
+        "additionalProperties": false
+      },
+      "query": {
+        "type": "object",
+        "required": [
+          "metricId",
+          "currentWindow",
+          "baselineWindow",
+          "filters",
+          "groupBy"
+        ],
+        "properties": {
+          "metricId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "paid_amount"
+              },
+              {
+                "type": "string",
+                "const": "paid_orders"
+              },
+              {
+                "type": "string",
+                "const": "sold_units"
+              },
+              {
+                "type": "string",
+                "const": "refund_amount"
+              },
+              {
+                "type": "string",
+                "const": "net_receipts"
+              },
+              {
+                "type": "string",
+                "const": "aov"
+              }
+            ]
+          },
+          "currentWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "baselineWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "channelId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "regionId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              },
+              "skuId": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "minItems": 1,
+                "maxItems": 20,
+                "uniqueItems": true
+              }
+            },
+            "additionalProperties": false
+          },
+          "groupBy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "none"
+              },
+              {
+                "type": "string",
+                "const": "channel"
+              },
+              {
+                "type": "string",
+                "const": "region"
+              },
+              {
+                "type": "string",
+                "const": "sku"
+              },
+              {
+                "type": "string",
+                "const": "category"
+              }
+            ]
+          },
+          "topN": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "additionalProperties": false
+      },
+      "metricVersion": {
+        "type": "string",
+        "minLength": 1
+      },
+      "ruleVersion": {
+        "type": "string",
+        "minLength": 1
+      },
+      "generatedAt": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+      },
+      "executionMode": {
+        "type": "string",
+        "const": "deterministic"
+      },
+      "agentExecuted": {
+        "type": "boolean",
+        "const": false
+      },
+      "metrics": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "metricId",
+            "label",
+            "unit",
+            "comparison",
+            "availability"
+          ],
+          "properties": {
+            "metricId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "paid_amount"
+                },
+                {
+                  "type": "string",
+                  "const": "refund_amount"
+                },
+                {
+                  "type": "string",
+                  "const": "sold_units"
+                }
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "const": "fen"
+                },
+                {
+                  "type": "string",
+                  "const": "units"
+                }
+              ]
+            },
+            "comparison": {
+              "type": "object",
+              "required": [
+                "current",
+                "baseline",
+                "delta",
+                "changeRate"
+              ],
+              "properties": {
+                "current": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "baseline": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "delta": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "changeRate": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "availability": {
+              "type": "object",
+              "required": [
+                "available",
+                "reason"
+              ],
+              "properties": {
+                "available": {
+                  "type": "boolean"
+                },
+                "reason": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "minItems": 3,
+        "maxItems": 3
+      },
+      "trend": {
+        "type": "object",
+        "required": [
+          "metricId",
+          "currentWindow",
+          "baselineWindow",
+          "offsetDays",
+          "points"
+        ],
+        "properties": {
+          "metricId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "paid_amount"
+              },
+              {
+                "type": "string",
+                "const": "refund_amount"
+              },
+              {
+                "type": "string",
+                "const": "sold_units"
+              }
+            ]
+          },
+          "currentWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "baselineWindow": {
+            "type": "object",
+            "required": [
+              "startDate",
+              "endDateExclusive"
+            ],
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDateExclusive": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "offsetDays": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "date",
+                "baselineDate",
+                "comparison",
+                "currentAvailability",
+                "baselineAvailability",
+                "analysisQuery"
+              ],
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "baselineDate": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "comparison": {
+                  "type": "object",
+                  "required": [
+                    "current",
+                    "baseline",
+                    "delta",
+                    "changeRate"
+                  ],
+                  "properties": {
+                    "current": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "baseline": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "delta": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "changeRate": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "currentAvailability": {
+                  "type": "object",
+                  "required": [
+                    "available",
+                    "reason"
+                  ],
+                  "properties": {
+                    "available": {
+                      "type": "boolean"
+                    },
+                    "reason": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "baselineAvailability": {
+                  "type": "object",
+                  "required": [
+                    "available",
+                    "reason"
+                  ],
+                  "properties": {
+                    "available": {
+                      "type": "boolean"
+                    },
+                    "reason": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "analysisQuery": {
+                  "type": "object",
+                  "required": [
+                    "metricId",
+                    "currentWindow",
+                    "baselineWindow",
+                    "filters",
+                    "groupBy"
+                  ],
+                  "properties": {
+                    "metricId": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "const": "paid_amount"
+                        },
+                        {
+                          "type": "string",
+                          "const": "paid_orders"
+                        },
+                        {
+                          "type": "string",
+                          "const": "sold_units"
+                        },
+                        {
+                          "type": "string",
+                          "const": "refund_amount"
+                        },
+                        {
+                          "type": "string",
+                          "const": "net_receipts"
+                        },
+                        {
+                          "type": "string",
+                          "const": "aov"
+                        }
+                      ]
+                    },
+                    "currentWindow": {
+                      "type": "object",
+                      "required": [
+                        "startDate",
+                        "endDateExclusive"
+                      ],
+                      "properties": {
+                        "startDate": {
+                          "type": "string"
+                        },
+                        "endDateExclusive": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "baselineWindow": {
+                      "type": "object",
+                      "required": [
+                        "startDate",
+                        "endDateExclusive"
+                      ],
+                      "properties": {
+                        "startDate": {
+                          "type": "string"
+                        },
+                        "endDateExclusive": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "filters": {
+                      "type": "object",
+                      "properties": {
+                        "channelId": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "minItems": 1,
+                          "maxItems": 20,
+                          "uniqueItems": true
+                        },
+                        "regionId": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "minItems": 1,
+                          "maxItems": 20,
+                          "uniqueItems": true
+                        },
+                        "skuId": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "minItems": 1,
+                          "maxItems": 20,
+                          "uniqueItems": true
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "groupBy": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "const": "none"
+                        },
+                        {
+                          "type": "string",
+                          "const": "channel"
+                        },
+                        {
+                          "type": "string",
+                          "const": "region"
+                        },
+                        {
+                          "type": "string",
+                          "const": "sku"
+                        },
+                        {
+                          "type": "string",
+                          "const": "category"
+                        }
+                      ]
+                    },
+                    "topN": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 20
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "minItems": 30,
+            "maxItems": 30
+          }
+        },
+        "additionalProperties": false
+      },
+      "availability": {
+        "type": "object",
+        "required": [
+          "available",
+          "reason"
+        ],
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "contributors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "key",
+            "label",
+            "isOther",
+            "current",
+            "baseline",
+            "delta",
+            "changeRate",
+            "share"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "isOther": {
+              "type": "boolean"
+            },
+            "current": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "baseline": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "delta": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "changeRate": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "share": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "changes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "ruleId",
+            "title",
+            "comparison",
+            "analysisQuery"
+          ],
+          "properties": {
+            "ruleId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "comparison": {
+              "type": "object",
+              "required": [
+                "current",
+                "baseline",
+                "delta",
+                "changeRate"
+              ],
+              "properties": {
+                "current": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "baseline": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "delta": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "changeRate": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "contributor": {
+              "type": "object",
+              "required": [
+                "key",
+                "label",
+                "isOther",
+                "current",
+                "baseline",
+                "delta",
+                "changeRate",
+                "share"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "isOther": {
+                  "type": "boolean"
+                },
+                "current": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "baseline": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "delta": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "changeRate": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "share": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "analysisQuery": {
+              "type": "object",
+              "required": [
+                "metricId",
+                "currentWindow",
+                "baselineWindow",
+                "filters",
+                "groupBy"
+              ],
+              "properties": {
+                "metricId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "paid_amount"
+                    },
+                    {
+                      "type": "string",
+                      "const": "paid_orders"
+                    },
+                    {
+                      "type": "string",
+                      "const": "sold_units"
+                    },
+                    {
+                      "type": "string",
+                      "const": "refund_amount"
+                    },
+                    {
+                      "type": "string",
+                      "const": "net_receipts"
+                    },
+                    {
+                      "type": "string",
+                      "const": "aov"
+                    }
+                  ]
+                },
+                "currentWindow": {
+                  "type": "object",
+                  "required": [
+                    "startDate",
+                    "endDateExclusive"
+                  ],
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDateExclusive": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "baselineWindow": {
+                  "type": "object",
+                  "required": [
+                    "startDate",
+                    "endDateExclusive"
+                  ],
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDateExclusive": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "filters": {
+                  "type": "object",
+                  "properties": {
+                    "channelId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "minItems": 1,
+                      "maxItems": 20,
+                      "uniqueItems": true
+                    },
+                    "regionId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "minItems": 1,
+                      "maxItems": 20,
+                      "uniqueItems": true
+                    },
+                    "skuId": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "minItems": 1,
+                      "maxItems": 20,
+                      "uniqueItems": true
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "groupBy": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "none"
+                    },
+                    {
+                      "type": "string",
+                      "const": "channel"
+                    },
+                    {
+                      "type": "string",
+                      "const": "region"
+                    },
+                    {
+                      "type": "string",
+                      "const": "sku"
+                    },
+                    {
+                      "type": "string",
+                      "const": "category"
+                    }
+                  ]
+                },
+                "topN": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "maxItems": 5
+      },
+      "queryTemplateIds": {
         "type": "array",
         "items": {
           "type": "string",
@@ -2868,6 +4772,10 @@
               {
                 "type": "string",
                 "const": "1.1.0"
+              },
+              {
+                "type": "string",
+                "const": "1.2.0"
               }
             ]
           },
@@ -4049,6 +5957,191 @@
         "additionalProperties": false
       }
     ]
+  },
+  "SourceIdSchema": {
+    "anyOf": [
+      {
+        "type": "string",
+        "const": "orders"
+      },
+      {
+        "type": "string",
+        "const": "order_items"
+      },
+      {
+        "type": "string",
+        "const": "refund_events"
+      },
+      {
+        "type": "string",
+        "const": "inventory"
+      },
+      {
+        "type": "string",
+        "const": "traffic"
+      },
+      {
+        "type": "string",
+        "const": "promotion"
+      }
+    ]
+  },
+  "SourceProfileSchema": {
+    "type": "object",
+    "required": [
+      "source",
+      "grain",
+      "rowCount",
+      "actualStartDate",
+      "actualEndDate",
+      "status",
+      "coverageStart",
+      "completeThrough",
+      "lastCompleteDate",
+      "missingPartitions",
+      "checkedAt",
+      "reason"
+    ],
+    "properties": {
+      "source": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "orders"
+          },
+          {
+            "type": "string",
+            "const": "order_items"
+          },
+          {
+            "type": "string",
+            "const": "refund_events"
+          },
+          {
+            "type": "string",
+            "const": "inventory"
+          },
+          {
+            "type": "string",
+            "const": "traffic"
+          },
+          {
+            "type": "string",
+            "const": "promotion"
+          }
+        ]
+      },
+      "grain": {
+        "type": "string",
+        "minLength": 1
+      },
+      "rowCount": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "actualStartDate": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "actualEndDate": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "available"
+          },
+          {
+            "type": "string",
+            "const": "partial"
+          },
+          {
+            "type": "string",
+            "const": "missing"
+          }
+        ]
+      },
+      "coverageStart": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "completeThrough": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "lastCompleteDate": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "missingPartitions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      },
+      "checkedAt": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "additionalProperties": false
   },
   "StartRunResponseSchema": {
     "type": "object",

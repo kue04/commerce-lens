@@ -1,0 +1,165 @@
+{
+  "startedAt": "2026-10-22T19:44:49.6673775+08:00",
+  "endedAt": "2026-10-22T19:45:40.8078304+08:00",
+  "branch": "main",
+  "head": "25a18ec3e64ae2d8384a101eb6fd403d5bb9038f",
+  "node": "v24.22.1",
+  "checks": [
+    {
+      "command": "npm run typecheck --prefix apps/web",
+      "startedAt": "2026-10-22T19:44:49.6736556+08:00",
+      "endedAt": "2026-10-22T19:44:51.5096827+08:00",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test --prefix apps/web",
+      "startedAt": "2026-10-22T19:44:51.5114475+08:00",
+      "endedAt": "2026-10-22T19:44:53.2534364+08:00",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:e2e --prefix apps/web",
+      "startedAt": "2026-10-22T19:44:53.2535151+08:00",
+      "endedAt": "2026-10-22T19:45:38.4204744+08:00",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build --prefix apps/web",
+      "startedAt": "2026-10-22T19:45:38.4205072+08:00",
+      "endedAt": "2026-10-22T19:45:40.7967012+08:00",
+      "exitCode": 0
+    }
+  ],
+  "sourceUnchangedDuringChecks": true,
+  "sourceHashes": [
+    {
+      "path": "apps/web/index.html",
+      "sha256": "0f3103f4f5ee25fbd2700d3a05fb08703b660fd190d2c8897e975eb80e46e4f6"
+    },
+    {
+      "path": "apps/web/package-lock.json",
+      "sha256": "5786767eca1516e72a9233c219b7fde6f1d4afe2467ecbf2a0e8f46bd8d06aef"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "e5d1665abb7bf545897938a56a665b5511d25a9aaa2dae7e0c0ffe5cb2f555fa"
+    },
+    {
+      "path": "apps/web/playwright.config.ts",
+      "sha256": "1af0325e7b28b9f8696948d842a0b6536e3f1212d35489c41a5046171260d3ab"
+    },
+    {
+      "path": "apps/web/src/App.tsx",
+      "sha256": "4d8618f6f54029024f0affcd00830db0223633f532a1ac3e6e8bf4cc33809fac"
+    },
+    {
+      "path": "apps/web/src/components/Chart.tsx",
+      "sha256": "33d331995beee6ad7d3d755c97e69c50f3622e579c02f84a7a465d1e0043ae5d"
+    },
+    {
+      "path": "apps/web/src/components/EvidencePanel.tsx",
+      "sha256": "5680bb6c7b80313adcf9d1adab9a2ea02cefe34c8911b5a645300534dfbd164f"
+    },
+    {
+      "path": "apps/web/src/components/ReportView.tsx",
+      "sha256": "07dc00fe94214f1d16bed877ce83c712823f83b1305e0c30fc534d6f24e946a3"
+    },
+    {
+      "path": "apps/web/src/components/ScopeDialog.tsx",
+      "sha256": "5ac3bc8b0255cdd51caeb0ddb2d7d7229565ddcf980fc5dfbe563032030cea01"
+    },
+    {
+      "path": "apps/web/src/components/SessionTrail.tsx",
+      "sha256": "c3860684165990493040cacf3afbfb6464d5a188f9001cfc5819de5d30bfc3ef"
+    },
+    {
+      "path": "apps/web/src/components/ui.tsx",
+      "sha256": "689b6427769a256387471d81cf591e9efb47492804b3119dc9c9d37b29044fa1"
+    },
+    {
+      "path": "apps/web/src/lib/api.ts",
+      "sha256": "63ecfea61673ce388e69e4c095b73f90d5e9ec0c5f38e712d20410395aef18e2"
+    },
+    {
+      "path": "apps/web/src/lib/fixtures.ts",
+      "sha256": "faf53e013a8d66e57c22649ac55c8c072e0f9338e3c3190ca174496bdf607eb4"
+    },
+    {
+      "path": "apps/web/src/lib/format.ts",
+      "sha256": "3a77b77bef58fff1f5dc220f23f992847403bc7b38483dd144933544fc14ed1b"
+    },
+    {
+      "path": "apps/web/src/lib/selectors.ts",
+      "sha256": "eb60e148c4220120688900425e88be1171ae8d914e97a67caec73476430c26d1"
+    },
+    {
+      "path": "apps/web/src/lib/types.ts",
+      "sha256": "27f398485b61b0166af07add08a6e73f703929a872c0fa57ce95640992eeeded"
+    },
+    {
+      "path": "apps/web/src/lib/use-workspace.ts",
+      "sha256": "5fbb0f52338315a6f2b676ccbb83b4e5cbde75e0f75a2e920963188c5009292c"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "df245729ee06bcaddfca29736b8afe9f78906d12140e7587b355ce3c5e1c7a6c"
+    },
+    {
+      "path": "apps/web/src/styles.css",
+      "sha256": "31dd27a0fae56f6b33d711bf9252aafab3ee156394bf9a0ad2554a353b74a0f8"
+    },
+    {
+      "path": "apps/web/tests/data.test.ts",
+      "sha256": "dbbb9da4a064efbcb58ef0f2a41a55ff0765cfca412ec3a585a3e6db115e6365"
+    },
+    {
+      "path": "apps/web/tests/visual.mjs",
+      "sha256": "e21a5ecc2711b65c567037a7c412c7af88a32f8b12100254305160436a8b6527"
+    },
+    {
+      "path": "apps/web/tests/workspace.spec.ts",
+      "sha256": "8b9f5b1d12adb152a859d85ffc1a2372ff5ed955523fd8603d02009af104f944"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "sha256": "8a75cc914a7770248959866efbd433702038f0e7452676bca9e9f1fd202690c9"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "8e2b09d99deebc6967b2065fa25a02c760461d18a62b7fe2f376e01cafd502b7"
+    },
+    {
+      "path": "packages/analytics/src/compare.ts",
+      "sha256": "1a370642eb740fd83a1fcdfe9f19ec412f893b2239e085e4250ca16cf17f8655"
+    },
+    {
+      "path": "packages/contracts/examples/payment-flow.json",
+      "sha256": "5294f9b2eb252ebb665d1c0128f5578cd2283affcd75edb6802d4b9ad9a112ff"
+    },
+    {
+      "path": "packages/contracts/src/http.ts",
+      "sha256": "f26c52ed21be9aaaf07e607724495a896cc6be1d38e333fa797430b36c182e79"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "ffe60c0397a75abbe17081e11fde776ed7ab887632015e9ce79a94557a0ce219"
+    },
+    {
+      "path": "apps/web/public/favicon.svg",
+      "sha256": "83ab75cb1279aea151fb323606896dc005b6f83858e20c35e9f4110e46bbb8dc"
+    },
+    {
+      "path": "apps/web/public/fonts/dm-sans-variable.ttf",
+      "sha256": "8cd08d97e89c24d0aa92edd2f0f4c8ee6195eee9b7c9f154865a58b02f0c1c0d"
+    },
+    {
+      "path": "apps/web/public/fonts/OFL-DM-Sans.txt",
+      "sha256": "9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1"
+    },
+    {
+      "path": "apps/web/public/fonts/README.md",
+      "sha256": "be88d56b65c6660a2ddc47c245ce666b31babac6f07e1693da9398aa70c2eb2c"
+    }
+  ],
+  "note": "前端 mock 刷新中断、取消/完成竞态及网络拦截共享契约验证；不代表真实 HTTP、PostgreSQL 或 Agent 已通过。日志 refresh-recovery-verification.log。"
+}

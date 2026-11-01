@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-23 Asia/Shanghai",
+  "slice": "Real read-only dataset profile HTTP integration",
+  "frontendHead": "25a18ec3e64ae2d8384a101eb6fd403d5bb9038f",
+  "backendHead": "a2502869f663029dd15f0512a7d51e5ecad61924",
+  "contractVersion": "1.2.0",
+  "checks": {
+    "typecheck": "passed",
+    "unit": {
+      "passed": 10,
+      "failed": 0
+    },
+    "e2e": {
+      "passed": 31,
+      "failed": 0,
+      "seconds": 19.4
+    },
+    "realBrowser": {
+      "passed": 1,
+      "failed": 0,
+      "seconds": 5.5,
+      "transportDoubles": false
+    },
+    "independentSqlOracle": "passed; counts/dates/watermarks/manual expectations; app rowcounts unchanged",
+    "build": "passed; existing ECharts 517.03kB warning",
+    "initialBuildFailure": "Test JSON narrow inferred types; fixed by shared DatasetProfile type annotation, no runtime/assertion change",
+    "schemaEqualityWithFinalBackend": [
+      "DatasetProfileSchema",
+      "CatalogSchema",
+      "ReportSchema",
+      "RunSchema"
+    ],
+    "visualReview": [
+      "real desktop sources",
+      "real mobile missing coverage"
+    ]
+  },
+  "datasetsTested": [
+    "signals-v1",
+    "acceptance-v1"
+  ],
+  "missingFields": [
+    "profile.counts paid successful orders total absent; displayed as not provided"
+  ],
+  "notVerified": [
+    "portfolio-90d-v1 large dataset absent in existing DB",
+    "frontend overview",
+    "overview to new analysis",
+    "real missing-partition/zero-baseline scenarios",
+    "new model execution",
+    "Existing payment create-run/export integration case: entry and contract-version expectation updated only; not run in read-only slice"
+  ],
+  "runtime": {
+    "mode": "deterministic",
+    "recover": false,
+    "databaseDefaultReadOnly": true,
+    "migrations": 0,
+    "seeds": 0,
+    "ownedApiPid": 36172,
+    "ownedPostgresPid": 29540,
+    "ownedServicesStopped": true,
+    "ports": {
+      "3000": "unreachable after owned-service cleanup",
+      "5173": "unreachable after owned-service cleanup"
+    }
+  },
+  "externalModelCalls": 0,
+  "sourceSha256": {
+    "apps/web/src/App.tsx": "6b6e9ff6845a8a90c73eb364446a13cfdc819fcd0bcde0d5f8a8edda1e15fdb5",
+    "apps/web/src/components/DataPages.tsx": "d4d6bee76705e864712b181ab2cc5bc024a61fe0394b95021a3e94cebb9c8661",
+    "apps/web/src/lib/api.ts": "f84a413ea750b2bacac2429e758e6dd63889983de6e0e7fe7eda65078d566236",
+    "apps/web/src/lib/types.ts": "4b876f9e6e10d7f77a03db45f8194940b029bbd1d698ef804e7a3ab491e06fc4",
+    "apps/web/src/lib/use-dataset-profile.ts": "a32631ecb81d0eb5d9ea7db6135a8f181d2a92dacfeaba014a3cb9516498d6ee",
+    "apps/web/src/styles.css": "4bcc9674df7c75c74027a1dfab46a751acf4831fc0107d59b2fb39506455a9dd",
+    "apps/web/package.json": "823b90cf0b515846a60a9322056fc245fe2ae218e7d9f072a04d6f519744b2ce",
+    "apps/web/tests/data.test.ts": "ab5fd794f0a8100efce375ea091913166ea4079897d1e4baaf208a396904ef11",
+    "apps/web/tests/http-support.ts": "2d907279d24907b2810b44a77e481f18edb1cc458ce160142e8988481956bbd2",
+    "apps/web/tests/overview.spec.ts": "825c73c138888778faab01d4decaa08e82d2057713911cd97e98a2601d743d4d",
+    "apps/web/tests/profile.spec.ts": "73d9ed8081730325ff11f85e9c8bd11c38fe65b3628d1f507187e2ce6c750a9a",
+    "apps/web/tests/real-integration/profile-read.spec.ts": "0acdc26ba0c20f7527f2df63c5f610a76af055d855317d049bc09d03f5b8d4df",
+    "apps/web/tests/real-integration/profile-oracle.mjs": "4e840430c6a678414ebd584a934774369600adb4e84b9cf53747fac7cfc74c23",
+    "apps/web/tests/real-integration/payment.spec.ts": "81533a96c6dc1fcceed6f10eb07ef339acab435b0e1bafe6f37e512a271340c8"
+  },
+  "documentationSha256": {
+    "docs/progress-frontend.md": "98ddce4887576bda851143be6532eaaa5a17c9fee4ba025078b5fd3237ca7cc8",
+    "docs/INTEGRATION-RESULTS.md": "7e54c2238e0e892264ac0137b75964ee53cf1484ee11c85e2b13213fb37db18e",
+    "docs/PROGRESS.md": "0b06852bfbb861590ea4d7e741656ba8399fa22f0f1df330410f5ae4282e623e"
+  }
+}

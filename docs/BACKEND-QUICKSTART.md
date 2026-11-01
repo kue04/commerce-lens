@@ -9,6 +9,8 @@ $env:ANALYSIS_MODE='deterministic'
 npm run api:dev
 ```
 
+Windows 使用已安装的 PowerShell 7 将 PostgreSQL 启动在独立隐藏控制台中，子进程继承同一隐藏控制台，避免每个 worker 弹出窗口；API 的 Ctrl+C 先关闭连接/lease，再通过 pg_ctl 停库。启动诊断日志在对应 `.local/postgres/startup-*.log`（临时测试库在各自目录）。不要通过关闭某个数据库子进程窗口来停库。
+
 另一 PowerShell 终端：
 
 ```powershell

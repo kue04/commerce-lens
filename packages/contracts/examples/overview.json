@@ -1,0 +1,1379 @@
+{
+  "request": {
+    "metricId": "paid_amount",
+    "currentWindow": {
+      "startDate": "2026-10-21",
+      "endDateExclusive": "2026-10-22"
+    },
+    "baselineWindow": {
+      "startDate": "2026-10-14",
+      "endDateExclusive": "2026-10-15"
+    },
+    "filters": {},
+    "groupBy": "sku",
+    "topN": 10
+  },
+  "response": {
+    "contractVersion": "1.2.0",
+    "dataset": {
+      "version": "portfolio-90d-v1",
+      "storeName": "禾味食品演示店",
+      "synthetic": true,
+      "businessClock": "2026-10-22",
+      "updatedAt": "2026-10-23T13:05:19.587Z",
+      "timezone": "Asia/Shanghai"
+    },
+    "query": {
+      "metricId": "paid_amount",
+      "currentWindow": {
+        "startDate": "2026-10-21",
+        "endDateExclusive": "2026-10-22"
+      },
+      "baselineWindow": {
+        "startDate": "2026-10-14",
+        "endDateExclusive": "2026-10-15"
+      },
+      "filters": {},
+      "groupBy": "sku",
+      "topN": 10
+    },
+    "metricVersion": "1.0.0",
+    "ruleVersion": "business-rules-v1",
+    "generatedAt": "2026-10-23T13:05:20.714Z",
+    "executionMode": "deterministic",
+    "agentExecuted": false,
+    "metrics": [
+      {
+        "metricId": "paid_amount",
+        "label": "支付金额",
+        "unit": "fen",
+        "comparison": {
+          "current": 11861993,
+          "baseline": 12259384,
+          "delta": -397391,
+          "changeRate": -0.03241525022790705
+        },
+        "availability": {
+          "available": true,
+          "reason": null
+        }
+      },
+      {
+        "metricId": "refund_amount",
+        "label": "成功退款金额",
+        "unit": "fen",
+        "comparison": {
+          "current": 147267,
+          "baseline": 153358,
+          "delta": -6091,
+          "changeRate": -0.039717523702708694
+        },
+        "availability": {
+          "available": true,
+          "reason": null
+        }
+      },
+      {
+        "metricId": "sold_units",
+        "label": "支付件数",
+        "unit": "units",
+        "comparison": {
+          "current": 4221,
+          "baseline": 4398,
+          "delta": -177,
+          "changeRate": -0.04024556616643929
+        },
+        "availability": {
+          "available": true,
+          "reason": null
+        }
+      }
+    ],
+    "trend": {
+      "metricId": "paid_amount",
+      "currentWindow": {
+        "startDate": "2026-09-22",
+        "endDateExclusive": "2026-10-22"
+      },
+      "baselineWindow": {
+        "startDate": "2026-09-15",
+        "endDateExclusive": "2026-10-15"
+      },
+      "offsetDays": 7,
+      "points": [
+        {
+          "date": "2026-09-22",
+          "baselineDate": "2026-09-15",
+          "comparison": {
+            "current": 11708239,
+            "baseline": 11490922,
+            "delta": 217317,
+            "changeRate": 0.018912059450059793
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-22",
+              "endDateExclusive": "2026-09-23"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-15",
+              "endDateExclusive": "2026-09-16"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-23",
+          "baselineDate": "2026-09-16",
+          "comparison": {
+            "current": 11854972,
+            "baseline": 11584515,
+            "delta": 270457,
+            "changeRate": 0.023346424084219324
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-23",
+              "endDateExclusive": "2026-09-24"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-16",
+              "endDateExclusive": "2026-09-17"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-24",
+          "baselineDate": "2026-09-17",
+          "comparison": {
+            "current": 11638438,
+            "baseline": 11243756,
+            "delta": 394682,
+            "changeRate": 0.03510232701599003
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-24",
+              "endDateExclusive": "2026-09-25"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-17",
+              "endDateExclusive": "2026-09-18"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-25",
+          "baselineDate": "2026-09-18",
+          "comparison": {
+            "current": 12052552,
+            "baseline": 11429760,
+            "delta": 622792,
+            "changeRate": 0.054488633182149054
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-25",
+              "endDateExclusive": "2026-09-26"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-18",
+              "endDateExclusive": "2026-09-19"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-26",
+          "baselineDate": "2026-09-19",
+          "comparison": {
+            "current": 14590218,
+            "baseline": 14412951,
+            "delta": 177267,
+            "changeRate": 0.012299146788190704
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-26",
+              "endDateExclusive": "2026-09-27"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-19",
+              "endDateExclusive": "2026-09-20"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-27",
+          "baselineDate": "2026-09-20",
+          "comparison": {
+            "current": 14990569,
+            "baseline": 14622945,
+            "delta": 367624,
+            "changeRate": 0.02514021628338204
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-27",
+              "endDateExclusive": "2026-09-28"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-20",
+              "endDateExclusive": "2026-09-21"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-28",
+          "baselineDate": "2026-09-21",
+          "comparison": {
+            "current": 11866502,
+            "baseline": 11650101,
+            "delta": 216401,
+            "changeRate": 0.018575032096288264
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-28",
+              "endDateExclusive": "2026-09-29"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-21",
+              "endDateExclusive": "2026-09-22"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-29",
+          "baselineDate": "2026-09-22",
+          "comparison": {
+            "current": 11667950,
+            "baseline": 11708239,
+            "delta": -40289,
+            "changeRate": -0.0034410811053652048
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-29",
+              "endDateExclusive": "2026-09-30"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-22",
+              "endDateExclusive": "2026-09-23"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-09-30",
+          "baselineDate": "2026-09-23",
+          "comparison": {
+            "current": 11872014,
+            "baseline": 11854972,
+            "delta": 17042,
+            "changeRate": 0.0014375402995468905
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-09-30",
+              "endDateExclusive": "2026-10-01"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-23",
+              "endDateExclusive": "2026-09-24"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-01",
+          "baselineDate": "2026-09-24",
+          "comparison": {
+            "current": 11659787,
+            "baseline": 11638438,
+            "delta": 21349,
+            "changeRate": 0.001834352685472054
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-01",
+              "endDateExclusive": "2026-10-02"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-24",
+              "endDateExclusive": "2026-09-25"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-02",
+          "baselineDate": "2026-09-25",
+          "comparison": {
+            "current": 11811032,
+            "baseline": 12052552,
+            "delta": -241520,
+            "changeRate": -0.020038909601883485
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-02",
+              "endDateExclusive": "2026-10-03"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-25",
+              "endDateExclusive": "2026-09-26"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-03",
+          "baselineDate": "2026-09-26",
+          "comparison": {
+            "current": 14701103,
+            "baseline": 14590218,
+            "delta": 110885,
+            "changeRate": 0.0075999549835376
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-03",
+              "endDateExclusive": "2026-10-04"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-26",
+              "endDateExclusive": "2026-09-27"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-04",
+          "baselineDate": "2026-09-27",
+          "comparison": {
+            "current": 14477336,
+            "baseline": 14990569,
+            "delta": -513233,
+            "changeRate": -0.034237059313759206
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-04",
+              "endDateExclusive": "2026-10-05"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-27",
+              "endDateExclusive": "2026-09-28"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-05",
+          "baselineDate": "2026-09-28",
+          "comparison": {
+            "current": 11616157,
+            "baseline": 11866502,
+            "delta": -250345,
+            "changeRate": -0.02109678151151873
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-05",
+              "endDateExclusive": "2026-10-06"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-28",
+              "endDateExclusive": "2026-09-29"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-06",
+          "baselineDate": "2026-09-29",
+          "comparison": {
+            "current": 11813065,
+            "baseline": 11667950,
+            "delta": 145115,
+            "changeRate": 0.012437060494774147
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-06",
+              "endDateExclusive": "2026-10-07"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-29",
+              "endDateExclusive": "2026-09-30"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-07",
+          "baselineDate": "2026-09-30",
+          "comparison": {
+            "current": 12061105,
+            "baseline": 11872014,
+            "delta": 189091,
+            "changeRate": 0.015927457632715056
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-07",
+              "endDateExclusive": "2026-10-08"
+            },
+            "baselineWindow": {
+              "startDate": "2026-09-30",
+              "endDateExclusive": "2026-10-01"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-08",
+          "baselineDate": "2026-10-01",
+          "comparison": {
+            "current": 11736215,
+            "baseline": 11659787,
+            "delta": 76428,
+            "changeRate": 0.006554836722145954
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-08",
+              "endDateExclusive": "2026-10-09"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-01",
+              "endDateExclusive": "2026-10-02"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-09",
+          "baselineDate": "2026-10-02",
+          "comparison": {
+            "current": 11890624,
+            "baseline": 11811032,
+            "delta": 79592,
+            "changeRate": 0.006738784553288824
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-09",
+              "endDateExclusive": "2026-10-10"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-02",
+              "endDateExclusive": "2026-10-03"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-10",
+          "baselineDate": "2026-10-03",
+          "comparison": {
+            "current": 14981438,
+            "baseline": 14701103,
+            "delta": 280335,
+            "changeRate": 0.01906897734136003
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-10",
+              "endDateExclusive": "2026-10-11"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-03",
+              "endDateExclusive": "2026-10-04"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-11",
+          "baselineDate": "2026-10-04",
+          "comparison": {
+            "current": 14875358,
+            "baseline": 14477336,
+            "delta": 398022,
+            "changeRate": 0.02749276524355033
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-11",
+              "endDateExclusive": "2026-10-12"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-04",
+              "endDateExclusive": "2026-10-05"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-12",
+          "baselineDate": "2026-10-05",
+          "comparison": {
+            "current": 11650023,
+            "baseline": 11616157,
+            "delta": 33866,
+            "changeRate": 0.0029154220281285797
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-12",
+              "endDateExclusive": "2026-10-13"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-05",
+              "endDateExclusive": "2026-10-06"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-13",
+          "baselineDate": "2026-10-06",
+          "comparison": {
+            "current": 12178113,
+            "baseline": 11813065,
+            "delta": 365048,
+            "changeRate": 0.030902056324924987
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-13",
+              "endDateExclusive": "2026-10-14"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-06",
+              "endDateExclusive": "2026-10-07"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-14",
+          "baselineDate": "2026-10-07",
+          "comparison": {
+            "current": 12259384,
+            "baseline": 12061105,
+            "delta": 198279,
+            "changeRate": 0.016439538499996475
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-14",
+              "endDateExclusive": "2026-10-15"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-07",
+              "endDateExclusive": "2026-10-08"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-15",
+          "baselineDate": "2026-10-08",
+          "comparison": {
+            "current": 11847761,
+            "baseline": 11736215,
+            "delta": 111546,
+            "changeRate": 0.009504427108739914
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-15",
+              "endDateExclusive": "2026-10-16"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-08",
+              "endDateExclusive": "2026-10-09"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-16",
+          "baselineDate": "2026-10-09",
+          "comparison": {
+            "current": 12312897,
+            "baseline": 11890624,
+            "delta": 422273,
+            "changeRate": 0.03551310679742291
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-16",
+              "endDateExclusive": "2026-10-17"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-09",
+              "endDateExclusive": "2026-10-10"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-17",
+          "baselineDate": "2026-10-10",
+          "comparison": {
+            "current": 15225337,
+            "baseline": 14981438,
+            "delta": 243899,
+            "changeRate": 0.016280079388907794
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-17",
+              "endDateExclusive": "2026-10-18"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-10",
+              "endDateExclusive": "2026-10-11"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-18",
+          "baselineDate": "2026-10-11",
+          "comparison": {
+            "current": 15257550,
+            "baseline": 14875358,
+            "delta": 382192,
+            "changeRate": 0.025692961473599493
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-18",
+              "endDateExclusive": "2026-10-19"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-11",
+              "endDateExclusive": "2026-10-12"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-19",
+          "baselineDate": "2026-10-12",
+          "comparison": {
+            "current": 12241917,
+            "baseline": 11650023,
+            "delta": 591894,
+            "changeRate": 0.05080625162714271
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-19",
+              "endDateExclusive": "2026-10-20"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-12",
+              "endDateExclusive": "2026-10-13"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-20",
+          "baselineDate": "2026-10-13",
+          "comparison": {
+            "current": 11974858,
+            "baseline": 12178113,
+            "delta": -203255,
+            "changeRate": -0.016690188373190494
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-20",
+              "endDateExclusive": "2026-10-21"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-13",
+              "endDateExclusive": "2026-10-14"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "date": "2026-10-21",
+          "baselineDate": "2026-10-14",
+          "comparison": {
+            "current": 11861993,
+            "baseline": 12259384,
+            "delta": -397391,
+            "changeRate": -0.03241525022790705
+          },
+          "currentAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "baselineAvailability": {
+            "available": true,
+            "reason": null
+          },
+          "analysisQuery": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-21",
+              "endDateExclusive": "2026-10-22"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-14",
+              "endDateExclusive": "2026-10-15"
+            },
+            "filters": {},
+            "groupBy": "sku",
+            "topN": 10
+          }
+        }
+      ]
+    },
+    "availability": {
+      "available": true,
+      "reason": null
+    },
+    "contributors": [
+      {
+        "key": "SKU-30",
+        "label": "SKU-30",
+        "isOther": false,
+        "current": 446670,
+        "baseline": 0,
+        "delta": 446670,
+        "changeRate": null,
+        "share": -1.1240063312958775
+      },
+      {
+        "key": "SKU-25",
+        "label": "SKU-25",
+        "isOther": false,
+        "current": 419244,
+        "baseline": 688758,
+        "delta": -269514,
+        "changeRate": -0.391304347826087,
+        "share": 0.6782086156958763
+      },
+      {
+        "key": "SKU-28",
+        "label": "SKU-28",
+        "isOther": false,
+        "current": 572058,
+        "baseline": 712728,
+        "delta": -140670,
+        "changeRate": -0.19736842105263158,
+        "share": 0.3539838597250567
+      },
+      {
+        "key": "SKU-29",
+        "label": "SKU-29",
+        "isOther": false,
+        "current": 545338,
+        "baseline": 656336,
+        "delta": -110998,
+        "changeRate": -0.16911764705882354,
+        "share": 0.2793168441157449
+      },
+      {
+        "key": "SKU-06",
+        "label": "SKU-06",
+        "isOther": false,
+        "current": 249575,
+        "baseline": 350075,
+        "delta": -100500,
+        "changeRate": -0.28708133971291866,
+        "share": 0.2528995372315931
+      },
+      {
+        "key": "SKU-19",
+        "label": "SKU-19",
+        "isOther": false,
+        "current": 546048,
+        "baseline": 456192,
+        "delta": 89856,
+        "changeRate": 0.19696969696969696,
+        "share": -0.2261148340047963
+      },
+      {
+        "key": "SKU-08",
+        "label": "SKU-08",
+        "isOther": false,
+        "current": 290401,
+        "baseline": 364463,
+        "delta": -74062,
+        "changeRate": -0.20320855614973263,
+        "share": 0.1863706022531965
+      },
+      {
+        "key": "SKU-27",
+        "label": "SKU-27",
+        "isOther": false,
+        "current": 605416,
+        "baseline": 678248,
+        "delta": -72832,
+        "changeRate": -0.10738255033557047,
+        "share": 0.18327541388707846
+      },
+      {
+        "key": "SKU-23",
+        "label": "SKU-23",
+        "isOther": false,
+        "current": 472472,
+        "baseline": 540540,
+        "delta": -68068,
+        "changeRate": -0.1259259259259259,
+        "share": 0.17128722089830922
+      },
+      {
+        "key": "SKU-02",
+        "label": "SKU-02",
+        "isOther": false,
+        "current": 238924,
+        "baseline": 171310,
+        "delta": 67614,
+        "changeRate": 0.39468799252816533,
+        "share": -0.17014476925748193
+      },
+      {
+        "key": "其他",
+        "label": "其他",
+        "isOther": true,
+        "current": 7475847,
+        "baseline": 7640734,
+        "delta": -164887,
+        "changeRate": -0.021579994801546553,
+        "share": 0.41492384075130034
+      }
+    ],
+    "changes": [
+      {
+        "ruleId": "business-rules-v1:paid_amount:sku:SKU-25",
+        "title": "SKU：SKU-25 的支付金额变化达到业务规则提示阈值，请核实。",
+        "comparison": {
+          "current": 419244,
+          "baseline": 688758,
+          "delta": -269514,
+          "changeRate": -0.391304347826087
+        },
+        "analysisQuery": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "skuId": [
+              "SKU-25"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "contributor": {
+          "key": "SKU-25",
+          "label": "SKU-25",
+          "isOther": false,
+          "current": 419244,
+          "baseline": 688758,
+          "delta": -269514,
+          "changeRate": -0.391304347826087,
+          "share": 0.6782086156958763
+        }
+      },
+      {
+        "ruleId": "business-rules-v1:paid_amount:sku:SKU-28",
+        "title": "SKU：SKU-28 的支付金额变化达到业务规则提示阈值，请核实。",
+        "comparison": {
+          "current": 572058,
+          "baseline": 712728,
+          "delta": -140670,
+          "changeRate": -0.19736842105263158
+        },
+        "analysisQuery": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "skuId": [
+              "SKU-28"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "contributor": {
+          "key": "SKU-28",
+          "label": "SKU-28",
+          "isOther": false,
+          "current": 572058,
+          "baseline": 712728,
+          "delta": -140670,
+          "changeRate": -0.19736842105263158,
+          "share": 0.3539838597250567
+        }
+      },
+      {
+        "ruleId": "business-rules-v1:paid_amount:sku:SKU-29",
+        "title": "SKU：SKU-29 的支付金额变化达到业务规则提示阈值，请核实。",
+        "comparison": {
+          "current": 545338,
+          "baseline": 656336,
+          "delta": -110998,
+          "changeRate": -0.16911764705882354
+        },
+        "analysisQuery": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "skuId": [
+              "SKU-29"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "contributor": {
+          "key": "SKU-29",
+          "label": "SKU-29",
+          "isOther": false,
+          "current": 545338,
+          "baseline": 656336,
+          "delta": -110998,
+          "changeRate": -0.16911764705882354,
+          "share": 0.2793168441157449
+        }
+      },
+      {
+        "ruleId": "business-rules-v1:paid_amount:sku:SKU-06",
+        "title": "SKU：SKU-06 的支付金额变化达到业务规则提示阈值，请核实。",
+        "comparison": {
+          "current": 249575,
+          "baseline": 350075,
+          "delta": -100500,
+          "changeRate": -0.28708133971291866
+        },
+        "analysisQuery": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "skuId": [
+              "SKU-06"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "contributor": {
+          "key": "SKU-06",
+          "label": "SKU-06",
+          "isOther": false,
+          "current": 249575,
+          "baseline": 350075,
+          "delta": -100500,
+          "changeRate": -0.28708133971291866,
+          "share": 0.2528995372315931
+        }
+      },
+      {
+        "ruleId": "business-rules-v1:paid_amount:sku:SKU-08",
+        "title": "SKU：SKU-08 的支付金额变化达到业务规则提示阈值，请核实。",
+        "comparison": {
+          "current": 290401,
+          "baseline": 364463,
+          "delta": -74062,
+          "changeRate": -0.20320855614973263
+        },
+        "analysisQuery": {
+          "metricId": "paid_amount",
+          "currentWindow": {
+            "startDate": "2026-10-21",
+            "endDateExclusive": "2026-10-22"
+          },
+          "baselineWindow": {
+            "startDate": "2026-10-14",
+            "endDateExclusive": "2026-10-15"
+          },
+          "filters": {
+            "skuId": [
+              "SKU-08"
+            ]
+          },
+          "groupBy": "sku",
+          "topN": 10
+        },
+        "contributor": {
+          "key": "SKU-08",
+          "label": "SKU-08",
+          "isOther": false,
+          "current": 290401,
+          "baseline": 364463,
+          "delta": -74062,
+          "changeRate": -0.20320855614973263,
+          "share": 0.1863706022531965
+        }
+      }
+    ],
+    "queryTemplateIds": [
+      "overview-daily-v1:payments-refunds",
+      "aggregate-v1:paid_amount:sku"
+    ]
+  }
+}

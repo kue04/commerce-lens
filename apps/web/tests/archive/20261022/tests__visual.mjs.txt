@@ -1,0 +1,96 @@
+import { chromium } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import assert from "node:assert/strict";
+const localChrome =
+  "C:/Users/kk/AppData/Local/ms-playwright/chromium-1248/chrome-win64/chrome.exe";
+const browser = await chromium.launch({
+  executablePath:
+    process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ??
+    (existsSync(localChrome) ? localChrome : undefined),
+  headless: true,
+});
+const page = await browser.newPage({
+  viewport: { width: 1672, height: 941 },
+  deviceScaleFactor: 1,
+});
+const errors = [];
+page.on("pageerror", (e) => errors.push(e.message));
+async function inspect() {
+  const result = await page.evaluate(() => ({
+    width: innerWidth,
+    overflow: document.documentElement.scrollWidth > innerWidth,
+    charts: document.querySelectorAll(".chart svg").length,
+  }));
+  assert.equal(result.overflow, false);
+  console.log(result);
+}
+await page.goto("http://127.0.0.1:5173");
+await page.getByRole("heading", { name: "华东销售，哪里变了？" }).waitFor();
+await page.getByRole("heading", { name: "坚果礼盒 · 库存核查" }).waitFor();
+await page.evaluate(() => document.fonts.ready);
+await page.waitForTimeout(400);
+await mkdir("artifacts", { recursive: true });
+await page.screenshot({
+  path: "artifacts/desktop-1672.png",
+  fullPage: true,
+  animations: "disabled",
+});
+await inspect();
+await page.setViewportSize({ width: 1440, height: 960 });
+await page.waitForTimeout(300);
+await page.screenshot({
+  path: "artifacts/desktop-1440.png",
+  fullPage: true,
+  animations: "disabled",
+});
+await inspect();
+await page.getByRole("button", { name: "关闭证据面板" }).click();
+await page.setViewportSize({ width: 390, height: 844 });
+await page.waitForTimeout(300);
+await page.screenshot({
+  path: "artifacts/mobile-390.png",
+  fullPage: true,
+  animations: "disabled",
+});
+await inspect();
+await page
+  .getByRole("button", { name: "查看证据 E02", exact: true })
+  .first()
+  .click();
+await page.screenshot({
+  path: "artifacts/mobile-evidence-390.png",
+  fullPage: true,
+  animations: "disabled",
+});
+await page.keyboard.press("Escape");
+await page.setViewportSize({ width: 1440, height: 960 });
+await page
+  .getByRole("complementary")
+  .getByRole("button", { name: "新建分析", exact: true })
+  .click();
+await page.screenshot({
+  path: "artifacts/welcome-1440.png",
+  fullPage: true,
+  animations: "disabled",
+});
+await page.getByRole("button", { name: "调整分析范围", exact: true }).click();
+await page.getByLabel("商品范围", { exact: true }).selectOption("nuts");
+await page.getByLabel("渠道范围", { exact: true }).selectOption("mall");
+await page.screenshot({
+  path: "artifacts/scope-1440.png",
+  fullPage: true,
+  animations: "disabled",
+});
+await page.getByRole("button", { name: "按此范围分析", exact: true }).click();
+await page.getByRole("heading", { name: "坚果礼盒，销售表现如何？" }).waitFor();
+await page.getByRole("button", { name: "只看其他商品", exact: true }).click();
+await page.getByRole("heading", { name: "排除坚果礼盒，表现如何？" }).waitFor();
+await page.locator(".session-toggle").click();
+await page.screenshot({
+  path: "artifacts/session-1440.png",
+  fullPage: true,
+  animations: "disabled",
+});
+assert.deepEqual(errors, []);
+await browser.close();

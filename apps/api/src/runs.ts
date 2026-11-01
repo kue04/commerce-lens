@@ -87,8 +87,8 @@ export class Runs {
       let partial;
       try{partial=tools?.fallback();}catch{await this.repository.finish(id,'failed','报告校验失败，未输出不可信事实',budget.usage);return;}
       if(partial && code!=='INSUFFICIENT_DATA'){
-        partial.limitations.push(`分析未完整完成：${message}`);
-        await this.repository.saveReport(partial,budget.usage);
+        partial.limitations.push(`分析未完整完成 [${code}]：${message}`);
+        await this.repository.saveReport(partial,budget.usage,{code,message});
       }else await this.repository.finish(id,code==='INSUFFICIENT_DATA'?'insufficient_data':'failed',message,budget.usage);
     }
   }

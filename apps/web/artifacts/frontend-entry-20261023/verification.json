@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-23 Asia/Shanghai",
+  "slice": "Default data entry, catalog preview, explicit session-version adapter; profile/overview integration pending",
+  "frontend": {
+    "head": "25a18ec3e64ae2d8384a101eb6fd403d5bb9038f",
+    "contract": "1.1.0",
+    "status": "M docs/API-CONTRACT.md\n M docs/PROGRESS.md\n M packages/contracts/examples/payment-flow.json\n M packages/contracts/examples/schemas.json\n M packages/contracts/src/http.ts\n?? apps/\n?? docs/INTEGRATION-RESULTS.md\n?? docs/progress-frontend.md"
+  },
+  "backend": {
+    "head": "a2502869f663029dd15f0512a7d51e5ecad61924",
+    "contractDoc": "# 本地后端联调契约 v1.2.0",
+    "profileRoutePresent": true,
+    "overviewRoutePresent": false,
+    "concurrentlyChanging": true,
+    "missingPaidOrderCount": true
+  },
+  "snapshot": {
+    "archive": "D:\\llm\\Commerce Lens\\.local\\frontend-overview-20261023\\before-unicode.tar",
+    "files": 173,
+    "sha256": "b333fba4168e31edaf9ed954e03f38795d6d1b05bc3469652a67b22574b4910a"
+  },
+  "checks": {
+    "typecheck": "passed",
+    "unit": {
+      "passed": 9,
+      "failed": 0
+    },
+    "e2eFirst": {
+      "passed": 26,
+      "failed": 2,
+      "reason": "browserContext.close ENOENT in Playwright trace files",
+      "output": "apps/web/test-results"
+    },
+    "e2eIsolatedOutput": {
+      "command": "npm run test:e2e --prefix apps/web -- --output=artifacts/frontend-entry-20261023/e2e",
+      "passed": 28,
+      "failed": 0,
+      "seconds": 20.0
+    },
+    "build": "passed; existing ECharts 517.03 kB warning",
+    "visualReview": "desktop overview and mobile profile inspected",
+    "realBrowserFastifyPostgres": "not run: new contract not synchronized, no live local API; no profile or overview fixtures promoted to production",
+    "sqlOracle": "not run: no business values implemented",
+    "sourceFingerprintStableAfterValidation": true
+  },
+  "http": {
+    "3000": {
+      "reachable": false,
+      "reason": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>"
+    },
+    "5173": {
+      "reachable": false,
+      "reason": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>"
+    }
+  },
+  "externalModelCalls": 0,
+  "productionDataPath": "HTTP only, no sample fallback",
+  "sharedContractSync": "none; did not copy in-progress backend schemas",
+  "sourceSha256": {
+    "apps/web/src/App.tsx": "9f5b8cad2a80e2c97a062ba6ea0b46031cc92b0872d44c2cef0415d3738b7552",
+    "apps/web/src/components/DataPages.tsx": "8bfec4367e6b2bbb969bfa38cdf0214148478f1083e0224b47487b7d00171653",
+    "apps/web/src/lib/navigation.ts": "338112a867056866d6cd1892bd7fd95b0a36af18dc19421b11653b0e4f2c94e1",
+    "apps/web/src/lib/types.ts": "a67cccb302331ef2785bd026cd57ae627be0a706f95de668eb455b389f7a8a94",
+    "apps/web/src/lib/api.ts": "8ce452e85ef2dd065a9445201bdde42cb727dad4dadf083834816c24c49b2c28",
+    "apps/web/src/lib/use-workspace.ts": "399ebcab7b6ad2a69626315b3e270c6b28f2c5220392ded8a6c08851748a454c",
+    "apps/web/src/styles.css": "e1c7a166bbc9b495fe1dcaac0d69f6ee6840a02ab9b603f0fbfad8a5784d4d4d",
+    "apps/web/tests/data.test.ts": "de822ccd50a3cd2b7a7dcf388508c8fb049392d9b4328edf36e605c56462e82a",
+    "apps/web/tests/workspace.spec.ts": "2ee9669cb46d2ce52596a0f13bdef3394f455d7883113631b4db57e0239ded3f",
+    "apps/web/tests/overview.spec.ts": "dca700ab068beddaee98a2d839bdcf7990ef5d66d9362c81a6278005ff04aa64"
+  },
+  "documentationSha256": {
+    "docs/progress-frontend.md": "e57abfdf262fd391a62be634051165173da0e2b6653ccf9e92969e29a673c474",
+    "docs/INTEGRATION-RESULTS.md": "c88c3fa4e63fc74ca015dad8a6b7dfd5a7122d8880aa291799bd48c6c621e9e2",
+    "docs/PROGRESS.md": "a5e20cbe5fef7f46dd776514c931521ab0b14dcebf89f2696a7c66718a050421"
+  }
+}

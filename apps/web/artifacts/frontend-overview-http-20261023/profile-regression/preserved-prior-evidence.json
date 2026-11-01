@@ -1,0 +1,37 @@
+[
+  {
+    "path": "apps/web/artifacts/frontend-profile-20261023/profile-real-desktop.png",
+    "restoredOriginalSha256": "e2f0bcf910d87f7cccb6bbae4d98d4fd67715f8187a87fae5626069518b4ea72",
+    "newVerificationSavedTo": "apps\\web\\artifacts\\frontend-overview-http-20261023\\profile-regression\\profile-real-desktop.png"
+  },
+  {
+    "path": "apps/web/artifacts/frontend-profile-20261023/profile-real-sources.png",
+    "restoredOriginalSha256": "6edbb72b74c211b8edde9de6fade0fbb6bc9315a3efcecbad525908b849929cc",
+    "newVerificationSavedTo": "apps\\web\\artifacts\\frontend-overview-http-20261023\\profile-regression\\profile-real-sources.png"
+  },
+  {
+    "path": "apps/web/artifacts/frontend-profile-20261023/profile-real-metrics.png",
+    "restoredOriginalSha256": "e4c1027757ebf7a38d2c2942f612e85be413da9e4d23c5470dc2180436f171c0",
+    "newVerificationSavedTo": "apps\\web\\artifacts\\frontend-overview-http-20261023\\profile-regression\\profile-real-metrics.png"
+  },
+  {
+    "path": "apps/web/artifacts/frontend-profile-20261023/profile-real-mobile.png",
+    "restoredOriginalSha256": "4cda445542ee0b56d5d8848b10549c643f5c74fad1ac0adccbda64988315584d",
+    "newVerificationSavedTo": "apps\\web\\artifacts\\frontend-overview-http-20261023\\profile-regression\\profile-real-mobile.png"
+  },
+  {
+    "path": "apps/web/artifacts/frontend-profile-20261023/profile-real-mobile-missing.png",
+    "restoredOriginalSha256": "78e65fd26d3634e76d8a65cafadbb3dd1fd5490383cce1571f675ecc61db9d64",
+    "newVerificationSavedTo": "apps\\web\\artifacts\\frontend-overview-http-20261023\\profile-regression\\profile-real-mobile-missing.png"
+  },
+  {
+    "path": "apps/web/artifacts/frontend-profile-20261023/profiles-real.json",
+    "restoredOriginalSha256": "6d1cad4c9b82aab6fa8e7350cc3b3337ac953be93a8326eab86e80e7d5e67588",
+    "newVerificationSavedTo": "apps\\web\\artifacts\\frontend-overview-http-20261023\\profile-regression\\profiles-real.json"
+  },
+  {
+    "path": "apps/web/artifacts/frontend-profile-20261023/profile-browser.json",
+    "restoredOriginalSha256": "1d3da735ed4b19c1ba17f2fccc6b72ab02b1e911e28389c63d5a91dca234d903",
+    "newVerificationSavedTo": "apps\\web\\artifacts\\frontend-overview-http-20261023\\profile-regression\\profile-browser.json"
+  }
+]

@@ -1,3 +1,105 @@
+# 当前后端改造：第二切片经营概览（2026-10-23）
+
+- 目录/版本：D:/llm/Commerce Lens-backend，backend/payment-api，HEAD=a250286+第一切片/既有并行未提交成果。本轮不改前端、不自动提交或合并、不调用真实外部模型、不重启其他会话正在使用的服务。
+- 实现：POST /api/datasets/:version/overview。共享HTTP1.2.0新增OverviewRequestSchema（原QuerySpec别名）、OverviewSchema/DTO；三主指标同范围比较，选中指标30天日趋势、两期实际窗口、每点单日analysisQuery、分组贡献、最多5条规则变化及独立可用性。昨天对上周同日，7天对前7天，30天对前30天；无效窗口拒绝，不静默改写。
+- 计算：AnalyticsService.overviewData在RLS只读repeatable-read内核查字典/版本/时钟/水位；一个固定日聚合模板分别聚合支付/退款后union，最多再查一个现有分组模板，不逐日查询。quality.ts与现有analyze共用质量门禁，rules.ts与报告共用原规则阈值，compare/contributions/safeInteger继续复用。缺源按指标、缺分区按日期返回null及原因，真实零保留0，基期零变化率null。概览不创建run/证据/报告，API即使为agent也不调用模型。
+- 本轮最终验证：Node24.22.1、真实PostgreSQL18.4；npm run typecheck、npm run contracts:examples、npm test（100/100，0跳过，255.93秒）、npm run build均通过。包含6个概览集成、共用规则边界单元和概况/概览样例schema校验；三指标所有30日两期独立SQL oracle、1/7/30窗口、筛选贡献与守恒、小数据手工值、权限/注入、跨期退款、缺源/分区/null与真实零、零基期、5条上限与精确下钻、acceptance/portfolio同QuerySpec保存报告一致。agent模式通过隔离loopback真实HTTP验证概览0模型/0新run；实际SQL调用核对为一个daily模板+一个分组模板。旧1.0.0/1.1.0报告读取/导出及现有回归均在本次100项内通过。
+- 证据：.local/overview-test.log保存本轮完整npm test日志；.local/overview-verification.json保存结果和36个当前变更源码/契约/测试SHA256，收尾再次核对无漂移。packages/contracts/examples/overview.json由本轮实际HTTP/PostgreSQL产生，不是手填目标值。所有本轮临时数据库已关闭。未运行前端浏览器、冻结评测、规模性能或真实模型，不能借用历史成绩。
+- 本轮文件：analytics/overview.ts、quality.ts、rules.ts（新），service.ts/query-compiler.ts；apps/api/src/app.ts；agent/report.ts仅抽出原规则调用并保留既有analysis-v3改动；contracts/src/http.ts、examples/schemas.json、overview.json（新）、重新生成payment-flow/dataset-profile；scripts/contract-examples.ts；tests/integration/overview.test.ts、tests/unit/rules.test.ts（新）、tests/unit/contracts.test.ts；API-CONTRACT、ADR0005及进度。未改package/lock、迁移、冻结标签、QuerySpec index.ts或前端。
+- 归属保护：第一切片文件归此前本后端会话；repository/runs、agent预算/pi/model-context/report的promptVersion、Windows启动器/窗口测试、预算replay与fixtures、Agent优化文档/结果仍是其他会话未提交成果。本轮未reset/clean或打包提交全部修改。验证对象是共享工作树，包含既有成果。
+- 接口同步清单：packages/contracts/src/http.ts；packages/contracts/examples/schemas.json、overview.json、dataset-profile.json、payment-flow.json；docs/API-CONTRACT.md及docs/decisions/0005-deterministic-overview.md。接入操作说明见docs/OVERVIEW-HANDOFF.md。本轮无提交ID，不能按整分支盲目cherry-pick。前端同步示例用于理解/校验，不能当页面实际数据。
+- 前端接入：本轮最终后端门禁通过后即可开始，无需等真实模型。只读发现原目录前端已存在页面与profile adapter的进行中改动，进度文档可能滞后；未触碰。前端须核对实际共享schema而非仅版本号，新增overview adapter；选择版本显式传createSession，同QuerySpec作为confirmedIntent，已有报告追问保留原session。当前use-workspace的新提交仍读取catalog.version，需前端会话修正版本传递，避免预览版本与分析版本不一致。
+- 准确停留点/下一步：第二切片后端已完成，本轮门禁通过，现在即可开始前端接入，无需等待真实模型或新增后端模块。前端结合尚未验收，需由前端会话按OVERVIEW-HANDOFF与API-CONTRACT接概况→概览→analysisQuery进入工作台，真实浏览器验证切指标/时间/筛选、缺源/零基期、异步请求隔离与数值一致。没有自动同步主目录文件或自动重启服务；后端文件未提交，HEAD仍为a250286。
+
+本轮复现命令（后端目录；测试仅faux/离线重放，不调用真实外部模型）：
+
+```powershell
+$env:PATH = (Join-Path (Get-Location) '.tools/node-v24.22.1-win-x64') + ';' + $env:PATH
+npm run typecheck
+npm run contracts:examples
+npm test
+npm run build
+```
+
+---
+
+以下第一切片与并行会话为历史记录，第二切片状态以本节为准。
+
+# 当前后端改造：第一切片（2026-10-23）
+
+- 职责/版本：D:/llm/Commerce Lens-backend，backend/payment-api，开始 HEAD=a250286。本轮负责连续数据与数据概况，不改前端；当前验证禁止真实外部模型调用，历史单次授权不延续到本轮。第二切片经营概览尚未实现。
+- 已实现：db/seeds/portfolio.ts 新增固定 seed=20261022 的 portfolio-90d-v1，时钟2026-10-22，2026-07-24至2026-10-21连续90天；订单按流量/转化权重分配，折扣/库存/退款变化写入明细，无报表答案/场景标签。新发布的 published_at/checked_at 使用真实执行时间，已有不可变版本与报告不改写。api:dev保留旧版本并在新版本不存在时发布，默认选新版本；db:seed原入口仍保留，可显式传 portfolio-90d-v1。
+- 已实现：GET /api/datasets/:version/profile；路由先授权版本，profile.ts 使用只读 repeatable-read、绑定参数与 RLS 统计当前店铺。返回实际行数、记录日期、六源覆盖/缺失/检查时间、三指标定义与筛选字典；区分 publishedAt、businessClock、排他 completeThrough 和 lastCompleteDate，不将发布称作同步。
+- 已实现：共享 HTTP 1.2.0，保留原QuerySpec及run/report/evidence字段，provenance接受1.0.0/1.1.0/1.2.0。真实HTTP/PostgreSQL概况样例实际统计100000订单、200000订单行、4795退款事件、259200小时库存、1080渠道大区日流量、2活动、30 SKU、3渠道、4大区。源缺失与真实零、交易实际日期与覆盖声明分别表达。
+- 本轮验证（HEAD=a250286+本轮与既有未提交改动，Node24.22.1、真实PostgreSQL18.4）：npm run typecheck、npm test（92/92，0跳过，215.90秒）、npm run contracts:examples通过。全套后最后一项旧报告用例从schema检查增强为真实DB保存/HTTP读取/JSON与Markdown导出/不可变保护；随后再次typecheck、最终专项6/6（0跳过，39.07秒）、npm run build通过。覆盖重复生成hash、重复发布拒绝、90天连续与粒度、三指标1/7/30天独立SQL oracle、贡献守恒、RLS、缺分区/缺源、零事件与1.0.0/1.1.0旧报告。完整全套未在增强测试后再次运行，不将增强用例混入此前92项结果。实际样例经过真实PostgreSQL与Fastify inject路由/schema，不将其称为新路由socket浏览器验收。外部模型调用0。
+- 验证快照：.local/portfolio-first-slice-verification.json记录本轮命令结果、实际样例数量、HEAD与当前发生变化的源码/契约/测试SHA256；包含他会话共享源码，只用于标识验证状态，不表示归属本轮。所有本轮临时数据库已正常关闭。未改长期运行的API或其数据库。
+- 未提交归属：开始已存在他会话的repository.ts/runs.ts、agent/budget.ts/pi.ts/model-context.ts、local-postgres.ts/Windows控制台测试、预算重放测试与fixtures、BACKEND-QUICKSTART、进度和评测结果。本轮期间又检测到他会话report.ts、report-export.test.ts、AGENT-BUDGET-OPTIMIZATION.md与进度更新。均保留；本轮未提交，未自动合并或重启正在使用的3000/55432服务。完整测试结果属于共享工作树，不冒称Agent优化为本轮成果。
+- 本轮文件：db/seeds/portfolio.ts、db/seeds/generate.ts、packages/analytics/src/profile.ts、apps/api/src/app.ts、packages/contracts/src/http.ts及examples三文件、scripts/seed.ts/api-dev.ts/contract-examples.ts、tests/integration/portfolio-profile.test.ts；signals.test.ts仅将新报告版本预期改为1.2.0。文档为API-CONTRACT、本文及PROGRESS顶部本轮说明；未改package/lock、迁移、冻结案例/标签或前端页面。
+- 前端同步（文件清单，尚无本轮提交ID）：packages/contracts/src/http.ts、packages/contracts/examples/schemas.json、dataset-profile.json、payment-flow.json、docs/API-CONTRACT.md；index.ts无变化。前端须连接运行本分支新代码的API；现有长期运行实例未由本轮重启，不能当作新路由已上线。
+- 停留点/下一步：第一切片已完成并验证；本轮全部改动仍未提交，以免将并行成果混入提交。下一轮单独实施经营概览：先补HTTP1.2.0概览schema/说明/真实样例，再实现原QuerySpec三指标、实际比较窗口、有限模板日趋势与共用规则；概览不创建run/报告、不调用模型。概览与报告数值一致性、日趋势/缺日期/规则共享/最多5项变化尚待第二切片验收。规模性能、冻结评测、真实模型和新路由socket/浏览器未在本轮重跑。
+
+本轮复现命令（工作目录为本后端目录，测试不调用真实外部模型）：
+
+```powershell
+$env:PATH = (Join-Path (Get-Location) '.tools/node-v24.22.1-win-x64') + ';' + $env:PATH
+npm run typecheck
+npm run contracts:examples
+npm test
+node --import tsx --test --test-concurrency=1 --test-timeout=60000 tests/integration/portfolio-profile.test.ts
+npm run build
+```
+
+---
+
+以下保留其他会话与历史记录，不作为本轮验收结论。
+
+# 当前预算收尾优化已验证（2026-10-23）
+
+预算收尾切片已完成。精简模型工具返回/保留完整证据入库导出；规范化发送上下文保守计数并预留submit_report；预算紧张转为仅提交，保留一次修订；原始BUDGET_EXCEEDED传播到run/SSE/partial报告与Markdown；前端顶部显示部分成功原因；真实模型验收必须completed且trace含成功submit_report。新Agent promptVersion=analysis-v3；硬限制未提高，原真实记录与zip未修改，本轮外部模型调用0。
+
+验证：HTTP1.1.0隔离基线a250286+14个预算/既有Windows启动文件，typecheck、86/86测试（真实PostgreSQL，0跳过，176.93秒）、build通过，前后指纹一致且本轮文件hash与共享源一致。原共享全套83/86（1个Markdown文本转义断言已修复、2个来自并行1.2.0契约切换）；另一路profile/数据集升级未覆盖、未并入本轮结论。最新前端typecheck、9/9单元、28/28浏览器、build通过。完整日志/指纹见apps/web/artifacts/agent-budget-optimization-20261023。
+
+离线验证：重放原四条真实响应+明确模拟最终提交，真实SQL工具执行后completed，5请求/8工具/6完整证据；第五轮输入上界24476降到4068。原真实样本依旧partial；不冒称修复后真实DeepSeek完成或成本下降。后续真实completed验收仍待独立运行。本轮服务未新启动，避免与并行数据集/profile工作冲突；隔离数据库均正常关闭。
+
+详细交付：D:/llm/Commerce Lens-backend/docs/AGENT-BUDGET-OPTIMIZATION.md；主目录apps/web/artifacts/agent-budget-optimization-20261023/OPTIMIZATION.md、backend-verification.json、frontend-verification.json、offline-replay-result.json和partial-budget-banner.png。
+
+---
+
+此前历史记录：
+
+前记录如下。
+
+# 当前真实 DeepSeek 单次执行快照（2026-10-23）
+
+用户在本会话明确授权“跑一次真实链路，并把所有过程数据内容保存后分析”。已完成1个真实浏览器业务run，DeepSeek模型ID deepseek-flash，4次真实HTTP200，7次SQL工具调用、6证据、27SSE事件，13539 tokens，估算成本USD0.002206008，run耗时7.10秒。原始run=57b2f2ae-90d1-4592-8f78-32fef1439701，report=d5b35706-6f6e-4c70-b8c7-3dc058b74c1a，session=ebad3e3a-4a5d-489d-970c-371bea3f1977。业务终态partial，agentExecuted=true，不能称完整Agent成功。
+
+独立SQL/手工预期7000000/10000000分、A−4000000/B+1000000通过，报告/导出/6证据/27事件与数据库一致，schema及证据hash校验通过。离线响应重放（外网0）定位：累计13539实际tokens后，第5轮输入的UTF8字节上界24476超过剩余16461预算，在发请求前BUDGET_EXCEEDED；Agent错误最终归并为REPORT_NOT_SUBMITTED。保存partial及原始错误，不改不可变报告、不抬预算、不重跑第二次真实run。
+
+完整证据目录D:/llm/Commerce Lens/apps/web/artifacts/real-agent-20261023/；ANALYSIS.md有调用时序、数值/解释审核和建议，model-transport.jsonl保存全部4次请求body/原始响应流（无Authorization），sql-queries.jsonl保存791条录制期SQL模板/参数/结果（含启动/目录/状态，非791业务聚合），source-data.json保存实际来源表与提取SQL，database-snapshot.json、events.sse、model-calls.json、timeline.json、report.json/md、截图、Playwright trace、offline-replay.json、analysis.json和SHA256 manifest.json均保留。已知凭证值扫描通过，未输出/保存Key或连接密码。
+
+本轮前端typecheck、7/7单元、23/23隔离HTTP浏览器、build通过；真实模型浏览器1/1通过表示partial链路被捕获，不代表completed。后端typecheck/build通过；业务源码未改，未重跑完整77项/冻结评测/性能/人工。真实用例在独立playwright.real-agent.config.ts内，默认test:e2e排除real-agent，且需显式COMMERCE_LENS_REAL_AGENT_ONCE=1；不会被普通回归自动付费执行。
+
+现有API已切为agent、signals-v1，前端/真实PostgreSQL继续运行；单次采集器已停止，不再录制后续模型/SQL内容。当前API使用后端.local/real-agent/start.ts（不加载capture.mjs）连接已有55432数据库、监听3000，前端5173。该本地启动器源码已复制进证据包；api:dev对现有数据库会拒绝重复启动，正常使用已有库可用api:start但其默认数据版本可能不同。本次未修改生产启动器。后续优先离线修正工具回传冗余/预算估算和原始错误传播，再另行验收completed；当前用户仅授权一次真实run，不继续自动发起新run。
+
+---
+
+以下为此前历史状态；“禁止真实外部模型”等限制已由本次用户对单次真实运行的明确授权覆盖，不能将历史deterministic记录当作本次结果。
+
+# 当前联调职责快照（2026-10-23）
+
+按用户最新要求已继续验证仅后端数据的前端：前端MockApi/fixture报告/模拟场景/localStorage报告缓存均已删除，浏览器支付后同会话渠道追问带parentRunId完成真实第二轮；保存/刷新均来自API。Fastify运行模式显式 deterministic，真实PostgreSQL18.4执行，SQL oracle和持久化DTO核对一致，agentExecuted=false、modelRequests=0。后端分支a250286及Windows隐藏控制台未提交修复未变；本轮无后端代码修改。详细证据在原目录D:/llm/Commerce Lens/docs/INTEGRATION-RESULTS.md及apps/web/artifacts/http-only/，未合并分支。
+
+原目录前端始终有快照保护。样式视觉保留，用户最新要求下已实际删除产品mock功能和缓存机制；旧测试源原文归档在主目录apps/web/tests/archive/20261022，当前HTTP生命周期与交互测试23条通过。最终前端7单元、23浏览器、typecheck、真实Chromium支付+渠道追问、独立SQL oracle、build通过；外网/模型请求0。
+
+本轮必要额外修复：用户报告大量postgres.exe窗口，进程树确认一套数据库的worker窗口。旧detached父进程无控制台，PostgreSQL后代自行分配可见控制台；先ShowWindow隐藏本次8窗口保持ready，再增加真实SQL连接/窗口检查回归，修复前visiblePostgresWindows=11失败。scripts/local-postgres.ts改用PowerShell7 Start-Process -WindowStyle Hidden启动独立隐藏控制台，子进程继承，保留Ctrl+C隔离/启动日志/readiness/pg_ctl有序关闭。新增scripts/check-postgres-windows.ps1与tests/integration/windows-console.test.ts，BACKEND-QUICKSTART补充说明。无业务/依赖/DTO/迁移变化，未同步旧主目录M1启动器。
+
+修复后专项2/2，最终后端npm run typecheck、npm test（77/77，0跳过，154.68秒）、npm run build通过；这是a250286加本轮未提交启动器/测试的结果。实际API启动后Ctrl+C退出，3000/55432均释放，再次启动后真实浏览器及SQL oracle通过，最后窗口检查0。启动时间较旧实现增加，未测性能基准；不将其当模型性能。原性能/冻结评测/真实模型/B/C/人工/视频未重跑。
+
+后端改动仍为上一轮 Windows隐藏控制台修复/quickstart/窗口回归，本轮未增加后端源码变更；前端最新源状态在原目录未提交。当前Vite5173、deterministic API3000及DB55432运行，可见PostgreSQL窗口0，health/ready正常。后续按授权继续真实验收澄清、SKU排除、退款/件数及服务失败恢复；不得调用外部模型。详见主目录INTEGRATION-RESULTS.md。
+
+---
+
+以下为原交接历史快照。
 # Commerce Lens 后端交接快照
 
 更新：2026-10-22，Asia/Shanghai。新会话先读根 AGENTS.md；本文保留当前有效状态，历史细节查 Git，不继续追加聊天流水账。

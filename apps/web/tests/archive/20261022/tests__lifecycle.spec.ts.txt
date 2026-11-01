@@ -1,0 +1,387 @@
+import { test, expect, type Page } from "@playwright/test";
+import flow from "../../../packages/contracts/examples/payment-flow.json" with { type: "json" };
+import type { RunEvent } from "../src/lib/types";
+
+async function harness(page: Page) {
+  await page.route("**/lifecycle-harness", (route) => route.fulfill({
+    contentType: "text/html",
+    body: '<div id="root"></div><script type="module" src="/tests/lifecycle-harness.tsx"></script>',
+  }));
+  await page.goto("/lifecycle-harness");
+  await expect.poll(() => page.evaluate(() => Boolean(window.lifecycle?.current?.report))).toBe(true);
+}
+
+async function ready(page: Page) {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "华东销售，哪里变了？" })).toBeVisible();
+}
+
+async function hold(page: Page) {
+  await page.getByLabel("快速选择演示场景", { exact: true }).selectOption("hold");
+}
+
+async function send(page: Page) {
+  const input = page.getByRole("textbox", { name: "输入分析问题" });
+  await input.fill("昨天华东支付金额为什么下降？");
+  await input.press("Enter");
+  await expect(page.locator(".running-state")).toBeVisible();
+}
+
+test("运行中浏览器后退不能绕过会话切换锁", async ({ page }) => {
+  await ready(page);
+  await hold(page);
+  await page.evaluate(() => history.pushState(null, "", location.href));
+  await send(page);
+  const runId = new URL(page.url()).searchParams.get("run");
+  await page.goBack();
+  await expect(page.locator(".running-state")).toBeVisible();
+  await expect(page.locator(".report")).toHaveCount(0);
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeDisabled();
+  expect(new URL(page.url()).searchParams.get("run")).toBe(runId);
+  await expect(page.getByRole("button", { name: "历史报告", exact: true })).toBeDisabled();
+  await expect(page.locator(".recent button").first()).toBeDisabled();
+  await expect(page.getByRole("button", { name: "新建分析", exact: true }).first()).toBeDisabled();
+  await page.getByRole("button", { name: "工作区与设置", exact: true }).click();
+  await expect(page.getByRole("radio", { name: "本地 HTTP API", exact: false })).toBeDisabled();
+  await page.getByRole("button", { name: "完成", exact: true }).click();
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await page.getByRole("button", { name: "新建分析", exact: true }).first().click();
+  await expect(page.locator(".welcome-state")).toBeVisible();
+});
+
+test("空闲时后退到无 report/run 的地址，恢复新建页面", async ({ page }) => {
+  await ready(page);
+  await page.evaluate(() => {
+    history.pushState(null, "", "/");
+    history.pushState(null, "", "?report=demo-other-report");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  await page.goBack();
+  await expect(page.locator(".welcome-state")).toBeVisible();
+  await expect(page.locator(".report")).toHaveCount(0);
+});
+
+test("切换到其他会话再后退，按 run URL 恢复取消终态", async ({ page }) => {
+  await ready(page);
+  await hold(page);
+  await send(page);
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  const runId = new URL(page.url()).searchParams.get("run");
+  await page.evaluate(() => {
+    history.pushState(null, "", "?report=demo-channel-report");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+  await expect(page.getByRole("heading", { name: "变化来自哪些渠道", exact: true })).toBeVisible();
+  await page.goBack();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await expect(page.locator(".report")).toHaveCount(0);
+  expect(new URL(page.url()).searchParams.get("run")).toBe(runId);
+});
+
+test("重连旧快照晚于取消返回时，不能复活任务或留下运行锁", async ({ page }) => {
+  await harness(page);
+  await page.evaluate(() => window.lifecycle.current!.setScenario("hold"));
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.scenario)).toBe("hold");
+  await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    await workspace.submit("昨天华东支付金额为什么下降？");
+  });
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.run?.id)).toBeTruthy();
+  await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    const api = workspace.api;
+    const oldSnapshot = await api.run(workspace.run!.id);
+    api.run = () => new Promise((resolve) => {
+      window.lifecycle.release = () => resolve(oldSnapshot);
+    });
+    void workspace.reconnect();
+    await workspace.cancel();
+  });
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.run?.status)).toBe("cancelled");
+  await page.evaluate(() => window.lifecycle.release!());
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.run?.status)).toBe("cancelled");
+  expect(await page.evaluate(() => window.lifecycle.current?.busy)).toBe(false);
+});
+
+test("同一帧重复 Enter/发送只建一条任务，成功后不恢复重复草稿", async ({ page }) => {
+  await ready(page);
+  await page.getByRole("textbox", { name: "输入分析问题" }).fill("昨天华东支付金额为什么下降？");
+  await page.evaluate(() => {
+    const input = document.querySelector("textarea")!;
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    document.querySelector<HTMLButtonElement>('[aria-label="发送问题"]')!.click();
+  });
+  await expect(page.locator(".report")).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toHaveValue("");
+  const runs = await page.evaluate(() => JSON.parse(localStorage.getItem("commerce-lens:demo-runs:v1")!));
+  expect(runs).toHaveLength(1);
+  expect(runs[0].status).toBe("completed");
+});
+
+test("提交同帧新建分析不能清除运行锁或遗留孤立任务", async ({ page }) => {
+  await ready(page);
+  await hold(page);
+  await page.getByRole("textbox", { name: "输入分析问题" }).fill("昨天华东支付金额为什么下降？");
+  await page.evaluate(() => {
+    document.querySelector("textarea")!.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    document.querySelector<HTMLButtonElement>(".new-analysis")!.click();
+  });
+  await expect(page.locator(".running-state")).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeDisabled();
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+});
+
+test("同一调用帧重复提交只调用一次 adapter.start", async ({ page }) => {
+  await harness(page);
+  const result = await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    const originalStart = workspace.api.start.bind(workspace.api);
+    let calls = 0;
+    workspace.api.start = async (...args) => { calls++; return originalStart(...args); };
+    const accepted = await Promise.all(Array.from({ length: 4 }, () => workspace.submit("昨天华东支付金额为什么下降？")));
+    return { calls, accepted };
+  });
+  expect(result.calls).toBe(1);
+  expect(result.accepted).toEqual([true, false, false, false]);
+});
+
+test("活动任务卸载只断开订阅，后台完成不改 URL，重新挂载可恢复", async ({ page }) => {
+  await harness(page);
+  await page.clock.install();
+  const started = await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    const subscribe = workspace.api.subscribe.bind(workspace.api);
+    const cancel = workspace.api.cancel.bind(workspace.api);
+    let stopped = 0;
+    let cancelled = 0;
+    workspace.api.subscribe = (...args) => {
+      const stop = subscribe(...args);
+      return () => { stopped++; stop(); };
+    };
+    workspace.api.cancel = (...args) => { cancelled++; return cancel(...args); };
+    await workspace.submit("昨天华东支付金额为什么下降？");
+    const url = location.href;
+    window.lifecycle.unmount();
+    return { stopped, cancelled, url };
+  });
+  expect(started.stopped).toBe(1);
+  expect(started.cancelled).toBe(0);
+  await page.clock.runFor(1_900);
+  expect(page.url()).toBe(started.url);
+  expect(await page.evaluate(() => window.lifecycle.current)).toBeUndefined();
+  await page.evaluate(() => window.lifecycle.mount());
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.report?.comparison.current)).toBe(7_000_000);
+  expect(await page.evaluate(() => window.lifecycle.current?.busy)).toBe(false);
+});
+
+test("创建会话等待时卸载，不再启动任务或改写下一页面", async ({ page }) => {
+  await harness(page);
+  await page.evaluate(() => window.lifecycle.current!.fresh());
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.report)).toBe(null);
+  const stopped = await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    workspace.api.createSession = () => new Promise((resolve) => { window.lifecycle.release = () => resolve("late-session"); });
+    let starts = 0;
+    const start = workspace.api.start.bind(workspace.api);
+    workspace.api.start = (...args) => { starts++; return start(...args); };
+    const pending = workspace.submit("昨天华东支付金额为什么下降？");
+    window.lifecycle.unmount();
+    window.lifecycle.release!();
+    const accepted = await pending;
+    return { starts, accepted, url: location.href };
+  });
+  expect(stopped.starts).toBe(0);
+  expect(stopped.accepted).toBe(false);
+  expect(new URL(stopped.url).searchParams.get("run")).toBe(null);
+});
+
+test("任务创建请求等待时卸载，晚到响应不订阅、不取消、不改 URL", async ({ page }) => {
+  await harness(page);
+  await page.clock.install();
+  const result = await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    const api = workspace.api;
+    const originalStart = api.start.bind(api);
+    let notify!: () => void;
+    const reached = new Promise<void>((resolve) => { notify = resolve; });
+    let runId = "";
+    let subscriptions = 0;
+    let cancellations = 0;
+    const subscribe = api.subscribe.bind(api);
+    const cancel = api.cancel.bind(api);
+    api.subscribe = (...args) => { subscriptions++; return subscribe(...args); };
+    api.cancel = (...args) => { cancellations++; return cancel(...args); };
+    api.start = async (...args) => {
+      const run = await originalStart(...args);
+      runId = run.id;
+      notify();
+      return new Promise((resolve) => { window.lifecycle.release = () => resolve(run); });
+    };
+    const pending = workspace.submit("昨天华东支付金额为什么下降？");
+    await reached;
+    const url = location.href;
+    window.lifecycle.unmount();
+    window.lifecycle.release!();
+    const accepted = await pending;
+    return { accepted, subscriptions, cancellations, url, runId };
+  });
+  expect(result.accepted).toBe(false);
+  expect(result.subscriptions).toBe(0);
+  expect(result.cancellations).toBe(0);
+  await page.clock.runFor(1_900);
+  expect(page.url()).toBe(result.url);
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("commerce-lens:demo-runs:v1")!));
+  expect(saved.find((run: { id: string }) => run.id === result.runId).status).toBe("completed");
+});
+
+test("离开整个页面再返回，原模拟任务明确中断且可新建", async ({ page }) => {
+  await ready(page);
+  await hold(page);
+  await send(page);
+  const runUrl = page.url();
+  await page.goto("about:blank");
+  await page.goto(runUrl);
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+  await page.getByRole("button", { name: "新建分析", exact: true }).first().click();
+  expect(new URL(page.url()).searchParams.has("run")).toBe(false);
+});
+
+test("旧会话报告晚到不能覆盖新会话及其查询范围", async ({ page }) => {
+  await harness(page);
+  await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    const report = workspace.api.report.bind(workspace.api);
+    workspace.api.report = async (id) => {
+      const result = await report(id);
+      if (id !== "demo-channel-report") return result;
+      return new Promise((resolve) => { window.lifecycle.release = () => resolve(result); });
+    };
+    void workspace.openReport("demo-channel-report");
+    await workspace.openReport("demo-other-report");
+  });
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.report?.id)).toBe("demo-other-report");
+  await page.evaluate(() => window.lifecycle.release!());
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.query.filters.skuId)).toEqual(["oats"]);
+  expect(new URL(page.url()).searchParams.get("report")).toBe("demo-other-report");
+  expect(await page.evaluate(() => window.lifecycle.current?.loading)).toBe(false);
+});
+
+for (const action of ["switch", "unmount"] as const) {
+  test(`导出等待时 ${action}，旧结果不能触发下载或改写新页面`, async ({ page }) => {
+    await harness(page);
+    await page.evaluate(async (next) => {
+      const workspace = window.lifecycle.current!;
+      window.lifecycle.downloads = 0;
+      HTMLAnchorElement.prototype.click = () => { window.lifecycle.downloads!++; };
+      let resolveExport!: () => void;
+      workspace.api.export = () => new Promise((resolve) => {
+        resolveExport = () => resolve(new Blob(["delayed export"]));
+      });
+      const pending = workspace.download("json");
+      window.lifecycle.release = async () => { resolveExport(); await pending; };
+      if (next === "switch") await workspace.openReport("demo-other-report");
+      else window.lifecycle.unmount();
+    }, action);
+    await page.evaluate(async () => { await window.lifecycle.release!(); });
+    expect(await page.evaluate(() => window.lifecycle.downloads)).toBe(0);
+    if (action === "switch") {
+      expect(new URL(page.url()).searchParams.get("report")).toBe("demo-other-report");
+      expect(await page.evaluate(() => window.lifecycle.current?.exporting)).toBe(false);
+    }
+  });
+}
+
+test("HTTP 取消订阅后，同一网络块的后续事件不再回调", async ({ page }) => {
+  await ready(page);
+  await page.route("**/api/runs/example-run/events", (route) => route.fulfill({
+    contentType: "text/event-stream",
+    body: flow.events.map((event) => `id: ${event.seq}\ndata: ${JSON.stringify(event)}\n\n`).join(""),
+  }));
+  const seen = await page.evaluate(async () => {
+    const path = "/src/lib/api.ts";
+    const { createApi } = await import(path);
+    const events: string[] = [];
+    await new Promise<void>((resolve) => {
+      const stop = createApi("http").subscribe("example-run", 0, (event: RunEvent) => {
+        events.push(event.type);
+        stop();
+        queueMicrotask(resolve);
+      }, () => undefined, () => undefined);
+    });
+    return events;
+  });
+  expect(seen).toEqual(["run.started"]);
+});
+
+test("HTTP EOF 查询终态等待中断订阅，晚到 snapshot 不再回调", async ({ page }) => {
+  await harness(page);
+  await page.route("**/api/runs/example-run/events", (route) => route.fulfill({
+    contentType: "text/event-stream", body: "",
+  }));
+  const snapshots = await page.evaluate(async (result) => {
+    const path = "/src/lib/api.ts";
+    const { createApi } = await import(path);
+    const api = createApi("http");
+    let release!: () => void;
+    let reached!: () => void;
+    const waiting = new Promise<void>((resolve) => { reached = resolve; });
+    api.run = () => new Promise((resolve) => {
+      reached();
+      release = () => resolve(result);
+    });
+    let calls = 0;
+    const stop = api.subscribe("example-run", 0, () => undefined, () => undefined, () => { calls++; });
+    await waiting;
+    stop();
+    release();
+    // 两轮微任务让延迟 run() 和 stream() 依次完成。
+    await Promise.resolve();
+    await Promise.resolve();
+    return calls;
+  }, flow.run);
+  expect(snapshots).toBe(0);
+});
+
+test("断开订阅后重连查询已完成任务，恢复报告与 URL 并释放锁", async ({ page }) => {
+  await harness(page);
+  await page.clock.install();
+  await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    workspace.api.subscribe = () => () => undefined;
+    await workspace.submit("昨天华东支付金额为什么下降？");
+  });
+  await page.clock.runFor(1_900);
+  expect(await page.evaluate(() => window.lifecycle.current?.busy)).toBe(true);
+  await page.evaluate(async () => { await window.lifecycle.current!.reconnect(); });
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.run?.status)).toBe("completed");
+  expect(await page.evaluate(() => window.lifecycle.current?.report?.comparison.current)).toBe(7_000_000);
+  expect(await page.evaluate(() => window.lifecycle.current?.busy)).toBe(false);
+  expect(new URL(page.url()).searchParams.has("report")).toBe(true);
+  expect(new URL(page.url()).searchParams.has("run")).toBe(false);
+});
+
+test("切换后旧导出失败不污染新页面，新导出锁不受旧 finally 影响", async ({ page }) => {
+  await harness(page);
+  await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    let rejectOld!: (error: Error) => void;
+    workspace.api.export = () => new Promise((_resolve, reject) => { rejectOld = reject; });
+    const oldExport = workspace.download("json");
+    await workspace.openReport("demo-other-report");
+    window.lifecycle.release = async () => { rejectOld(new Error("旧导出失败")); await oldExport; };
+  });
+  await expect.poll(() => page.evaluate(() => window.lifecycle.current?.report?.id)).toBe("demo-other-report");
+  await page.evaluate(async () => {
+    const workspace = window.lifecycle.current!;
+    workspace.api.export = () => new Promise(() => undefined);
+    void workspace.download("json");
+    await window.lifecycle.release!();
+  });
+  expect(await page.evaluate(() => window.lifecycle.current?.error)).toBe(null);
+  expect(await page.evaluate(() => window.lifecycle.current?.exporting)).toBe(true);
+});

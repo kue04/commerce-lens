@@ -1,0 +1,503 @@
+import {
+  compare,
+  contributions,
+} from "../../../../packages/analytics/src/compare";
+import type {
+  Dataset,
+  Catalog,
+  QuerySpec,
+  Report,
+  Scenario,
+  TraceEntry,
+} from "./types";
+import { metricValue, rate } from "./format";
+import { parseQuerySpec } from "../../../../packages/contracts/src/index";
+
+export const dataset: Dataset = {
+  version: "web-demo-v1",
+  storeName: "禾味食品旗舰店",
+  synthetic: true,
+  businessClock: "2026-10-22",
+  updatedAt: "2026-10-22T00:30:00+08:00",
+  timezone: "Asia/Shanghai",
+};
+export const catalog: Catalog = {
+  ...dataset,
+  contractVersion: "1.1.0",
+  executionMode: "deterministic",
+  supportedMetrics: ["paid_amount"],
+  datasets: [dataset],
+};
+export const baseQuery: QuerySpec = {
+  metricId: "paid_amount",
+  currentWindow: { startDate: "2026-10-21", endDateExclusive: "2026-10-22" },
+  baselineWindow: { startDate: "2026-10-14", endDateExclusive: "2026-10-15" },
+  filters: { regionId: ["east"] },
+  groupBy: "sku",
+  topN: 10,
+};
+// 唯一演示源：金额以分存储；SKU × 渠道汇总记录。报告、图表、表格、导出均由它派生。
+export const demoRows = [
+  {
+    sku: "nuts",
+    label: "坚果礼盒",
+    channel: "mall",
+    channelLabel: "品牌商城",
+    paid_amount: [4_500_000, 1_500_000],
+    refund_amount: [50_000, 120_000],
+    sold_units: [450, 150],
+  },
+  {
+    sku: "nuts",
+    label: "坚果礼盒",
+    channel: "live",
+    channelLabel: "直播渠道",
+    paid_amount: [1_500_000, 500_000],
+    refund_amount: [20_000, 60_000],
+    sold_units: [150, 50],
+  },
+  {
+    sku: "oats",
+    label: "燕麦脆",
+    channel: "mall",
+    channelLabel: "品牌商城",
+    paid_amount: [2_500_000, 3_000_000],
+    refund_amount: [20_000, 15_000],
+    sold_units: [500, 600],
+  },
+  {
+    sku: "oats",
+    label: "燕麦脆",
+    channel: "live",
+    channelLabel: "直播渠道",
+    paid_amount: [1_500_000, 2_000_000],
+    refund_amount: [10_000, 5_000],
+    sold_units: [300, 400],
+  },
+] as const;
+export const inventory = Array.from({ length: 25 }, (_, hour) => ({
+  hour,
+  stock:
+    hour < 2
+      ? 200
+      : hour < 8
+        ? 170
+        : hour < 18
+          ? 0
+          : hour === 18
+            ? 90
+            : hour === 19
+              ? 145
+              : 200,
+}));
+const zeroHours = inventory
+  .slice(0, 24)
+  .filter((row) => row.stock === 0).length;
+
+export const scenarios: { value: Scenario; label: string }[] = [
+  { value: "success", label: "完整报告" },
+  { value: "clarification", label: "需要澄清" },
+  { value: "empty", label: "空数据" },
+  { value: "partial", label: "部分成功" },
+  { value: "insufficient", label: "核心数据不足" },
+  { value: "error", label: "接口错误" },
+  { value: "disconnect", label: "断线与恢复" },
+  { value: "hold", label: "持续运行 / 取消" },
+];
+export const phases = ["口径确认", "数据检查", "商品拆解", "信号核查"];
+
+export const demoProducts = [
+  ...new Map(
+    demoRows.map((row) => [row.sku, { id: row.sku, label: row.label }]),
+  ).values(),
+];
+export const demoChannels = [
+  ...new Map(
+    demoRows.map((row) => [
+      row.channel,
+      { id: row.channel, label: row.channelLabel },
+    ]),
+  ).values(),
+];
+
+export function demoScopeLabels(query: QuerySpec) {
+  return {
+    products:
+      query.filters.skuId
+        ?.map((id) => demoProducts.find((p) => p.id === id)?.label ?? id)
+        .join("、") ?? "全部商品",
+    channel:
+      query.filters.channelId
+        ?.map((id) => demoChannels.find((c) => c.id === id)?.label ?? id)
+        .join("、") ?? "全渠道",
+  };
+}
+
+export function mockClarificationReason(question: string): string | null {
+  if (/退款|销量|件数|利润|毛利|转化率|客单价|订单数|GMV/i.test(question))
+    return "当前模拟数据仅开放支付金额，请确认是否按支付金额分析。";
+  if (/华南|华北|西南|全国|今天|前天|本周|上个月|本月|最近/.test(question))
+    return "当前演示仅覆盖华东、2026-10-21 对比上周同日，请确认这一范围。";
+  if (/^(销售|分析一下|看看)[？?。\s]*$/.test(question))
+    return "请先确认分析指标、日期与商品范围。";
+  if (!/支付|销售|金额|商品|渠道|坚果|燕麦|品牌商城|直播/.test(question))
+    return "这个问题不在当前固定演示范围内。可确认支付金额范围，或改问商品、渠道的支付金额变化。";
+  return null;
+}
+
+export function validateDemoQuery(input: QuerySpec): QuerySpec {
+  const query = parseQuerySpec(input);
+  if (
+    query.metricId !== "paid_amount" ||
+    query.currentWindow.startDate !== baseQuery.currentWindow.startDate ||
+    query.currentWindow.endDateExclusive !==
+      baseQuery.currentWindow.endDateExclusive ||
+    query.baselineWindow.startDate !== baseQuery.baselineWindow.startDate ||
+    query.baselineWindow.endDateExclusive !==
+      baseQuery.baselineWindow.endDateExclusive ||
+    query.filters.regionId?.length !== 1 ||
+    query.filters.regionId[0] !== "east" ||
+    !["sku", "channel"].includes(query.groupBy) ||
+    query.filters.skuId?.some((id) => !demoProducts.some((p) => p.id === id)) ||
+    query.filters.channelId?.some(
+      (id) => !demoChannels.some((c) => c.id === id),
+    )
+  ) {
+    throw new Error(
+      "所选范围超出当前模拟数据覆盖，请选择华东固定日期、已有商品与渠道。",
+    );
+  }
+  return query;
+}
+
+export function queryForQuestion(
+  question: string,
+  previous?: QuerySpec,
+): QuerySpec {
+  const query = structuredClone(previous ?? baseQuery);
+  query.metricId = "paid_amount";
+  if (/按渠道|渠道.*拆解|哪些渠道/.test(question)) query.groupBy = "channel";
+  if (/按商品|商品.*拆解/.test(question)) query.groupBy = "sku";
+  if (/排除坚果|其他商品/.test(question)) query.filters.skuId = ["oats"];
+  else if (/排除燕麦/.test(question)) query.filters.skuId = ["nuts"];
+  else if (/只看坚果|仅看坚果/.test(question)) query.filters.skuId = ["nuts"];
+  else if (/只看燕麦|仅看燕麦/.test(question)) query.filters.skuId = ["oats"];
+  if (/全部商品|所有商品/.test(question)) delete query.filters.skuId;
+  if (/只看品牌商城|仅看品牌商城/.test(question))
+    query.filters.channelId = ["mall"];
+  if (/只看直播|仅看直播/.test(question)) query.filters.channelId = ["live"];
+  if (/全渠道|所有渠道/.test(question)) delete query.filters.channelId;
+  return query;
+}
+
+export function makeReport(
+  question: string,
+  sessionId: string,
+  runId: string,
+  scenario: Scenario = "success",
+  inputQuery = baseQuery,
+): Report {
+  const query = validateDemoQuery(inputQuery);
+  const metric = "paid_amount";
+  query.metricId = metric;
+  const metricLabel = "支付金额";
+  const unit = "fen";
+  const source =
+    scenario === "empty"
+      ? []
+      : demoRows.filter(
+          (row) =>
+            (!query.filters.skuId || query.filters.skuId.includes(row.sku)) &&
+            (!query.filters.channelId ||
+              query.filters.channelId.includes(row.channel)),
+        );
+  const baseline = source.reduce((sum, row) => sum + row[metric][0], 0);
+  const current = source.reduce((sum, row) => sum + row[metric][1], 0);
+  const comparison = compare(current, baseline);
+  const groups = new Map<
+    string,
+    { key: string; label: string; current: number; baseline: number }
+  >();
+  for (const row of source) {
+    const key = query.groupBy === "channel" ? row.channel : row.sku;
+    const item = groups.get(key) ?? {
+      key,
+      label: query.groupBy === "channel" ? row.channelLabel : row.label,
+      current: 0,
+      baseline: 0,
+    };
+    item.current += row[metric][1];
+    item.baseline += row[metric][0];
+    groups.set(key, item);
+  }
+  const contributors = contributions(
+    [...groups.values()],
+    comparison,
+    query.topN ?? 10,
+  ).map((row) => ({ ...row, label: groups.get(row.key)?.label ?? row.key }));
+  const labels = demoScopeLabels(query);
+  const scopeLabel = `华东 · ${labels.products}`;
+  const prefix = `${runId}-`;
+  const ids = ["e01", "e02", "e03"].map((code) => `${prefix}${code}`);
+  const partial = scenario === "partial";
+  const createdAt = dataset.updatedAt;
+  const trace: TraceEntry[] = [
+    {
+      name: "check_data_quality",
+      params: `${query.currentWindow.startDate} · 华东 · 核心数据覆盖`,
+      status: "success",
+      durationMs: 24,
+    },
+    {
+      name: "compare_metric",
+      params: `${metric} · ${labels.products} · ${labels.channel} · 上周同日`,
+      status: "success",
+      durationMs: 36,
+      evidenceId: ids[0],
+    },
+    {
+      name: "decompose_change",
+      params: `groupBy=${query.groupBy} · topN=10`,
+      status: "success",
+      durationMs: 42,
+      evidenceId: ids[1],
+    },
+    {
+      name: "inspect_inventory",
+      params: "坚果礼盒 · 华东 · 小时快照",
+      status: partial ? "missing" : "success",
+      durationMs: 18,
+      evidenceId: ids[2],
+    },
+  ];
+  const defaultPaid =
+    metric === "paid_amount" &&
+    !query.filters.skuId &&
+    !query.filters.channelId &&
+    query.groupBy !== "channel" &&
+    source.length > 0;
+  const report: Report = {
+    id: `${runId}-report`,
+    runId,
+    sessionId,
+    question,
+    query,
+    scopeLabel,
+    metricLabel,
+    unit,
+    dataset,
+    status: partial ? "partial" : "completed",
+    title:
+      query.filters.skuId?.length === 1
+        ? query.filters.skuId[0] === "oats" && /排除|其他商品/.test(question)
+          ? "排除坚果礼盒，表现如何？"
+          : `${labels.products}，销售表现如何？`
+        : query.filters.channelId
+          ? `${labels.channel}，销售表现如何？`
+          : "华东销售，哪里变了？",
+    comparison,
+    contributors,
+    finding: !source.length
+      ? "所选范围内没有交易记录，无法进行商品贡献分析。"
+      : defaultPaid
+        ? "坚果礼盒是主要下降来源，燕麦脆的增长抵消了部分降幅。"
+        : `${scopeLabel}，${metricLabel}${comparison.delta! < 0 ? "减少" : "增加"} ${metricValue(Math.abs(comparison.delta!), unit)}。`,
+    facts: source.length
+      ? [
+          {
+            templateId: "comparison",
+            valueRefs: [
+              "comparison.baseline",
+              "comparison.current",
+              "comparison.delta",
+            ],
+            text: `${metricLabel}由 ${metricValue(baseline, unit)} 变为 ${metricValue(current, unit)}，变化 ${rate(comparison.changeRate, true)}。`,
+            evidenceIds: [ids[0]!],
+          },
+          {
+            templateId: "contribution",
+            valueRefs: contributors.map((_, i) => `contributors.${i}.delta`),
+            text:
+              contributors
+                .map(
+                  (row) => `${row.label}${metricValue(row.delta, unit, true)}`,
+                )
+                .join("；") + "。",
+            evidenceIds: [ids[1]!],
+          },
+        ]
+      : [],
+    hypotheses:
+      source.some((row) => row.sku === "nuts") &&
+      comparison.delta! < 0 &&
+      !query.filters.channelId &&
+      !partial
+        ? [
+            {
+              text: `坚果礼盒出现 ${zeroHours} 小时零库存，与销售下降同日出现，可能影响销售。`,
+              evidenceIds: [ids[2]!],
+              missingEvidence: ["SKU 级访问与曝光", "补货时点明细"],
+            },
+          ]
+        : [],
+    unknowns: partial
+      ? [
+          "库存快照缺失，无法核查缺货解释。",
+          "缺少商品访问与曝光数据，无法区分供应不足和需求变化。",
+        ]
+      : [
+          "缺少 SKU 级曝光、商品访问和精确补货记录，无法确认因果关系或估算损失。",
+        ],
+    nextActions:
+      source.some((row) => row.sku === "nuts") && comparison.delta! < 0
+        ? ["查看补货与缺货时段", "补充商品访问与曝光数据"]
+        : ["核实本期与基期的商品或渠道订单明细", "补充商品访问与曝光数据"],
+    limitations: [
+      "合成演示数据；前端 mock，未执行 Agent。",
+      "贡献表示金额变化分解，负值与超过 100% 的份额均可能出现。",
+      "库存与销售的时间重叠不等同于因果关系。",
+    ],
+    evidences: [
+      {
+        id: ids[0]!,
+        runId,
+        resultHash: "fixture-comparison-v1",
+        queryTemplateIds: ["fixture:compare"],
+        code: "E01",
+        title: `${metricLabel} · 周期比较`,
+        kind: "comparison",
+        status: "success",
+        metricId: metric,
+        query,
+        source: "支付订单行汇总（前端 fixture）",
+        datasetVersion: dataset.version,
+        metricVersion: "v1",
+        createdAt,
+        coverage: 1,
+        baselineCoverage: 1,
+        columns: ["本期（分）", "基期（分）", "变化（分）", "变化率"],
+        rows: [[current, baseline, comparison.delta, comparison.changeRate]],
+        comparison,
+        note: "金额以分计算；本证据为固定演示数据，未访问数据库。",
+      },
+      {
+        id: ids[1]!,
+        runId,
+        resultHash: "fixture-contribution-v1",
+        queryTemplateIds: ["fixture:decompose"],
+        code: "E02",
+        title: `${query.groupBy === "channel" ? "渠道" : "商品"} · 变化贡献`,
+        kind: "contribution",
+        status: "success",
+        metricId: metric,
+        query,
+        source: "同口径分组汇总（前端 fixture）",
+        datasetVersion: dataset.version,
+        metricVersion: "v1",
+        createdAt,
+        coverage: 1,
+        baselineCoverage: 1,
+        columns: ["分组", "本期（分）", "基期（分）", "变化（分）", "贡献份额"],
+        rows: contributors.map((row) => [
+          row.label,
+          row.current,
+          row.baseline,
+          row.delta,
+          row.share,
+        ]),
+        contributors,
+        note: "各分组变化之和等于总变化；增长项可以抵消下降。",
+      },
+      {
+        id: ids[2]!,
+        runId,
+        resultHash: "fixture-inventory-v1",
+        queryTemplateIds: ["fixture:inventory"],
+        code: "E03",
+        title: "坚果礼盒 · 库存核查",
+        kind: "inventory",
+        status: partial ? "missing" : "success",
+        metricId: metric,
+        query: { ...query, filters: { regionId: ["east"], skuId: ["nuts"] } },
+        source: "库存小时快照（前端 fixture）",
+        datasetVersion: dataset.version,
+        metricVersion: "v1",
+        createdAt,
+        coverage: partial ? null : 1,
+        baselineCoverage: 1,
+        columns: ["小时", "库存量（件）", "基期库存量（件）"],
+        rows: partial ? [] : inventory.map((row) => [row.hour, row.stock, 200]),
+        note: partial
+          ? "库存快照缺失，不等于库存为零，不能据此判断缺货。"
+          : "库存与销售变化存在时间重叠，仍需补充流量证据；库存为商品×地区观测，不区分渠道。",
+      },
+    ],
+    trace,
+    createdAt,
+    provenance: {
+      contractVersion: "1.0.0",
+      executionMode: "deterministic",
+      agentExecuted: false,
+      modelId: null,
+      promptVersion: "frontend-fixture-v1",
+      metricVersion: "v1",
+      datasetVersion: dataset.version,
+    },
+  };
+  if (!source.some((row) => row.sku === "nuts")) {
+    report.evidences = report.evidences.filter((e) => e.kind !== "inventory");
+    report.trace = report.trace.filter((t) => t.name !== "inspect_inventory");
+    if (partial)
+      report.unknowns[0] = "商品访问和曝光观测缺失，无法完整解释变化。";
+  }
+  return report;
+}
+
+export function exportReport(report: Report, format: "md" | "json"): Blob {
+  if (format === "json")
+    return new Blob([JSON.stringify(report, null, 2)], {
+      type: "application/json;charset=utf-8",
+    });
+  const content = [
+    `# ${report.title}`,
+    "> 合成演示数据 · 前端 mock / 未执行 Agent",
+    "",
+    report.question,
+    `${report.scopeLabel} · ${demoScopeLabels(report.query).channel} | ${report.query.currentWindow.startDate} | 对比 ${report.query.baselineWindow.startDate}`,
+    `本期：${metricValue(report.comparison.current, report.unit)}；基期：${metricValue(report.comparison.baseline, report.unit)}；变化：${metricValue(report.comparison.delta, report.unit, true)}（${rate(report.comparison.changeRate, true)}）`,
+    "",
+    "## 核心发现",
+    report.finding,
+    "",
+    "## 已确认事实",
+    ...report.facts.map(
+      (f) =>
+        `- ${f.text} [${f.evidenceIds.map((id) => report.evidences.find((e) => e.id === id)?.code).join(", ")}]`,
+    ),
+    "",
+    "## 候选解释",
+    ...report.hypotheses.map((f) => `- ${f.text}`),
+    "",
+    "## 缺失信息",
+    ...report.unknowns.map((s) => `- ${s}`),
+    "",
+    "## 建议核实",
+    ...report.nextActions.map((s) => `- ${s}`),
+    "",
+    "## 证据",
+    ...report.evidences.flatMap((e) => [
+      `### ${e.code} ${e.title}`,
+      `来源：${e.source}；版本：${e.datasetVersion}；状态：${e.status}`,
+      `| ${e.columns.join(" | ")} |`,
+      `| ${e.columns.map(() => "---").join(" | ")} |`,
+      ...e.rows.map((row) => `| ${row.map((v) => v ?? "缺失").join(" | ")} |`),
+      e.note,
+    ]),
+    "",
+    "## 限制",
+    ...report.limitations.map((s) => `- ${s}`),
+    `数据水位：${report.dataset.updatedAt}`,
+    `时区：${report.dataset.timezone}`,
+  ].join("\n");
+  return new Blob([content], { type: "text/markdown;charset=utf-8" });
+}

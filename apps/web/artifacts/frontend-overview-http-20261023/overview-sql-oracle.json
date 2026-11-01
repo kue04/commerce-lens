@@ -1,0 +1,1573 @@
+{
+  "serverVersion": "18.4",
+  "readOnly": true,
+  "before": {
+    "counts": {
+      "sessions": 12,
+      "runs": 15,
+      "reports": 15,
+      "events": 374,
+      "evidences": 75
+    },
+    "snapshot": {
+      "datasets": "cb0743a60b2c6b660174f8629804797a"
+    }
+  },
+  "after": {
+    "counts": {
+      "sessions": 12,
+      "runs": 15,
+      "reports": 15,
+      "events": 374,
+      "evidences": 75
+    },
+    "snapshot": {
+      "datasets": "cb0743a60b2c6b660174f8629804797a"
+    }
+  },
+  "cardChecks": 69,
+  "dailyChecks": 690,
+  "changeChecks": 30,
+  "sql": {
+    "paymentSql": "SELECT (o.paid_at AT TIME ZONE 'Asia/Shanghai')::date::text AS day,\n  sum(CASE WHEN $5::text[] IS NULL THEN o.paid_amount_cents ELSE\n    (SELECT coalesce(sum(i.paid_amount_cents),0) FROM business.order_items i\n      WHERE i.dataset_version=o.dataset_version AND i.store_id=o.store_id AND i.order_id=o.order_id AND i.sku_id=ANY($5)) END)::text AS amount,\n  sum((SELECT coalesce(sum(i.quantity),0) FROM business.order_items i\n    WHERE i.dataset_version=o.dataset_version AND i.store_id=o.store_id AND i.order_id=o.order_id AND ($5::text[] IS NULL OR i.sku_id=ANY($5))))::text AS units\n  FROM business.orders o WHERE o.dataset_version=$1 AND o.store_id=$2 AND o.payment_status='succeeded'\n  AND ($3::text[] IS NULL OR o.channel_id=ANY($3)) AND ($4::text[] IS NULL OR o.region_id=ANY($4)) GROUP BY 1 ORDER BY 1",
+    "refundSql": "SELECT (r.succeeded_at AT TIME ZONE 'Asia/Shanghai')::date::text AS day, sum(r.refund_amount_cents)::text AS amount\n  FROM business.refund_events r JOIN business.order_items i USING(dataset_version,store_id,order_item_id)\n  JOIN business.orders o USING(dataset_version,store_id,order_id)\n  WHERE r.dataset_version=$1 AND r.store_id=$2 AND r.status='succeeded'\n  AND ($3::text[] IS NULL OR o.channel_id=ANY($3)) AND ($4::text[] IS NULL OR o.region_id=ANY($4))\n  AND ($5::text[] IS NULL OR i.sku_id=ANY($5)) GROUP BY 1 ORDER BY 1",
+    "watermarkSql": "SELECT source,coverage_start::text,complete_through::text,missing_partitions::text[] FROM business.source_watermarks WHERE dataset_version=$1 AND store_id=$2 ORDER BY source"
+  },
+  "sources": [
+    {
+      "args": [
+        "signals-v1",
+        "store-demo",
+        null,
+        null,
+        null
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "10000000",
+          "units": "100"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "12345",
+          "units": "1"
+        },
+        {
+          "day": "2026-10-21",
+          "amount": "7000000",
+          "units": "70"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "inventory",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "promotion",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "traffic",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    },
+    {
+      "args": [
+        "signals-v1",
+        "store-demo",
+        null,
+        null,
+        [
+          "A"
+        ]
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "6000000",
+          "units": "60"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "0",
+          "units": "0"
+        },
+        {
+          "day": "2026-10-21",
+          "amount": "2000000",
+          "units": "20"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "inventory",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "promotion",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "traffic",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    },
+    {
+      "args": [
+        "signals-v1",
+        "store-demo",
+        [
+          "douyin"
+        ],
+        null,
+        null
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "10000000",
+          "units": "100"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "12345",
+          "units": "1"
+        },
+        {
+          "day": "2026-10-21",
+          "amount": "7000000",
+          "units": "70"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "inventory",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "promotion",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "traffic",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    },
+    {
+      "args": [
+        "signals-v1",
+        "store-demo",
+        [
+          "douyin"
+        ],
+        null,
+        [
+          "A"
+        ]
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "6000000",
+          "units": "60"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "0",
+          "units": "0"
+        },
+        {
+          "day": "2026-10-21",
+          "amount": "2000000",
+          "units": "20"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "inventory",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "promotion",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "traffic",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    },
+    {
+      "args": [
+        "signals-v1",
+        "store-demo",
+        [
+          "douyin"
+        ],
+        [
+          "east"
+        ],
+        null
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "10000000",
+          "units": "100"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "12345",
+          "units": "1"
+        },
+        {
+          "day": "2026-10-21",
+          "amount": "7000000",
+          "units": "70"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "inventory",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "promotion",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "traffic",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    },
+    {
+      "args": [
+        "signals-v1",
+        "store-demo",
+        [
+          "douyin"
+        ],
+        [
+          "east"
+        ],
+        [
+          "A"
+        ]
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "6000000",
+          "units": "60"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "0",
+          "units": "0"
+        },
+        {
+          "day": "2026-10-21",
+          "amount": "2000000",
+          "units": "20"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "inventory",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "promotion",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "traffic",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    },
+    {
+      "args": [
+        "scenario-S08-v1",
+        "store-demo",
+        null,
+        null,
+        null
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "10000000",
+          "units": "100"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "12345",
+          "units": "1"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-21",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    },
+    {
+      "args": [
+        "scenario-S10-v1",
+        "store-demo",
+        null,
+        null,
+        null
+      ],
+      "payments": [
+        {
+          "day": "2026-10-14",
+          "amount": "10000000",
+          "units": "100"
+        },
+        {
+          "day": "2026-10-20",
+          "amount": "12345",
+          "units": "1"
+        },
+        {
+          "day": "2026-10-21",
+          "amount": "10000000",
+          "units": "100"
+        }
+      ],
+      "refunds": [
+        {
+          "day": "2026-10-21",
+          "amount": "300000"
+        }
+      ],
+      "watermarks": [
+        {
+          "source": "order_items",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "orders",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        },
+        {
+          "source": "refund_events",
+          "coverage_start": "2026-07-24",
+          "complete_through": "2026-10-22",
+          "missing_partitions": []
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "refund_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "sold_units",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-15",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-08",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7012345,
+          "baseline": 10000000,
+          "delta": -2987655,
+          "changeRate": -0.2987655
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 71,
+          "baseline": 100,
+          "delta": -29,
+          "changeRate": -0.29
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "refund_amount",
+        "currentWindow": {
+          "startDate": "2026-10-15",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-08",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7012345,
+          "baseline": 10000000,
+          "delta": -2987655,
+          "changeRate": -0.2987655
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 71,
+          "baseline": 100,
+          "delta": -29,
+          "changeRate": -0.29
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "sold_units",
+        "currentWindow": {
+          "startDate": "2026-10-15",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-08",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7012345,
+          "baseline": 10000000,
+          "delta": -2987655,
+          "changeRate": -0.2987655
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 71,
+          "baseline": 100,
+          "delta": -29,
+          "changeRate": -0.29
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-15",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-08",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7012345,
+          "baseline": 10000000,
+          "delta": -2987655,
+          "changeRate": -0.2987655
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 71,
+          "baseline": 100,
+          "delta": -29,
+          "changeRate": -0.29
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-09-22",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-08-23",
+          "endDateExclusive": "2026-09-22"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 17012345,
+          "baseline": 0,
+          "delta": 17012345,
+          "changeRate": null
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 171,
+          "baseline": 0,
+          "delta": 171,
+          "changeRate": null
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "refund_amount",
+        "currentWindow": {
+          "startDate": "2026-09-22",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-08-23",
+          "endDateExclusive": "2026-09-22"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 17012345,
+          "baseline": 0,
+          "delta": 17012345,
+          "changeRate": null
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 171,
+          "baseline": 0,
+          "delta": 171,
+          "changeRate": null
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "sold_units",
+        "currentWindow": {
+          "startDate": "2026-09-22",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-08-23",
+          "endDateExclusive": "2026-09-22"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 17012345,
+          "baseline": 0,
+          "delta": 17012345,
+          "changeRate": null
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 171,
+          "baseline": 0,
+          "delta": 171,
+          "changeRate": null
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-09-22",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-08-23",
+          "endDateExclusive": "2026-09-22"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 17012345,
+          "baseline": 0,
+          "delta": 17012345,
+          "changeRate": null
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 171,
+          "baseline": 0,
+          "delta": 171,
+          "changeRate": null
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {
+          "channelId": [
+            "douyin"
+          ]
+        },
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {
+          "channelId": [
+            "douyin"
+          ],
+          "regionId": [
+            "east"
+          ]
+        },
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {
+          "channelId": [
+            "douyin"
+          ],
+          "regionId": [
+            "east"
+          ],
+          "skuId": [
+            "A"
+          ]
+        },
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 2000000,
+          "baseline": 6000000,
+          "delta": -4000000,
+          "changeRate": -0.6666666666666666
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 20,
+          "baseline": 60,
+          "delta": -40,
+          "changeRate": -0.6666666666666666
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {
+          "channelId": [
+            "douyin"
+          ],
+          "regionId": [
+            "east"
+          ],
+          "skuId": [
+            "A"
+          ]
+        },
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 2000000,
+          "baseline": 6000000,
+          "delta": -4000000,
+          "changeRate": -0.6666666666666666
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 20,
+          "baseline": 60,
+          "delta": -40,
+          "changeRate": -0.6666666666666666
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "scenario-S08-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": null,
+          "baseline": 10000000,
+          "delta": null,
+          "changeRate": null
+        },
+        {
+          "metricId": "refund_amount",
+          "current": null,
+          "baseline": 0,
+          "delta": null,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": null,
+          "baseline": 100,
+          "delta": null,
+          "changeRate": null
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "scenario-S10-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 10000000,
+          "baseline": 10000000,
+          "delta": 0,
+          "changeRate": 0
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 100,
+          "baseline": 100,
+          "delta": 0,
+          "changeRate": 0
+        }
+      ],
+      "changes": 0
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    },
+    {
+      "version": "signals-v1",
+      "request": {
+        "metricId": "paid_amount",
+        "currentWindow": {
+          "startDate": "2026-10-21",
+          "endDateExclusive": "2026-10-22"
+        },
+        "baselineWindow": {
+          "startDate": "2026-10-14",
+          "endDateExclusive": "2026-10-15"
+        },
+        "filters": {},
+        "groupBy": "sku",
+        "topN": 10
+      },
+      "cardComparisons": [
+        {
+          "metricId": "paid_amount",
+          "current": 7000000,
+          "baseline": 10000000,
+          "delta": -3000000,
+          "changeRate": -0.3
+        },
+        {
+          "metricId": "refund_amount",
+          "current": 300000,
+          "baseline": 0,
+          "delta": 300000,
+          "changeRate": null
+        },
+        {
+          "metricId": "sold_units",
+          "current": 70,
+          "baseline": 100,
+          "delta": -30,
+          "changeRate": -0.3
+        }
+      ],
+      "changes": 2
+    }
+  ],
+  "manual": {
+    "paid": [
+      7000000,
+      10000000
+    ],
+    "refunds": [
+      300000,
+      0
+    ],
+    "units": [
+      70,
+      100
+    ],
+    "contributionA": [
+      -4000000,
+      1.3333333333333333
+    ],
+    "contributionB": [
+      1000000,
+      -0.3333333333333333
+    ]
+  }
+}

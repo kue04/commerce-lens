@@ -1,0 +1,240 @@
+{
+  "sourceRunId": "57b2f2ae-90d1-4592-8f78-32fef1439701",
+  "mode": "Four recorded responses; final response in tests is explicitly synthetic, no network",
+  "responses": [
+    {
+      "content": "{\"kind\":\"analysis\",\"query\":{\"metricId\":\"paid_amount\",\"currentWindow\":{\"startDate\":\"2026-10-21\",\"endDateExclusive\":\"2026-10-22\"},\"baselineWindow\":{\"startDate\":\"2026-10-14\",\"endDateExclusive\":\"2026-10-15\"},\"filters\":{\"regionId\":[\"east\"]},\"groupBy\":\"sku\",\"topN\":10}}",
+      "stopReason": "stop",
+      "toolCalls": [],
+      "usage": {
+        "prompt_tokens": 751,
+        "completion_tokens": 88,
+        "total_tokens": 839,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 239
+      }
+    },
+    {
+      "content": "我会先检查数据质量，然后比较并分解变化。",
+      "stopReason": "toolUse",
+      "toolCalls": [
+        {
+          "name": "check_data_quality",
+          "arguments": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-21",
+              "endDateExclusive": "2026-10-22"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-14",
+              "endDateExclusive": "2026-10-15"
+            },
+            "filters": {
+              "regionId": [
+                "east"
+              ]
+            },
+            "groupBy": "sku",
+            "topN": 10
+          }
+        },
+        {
+          "name": "compare_metric",
+          "arguments": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-21",
+              "endDateExclusive": "2026-10-22"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-14",
+              "endDateExclusive": "2026-10-15"
+            },
+            "filters": {
+              "regionId": [
+                "east"
+              ]
+            },
+            "groupBy": "sku",
+            "topN": 10
+          }
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 2925,
+        "completion_tokens": 369,
+        "total_tokens": 3294,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688
+        },
+        "prompt_cache_hit_tokens": 2688,
+        "prompt_cache_miss_tokens": 237
+      }
+    },
+    {
+      "content": "数据覆盖完整。支付金额从 10,000,000 分降至 7,000,000 分（-30%）。现在按 SKU 分解。",
+      "stopReason": "toolUse",
+      "toolCalls": [
+        {
+          "name": "decompose_change",
+          "arguments": {
+            "metricId": "paid_amount",
+            "currentWindow": {
+              "startDate": "2026-10-21",
+              "endDateExclusive": "2026-10-22"
+            },
+            "baselineWindow": {
+              "startDate": "2026-10-14",
+              "endDateExclusive": "2026-10-15"
+            },
+            "filters": {
+              "regionId": [
+                "east"
+              ]
+            },
+            "groupBy": "sku",
+            "topN": 10
+          }
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 3853,
+        "completion_tokens": 219,
+        "total_tokens": 4072,
+        "prompt_tokens_details": {
+          "cached_tokens": 3200
+        },
+        "prompt_cache_hit_tokens": 3200,
+        "prompt_cache_miss_tokens": 653
+      }
+    },
+    {
+      "content": "SKU A 是主要拖累项（-4,000,000 分），SKU B 部分抵消（+1,000,000 分）。现在检查 SKU A 的信号。",
+      "stopReason": "toolUse",
+      "toolCalls": [
+        {
+          "name": "inspect_signals",
+          "arguments": {
+            "signalType": "inventory",
+            "query": {
+              "metricId": "paid_amount",
+              "currentWindow": {
+                "startDate": "2026-10-21",
+                "endDateExclusive": "2026-10-22"
+              },
+              "baselineWindow": {
+                "startDate": "2026-10-14",
+                "endDateExclusive": "2026-10-15"
+              },
+              "filters": {
+                "regionId": [
+                  "east"
+                ],
+                "skuId": [
+                  "A"
+                ]
+              },
+              "groupBy": "sku",
+              "topN": 10
+            }
+          }
+        },
+        {
+          "name": "inspect_signals",
+          "arguments": {
+            "signalType": "traffic",
+            "query": {
+              "metricId": "paid_amount",
+              "currentWindow": {
+                "startDate": "2026-10-21",
+                "endDateExclusive": "2026-10-22"
+              },
+              "baselineWindow": {
+                "startDate": "2026-10-14",
+                "endDateExclusive": "2026-10-15"
+              },
+              "filters": {
+                "regionId": [
+                  "east"
+                ],
+                "skuId": [
+                  "A"
+                ]
+              },
+              "groupBy": "sku",
+              "topN": 10
+            }
+          }
+        },
+        {
+          "name": "inspect_signals",
+          "arguments": {
+            "signalType": "promotion",
+            "query": {
+              "metricId": "paid_amount",
+              "currentWindow": {
+                "startDate": "2026-10-21",
+                "endDateExclusive": "2026-10-22"
+              },
+              "baselineWindow": {
+                "startDate": "2026-10-14",
+                "endDateExclusive": "2026-10-15"
+              },
+              "filters": {
+                "regionId": [
+                  "east"
+                ],
+                "skuId": [
+                  "A"
+                ]
+              },
+              "groupBy": "sku",
+              "topN": 10
+            }
+          }
+        },
+        {
+          "name": "inspect_signals",
+          "arguments": {
+            "signalType": "refund_reason",
+            "query": {
+              "metricId": "paid_amount",
+              "currentWindow": {
+                "startDate": "2026-10-21",
+                "endDateExclusive": "2026-10-22"
+              },
+              "baselineWindow": {
+                "startDate": "2026-10-14",
+                "endDateExclusive": "2026-10-15"
+              },
+              "filters": {
+                "regionId": [
+                  "east"
+                ],
+                "skuId": [
+                  "A"
+                ]
+              },
+              "groupBy": "sku",
+              "topN": 10
+            }
+          }
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4685,
+        "completion_tokens": 649,
+        "total_tokens": 5334,
+        "prompt_tokens_details": {
+          "cached_tokens": 3968
+        },
+        "prompt_cache_hit_tokens": 3968,
+        "prompt_cache_miss_tokens": 717
+      }
+    }
+  ]
+}

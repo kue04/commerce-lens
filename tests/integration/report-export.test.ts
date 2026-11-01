@@ -65,7 +65,10 @@ async function exportsMatch(app:Awaited<ReturnType<typeof buildApp>>,report:Repo
     assert.ok(md.body.includes(item.text));for(const id of item.evidenceIds)assert.ok(md.body.includes(id));
   }
   for(const h of report.hypotheses)for(const text of h.missingEvidence)assert.ok(md.body.includes(text));
-  for(const text of [...report.unknowns,...report.nextActions,...report.limitations])assert.ok(md.body.includes(text));
+  // Markdown escapes literal brackets/underscores in error codes. Verify the
+  // readable text as well as the structured JSON blocks above, without stripping content.
+  const readable=md.body.replace(/\\([\\`*_[\]])/g,'$1');
+  for(const text of [...report.unknowns,...report.nextActions,...report.limitations])assert.ok(readable.includes(text));
   assert.ok(md.body.includes(`状态：${report.status}`));assert.ok(md.body.includes(`单位：${report.unit}`));
   assert.match(md.body,/合成数据/);
   return md.body;

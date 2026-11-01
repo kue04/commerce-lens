@@ -1,0 +1,116 @@
+{
+  "createdAt": "2026-10-23T08:11:39.934Z",
+  "purpose": "offline agent budget optimization; no new external model calls",
+  "files": [
+    {
+      "path": "backend-build.log",
+      "bytes": 92,
+      "sha256": "678abab29a3a09df714f70c926184ece4a94a231d25b6834e2e2b86e3e00f2cc"
+    },
+    {
+      "path": "backend-test.log",
+      "bytes": 9060,
+      "sha256": "dde0f51a0a22e5ef3a48cf667a94cc35406918389813b2e5cdcad4e83d6d44f3"
+    },
+    {
+      "path": "backend-typecheck.log",
+      "bytes": 50,
+      "sha256": "cbd62db47c4297e98d1b19f5268565cd02999fb6450253b7d10426c98f4edbae"
+    },
+    {
+      "path": "backend-verification.json",
+      "bytes": 2540,
+      "sha256": "09cec3c0d0ab833487684dad5e95cbf46b1bbd97283aa888347245f1175fd77f"
+    },
+    {
+      "path": "frontend-verification.json",
+      "bytes": 4865,
+      "sha256": "e48c0e576eb0a8ef701ec2301e5710aa5ca2693eec5eaf66079ca98141020d43"
+    },
+    {
+      "path": "offline-replay-result.json",
+      "bytes": 24887,
+      "sha256": "daa468c8458afea8882b53e03bc4f7a2532c89560f8f73c7608eb10ddc11d052"
+    },
+    {
+      "path": "OPTIMIZATION.md",
+      "bytes": 6533,
+      "sha256": "6811ccb35174163586e515c66a7cbef95921e4eafd54d285fc70f5eb4425f837"
+    },
+    {
+      "path": "partial-budget-banner.png",
+      "bytes": 144037,
+      "sha256": "8e599bacda412e26bd472d7120d2a59472c43313bd0558d624ae4bdcdb700132"
+    },
+    {
+      "path": "source/apps__api__src__repository.ts",
+      "bytes": 14709,
+      "sha256": "bb4b7730b01b57db5b2e8f2a94738a7b37409a06a5b8db444c031e30ad67b69e"
+    },
+    {
+      "path": "source/apps__api__src__runs.ts",
+      "bytes": 8961,
+      "sha256": "b13241280034ee51362a939a1b3219868aff8663c99125c09a8e3574ab6ffd55"
+    },
+    {
+      "path": "source/packages__agent__src__budget.ts",
+      "bytes": 2540,
+      "sha256": "5501720d13c9e8831d1a9f3e977fe9fe17a07177a1e7068798608aa223791a9a"
+    },
+    {
+      "path": "source/packages__agent__src__model-context.ts",
+      "bytes": 3207,
+      "sha256": "1961a83733c1e8e23500f2438df3a9516e77f35f78a96b4a7772aeaff06b16a4"
+    },
+    {
+      "path": "source/packages__agent__src__pi.ts",
+      "bytes": 9943,
+      "sha256": "9f334b614608efd9b5cb8b4cfa070b73bc3d92e762f0ac23bcb6cc051ebb2e9f"
+    },
+    {
+      "path": "source/packages__agent__src__report.ts",
+      "bytes": 14846,
+      "sha256": "358e2d146045af3ec05229b7ec3b5ea728f0c0f9d2694bb2b48f6a6536ce8c1a"
+    },
+    {
+      "path": "source/tests__fixtures__agent-budget-20261023.json",
+      "bytes": 6897,
+      "sha256": "0ae58e6593ef1d5bf5d3bbfd6c2c7ef6a880d31bbb2ff7c3c6148f68a1de081c"
+    },
+    {
+      "path": "source/tests__integration__agent-budget-replay.test.ts",
+      "bytes": 9279,
+      "sha256": "fa47d3a395217aa33b7053c6aacf2b27e8bd2cd0a1e681ba37b371bfb7bf0b27"
+    },
+    {
+      "path": "source/tests__unit__model-context.test.ts",
+      "bytes": 2962,
+      "sha256": "626f738b78d36b94f8d1d858461e0432c813860e1eaa470e19ae718a614e7ae6"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 693,
+      "sha256": "964deecfb9b7c4c17f76ff0e358d67619bfe779ae38f32c21ca7c2147e86c9d5"
+    },
+    {
+      "path": "web-build.log",
+      "bytes": 1083,
+      "sha256": "5e30d586d7098594f264982963c20b56c86bec75895740b29550ffc84dc4107a"
+    },
+    {
+      "path": "web-test-e2e.log",
+      "bytes": 4280,
+      "sha256": "cdffa03a8117fc3a3d0222619eb5593dab8e3fba1eb4ffacebce8ec4a74701b7"
+    },
+    {
+      "path": "web-test.log",
+      "bytes": 909,
+      "sha256": "4f5a7272f1a857f738e8eb8a837061490c6af65c4e58bc3bc4d68566392a5ec2"
+    },
+    {
+      "path": "web-typecheck.log",
+      "bytes": 55,
+      "sha256": "b2acfe6dfa100423644cb363da5b4fab6d02a4656800670af16dc51b3f2f4f6c"
+    }
+  ]
+}

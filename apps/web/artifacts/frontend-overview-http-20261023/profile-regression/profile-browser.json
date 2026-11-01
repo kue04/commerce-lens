@@ -1,0 +1,240 @@
+{
+  "catalog": {
+    "version": "signals-v1",
+    "storeName": "禾味食品演示店",
+    "synthetic": true,
+    "businessClock": "2026-10-22",
+    "updatedAt": "2026-10-21T16:00:00.000Z",
+    "timezone": "Asia/Shanghai",
+    "contractVersion": "1.2.0",
+    "executionMode": "deterministic",
+    "supportedMetrics": [
+      "paid_amount",
+      "refund_amount",
+      "sold_units"
+    ],
+    "datasets": [
+      {
+        "version": "acceptance-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S01-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S02-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S03-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S04-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S05-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S06-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S07-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S08-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S09-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S10-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S11-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "scenario-S12-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "version": "signals-v1",
+        "storeName": "禾味食品演示店",
+        "synthetic": true,
+        "businessClock": "2026-10-22",
+        "updatedAt": "2026-10-21T16:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      }
+    ]
+  },
+  "traffic": [
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/datasets/signals-v1/profile",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/datasets/acceptance-v1/profile",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/datasets/acceptance-v1/profile",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/d5b35706-6f6e-4c70-b8c7-3dc058b74c1a",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/sessions?limit=30",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/d5b35706-6f6e-4c70-b8c7-3dc058b74c1a",
+      "status": 200
+    }
+  ],
+  "external": [],
+  "errors": [],
+  "restoredReport": {
+    "id": "d5b35706-6f6e-4c70-b8c7-3dc058b74c1a",
+    "datasetVersion": "signals-v1"
+  },
+  "modelRequestsCreated": 0
+}

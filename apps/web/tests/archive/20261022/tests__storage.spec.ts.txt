@@ -1,0 +1,318 @@
+import { expect, test, type Page } from "@playwright/test";
+import flow from "../../../packages/contracts/examples/payment-flow.json" with { type: "json" };
+
+async function ready(page: Page) {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "华东销售，哪里变了？" })).toBeVisible();
+}
+
+async function hold(page: Page) {
+  await page.getByRole("button", { name: "工作区与设置", exact: true }).click();
+  await page.getByLabel("演示场景", { exact: true }).selectOption("hold");
+  await page.getByRole("button", { name: "完成", exact: true }).click();
+}
+
+async function scopedHold(page: Page) {
+  await ready(page);
+  await hold(page);
+  await page.getByRole("button", { name: "调整分析范围", exact: true }).click();
+  await page.getByLabel("商品范围", { exact: true }).selectOption("nuts");
+  await page.getByLabel("渠道范围", { exact: true }).selectOption("mall");
+  await page.getByRole("button", { name: "按此范围分析", exact: true }).click();
+  await expect(page.locator(".running-state")).toBeVisible();
+}
+
+test("筛选任务的范围快照丢失后禁止静默按全部商品重试", async ({ page }) => {
+  await scopedHold(page);
+  await page.evaluate(() => sessionStorage.removeItem("commerce-lens:run-query:v1"));
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  await expect(page.getByText("原分析范围未能恢复", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "重新分析", exact: true })).toHaveCount(0);
+  await page.screenshot({ path: "artifacts/storage-range-recovery-1440.png", fullPage: true, animations: "disabled" });
+  await page.getByRole("button", { name: "重新确认分析范围", exact: true }).click();
+  await page.getByLabel("商品范围", { exact: true }).selectOption("nuts");
+  await page.getByLabel("渠道范围", { exact: true }).selectOption("mall");
+  await page.getByRole("button", { name: "按此范围分析", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("15,000");
+});
+
+for (const defect of ["json", "null", "schema", "wrong-run", "unsupported-region", "unsupported-date"] as const) {
+  test(`范围快照 ${defect} 时不创建默认范围任务，取消确认仍保持阻止`, async ({ page }) => {
+    await scopedHold(page);
+    await page.evaluate((kind) => {
+      const key = "commerce-lens:run-query:v1";
+      const saved = JSON.parse(sessionStorage.getItem(key)!);
+      if (kind === "wrong-run") saved.runId = "some-other-run";
+      if (kind === "schema") saved.query.topN = "ten";
+      if (kind === "unsupported-region") saved.query.filters.regionId = ["south"];
+      if (kind === "unsupported-date") saved.query.currentWindow.startDate = "2026-10-20";
+      sessionStorage.setItem(key, kind === "json" ? "{invalid" : kind === "null" ? "null" : JSON.stringify(saved));
+    }, defect);
+    await page.reload();
+    await expect(page.getByRole("alert", { name: "分析范围恢复" })).toContainText("原分析范围未能恢复");
+    const before = await page.evaluate(() => JSON.parse(localStorage.getItem("commerce-lens:demo-runs:v1")!).length);
+    const input = page.getByRole("textbox", { name: "输入分析问题" });
+    await input.fill("按商品拆解");
+    await expect(page.getByRole("button", { name: "发送问题", exact: true })).toBeDisabled();
+    await input.press("Enter");
+    await expect(page.locator(".report")).toHaveCount(0);
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("commerce-lens:demo-runs:v1")!).length)).toBe(before);
+    await page.getByRole("button", { name: "重新确认分析范围", exact: true }).click();
+    await page.getByRole("button", { name: "暂不分析", exact: true }).click();
+    await expect(page.getByRole("alert", { name: "分析范围恢复" })).toBeVisible();
+    await page.getByRole("button", { name: "新建分析", exact: true }).first().click();
+    await expect(page.getByRole("alert", { name: "分析范围恢复" })).toHaveCount(0);
+  });
+}
+
+for (const failedKey of ["commerce-lens:demo-runs:v1", "commerce-lens:demo-reports:v1"] as const) {
+  test(`仅 ${failedKey} 写入失败：本页数值正确，刷新按实际保存结果恢复`, async ({ page }) => {
+    await ready(page);
+    await page.evaluate((name) => {
+      const original = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (key, value) {
+        if (this === localStorage && key === name) throw new DOMException("full", "QuotaExceededError");
+        return original.call(this, key, value);
+      };
+    }, failedKey);
+    await page.getByRole("button", { name: "只看其他商品", exact: true }).click();
+    await expect(page.locator(".hero-number")).toContainText("50,000");
+    await expect(page.locator(".change-badge")).toContainText("25.0%");
+    await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地保存失败");
+    await page.reload();
+    if (failedKey.endsWith("demo-reports:v1")) {
+      await expect(page.getByRole("alert")).toContainText("报告不存在");
+      await expect(page.locator(".report")).toHaveCount(0);
+      await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+    } else {
+      await expect(page.locator(".hero-number")).toContainText("50,000");
+      await expect(page.locator(".scope-line")).toContainText("燕麦脆");
+    }
+  });
+}
+
+test("localStorage 被禁用仍能完成、取消和导出，刷新明确报告未能恢复", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "localStorage", { get() { throw new DOMException("blocked", "SecurityError"); } });
+  });
+  await ready(page);
+  await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地存储不可用");
+  await hold(page);
+  const input = page.getByRole("textbox", { name: "输入分析问题" });
+  await input.fill("昨天华东支付金额为什么下降？");
+  await input.press("Enter");
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await page.getByLabel("快速选择演示场景", { exact: true }).selectOption("success");
+  await page.getByRole("button", { name: "重新分析", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("70,000");
+  await page.getByRole("button", { name: "导出报告", exact: true }).click();
+  const downloaded = page.waitForEvent("download");
+  await page.getByRole("button", { name: "JSON 数据", exact: false }).click();
+  const stream = await (await downloaded).createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream!) chunks.push(chunk);
+  const report = JSON.parse(Buffer.concat(chunks).toString());
+  expect(report.comparison).toEqual({ current: 7_000_000, baseline: 10_000_000, delta: -3_000_000, changeRate: -0.3 });
+  expect(report.provenance.agentExecuted).toBe(false);
+  await page.reload();
+  await expect(page.getByRole("alert")).toContainText("报告不存在");
+  await expect(page.locator(".report")).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test("sessionStorage 被禁用时，本页范围不丢失，刷新后必须重新确认", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "sessionStorage", { get() { throw new DOMException("blocked", "SecurityError"); } });
+  });
+  await scopedHold(page);
+  await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地保存失败");
+  await expect(page.getByRole("button", { name: "调整分析范围", exact: true })).toContainText("品牌商城");
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  await expect(page.getByRole("alert", { name: "分析范围恢复" })).toBeVisible();
+  await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地存储不可用");
+  await expect(page.getByRole("button", { name: "重新分析", exact: true })).toHaveCount(0);
+});
+
+test("有效与损坏报告混存时保留有效报告、范围和数值", async ({ page }) => {
+  await ready(page);
+  await page.getByRole("button", { name: "只看其他商品", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  await page.evaluate(() => {
+    const key = "commerce-lens:demo-reports:v1";
+    const reports = JSON.parse(localStorage.getItem(key)!);
+    const invalid = structuredClone(reports.at(-1));
+    invalid.id = "damaged-report";
+    invalid.comparison.delta = 1;
+    localStorage.setItem(key, JSON.stringify([...reports, invalid]));
+  });
+  await page.reload();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  await expect(page.locator(".scope-line")).toContainText("燕麦脆");
+  await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地记录损坏");
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("commerce-lens:demo-reports:v1")!).some((r: { id: string }) => r.id === "damaged-report"))).toBe(true);
+});
+
+for (const fault of ["no-report-id", "foreign-report-id"] as const) {
+  test(`已完成运行的 ${fault} 损坏时显式报错，不显示旧成功报告或留锁`, async ({ page }) => {
+    await ready(page);
+    await page.getByRole("button", { name: "只看其他商品", exact: true }).click();
+    await expect(page.locator(".hero-number")).toContainText("50,000");
+    const runId = await page.evaluate((kind) => {
+      const key = "commerce-lens:demo-runs:v1";
+      const runs = JSON.parse(localStorage.getItem(key)!);
+      const run = runs.at(-1);
+      if (kind === "no-report-id") delete run.reportId;
+      else run.reportId = "demo-main-report";
+      localStorage.setItem(key, JSON.stringify(runs));
+      return run.id as string;
+    }, fault);
+    await page.goto(`/?run=${encodeURIComponent(runId)}`);
+    await expect(page.getByRole("alert")).toContainText("本地任务记录不完整");
+    await expect(page.locator(".report")).toHaveCount(0);
+    await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+  });
+}
+
+test("运行快照写入失败时显式告警，刷新不回退旧成功报告", async ({ page }) => {
+  await ready(page);
+  await hold(page);
+  await page.evaluate(() => {
+    const original = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (this === localStorage && key === "commerce-lens:demo-runs:v1")
+        throw new DOMException("quota reached", "QuotaExceededError");
+      return original.call(this, key, value);
+    };
+  });
+  const input = page.getByRole("textbox", { name: "输入分析问题" });
+  await input.fill("昨天华东支付金额为什么下降？");
+  await input.press("Enter");
+  await expect(page.locator(".running-state")).toBeVisible();
+  await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地保存失败");
+  await page.reload();
+  await expect(page.getByRole("alert")).toContainText("任务不存在");
+  await expect(page.locator(".report")).toHaveCount(0);
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+});
+
+for (const key of ["commerce-lens:demo-runs:v1", "commerce-lens:demo-reports:v1"] as const) {
+  test(`${key} 损坏时不崩溃，保留内置报告并提示损坏`, async ({ page }) => {
+    await ready(page);
+    await page.evaluate((name) => localStorage.setItem(name, "{broken-json"), key);
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "华东销售，哪里变了？" })).toBeVisible();
+    await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地记录损坏");
+  });
+  test(`${key} 顶层结构损坏时提示并保留原存储内容`, async ({ page }) => {
+    await ready(page);
+    await page.evaluate((name) => localStorage.setItem(name, '{"unexpected":[]}'), key);
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "华东销售，哪里变了？" })).toBeVisible();
+    await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地记录损坏");
+    expect(await page.evaluate((name) => localStorage.getItem(name), key)).toBe('{"unexpected":[]}');
+  });
+}
+
+test("有效和损坏 Run 混存时，取消记录保持取消且可重新分析", async ({ page }) => {
+  await scopedHold(page);
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await page.evaluate(() => {
+    const key = "commerce-lens:demo-runs:v1";
+    const runs = JSON.parse(localStorage.getItem(key)!);
+    localStorage.setItem(key, JSON.stringify([...runs, { id: "broken-run", status: "running" }]));
+  });
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地记录损坏");
+  await page.getByRole("button", { name: "重新分析", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("15,000");
+  await expect(page.locator(".metric-secondary").first()).toContainText("45,000");
+});
+
+for (const target of ["run", "report"] as const) {
+  test("显式 " + target + " 链接的存储损坏时不打开默认成功报告", async ({ page }) => {
+    await ready(page);
+    if (target === "run") {
+      await hold(page);
+      const input = page.getByRole("textbox", { name: "输入分析问题" });
+      await input.fill("昨天华东支付金额为什么下降？");
+      await input.press("Enter");
+      await expect(page.locator(".running-state")).toBeVisible();
+      await page.evaluate(() => localStorage.setItem("commerce-lens:demo-runs:v1", "{invalid"));
+    } else {
+      await page.getByRole("button", { name: "只看其他商品" }).click();
+      await expect(page.locator(".hero-number")).toContainText("50,000");
+      await page.evaluate(() => localStorage.setItem("commerce-lens:demo-reports:v1", "{invalid"));
+    }
+    await page.reload();
+    await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地记录损坏");
+    await expect(page.getByRole("alert")).toContainText(target === "run" ? "任务不存在" : "报告不存在");
+    await expect(page.locator(".report")).toHaveCount(0);
+    await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+  });
+}
+
+test("终态写入失败后，刷新将旧活动快照标为中断而非继续锁住", async ({ page }) => {
+  await scopedHold(page);
+  await page.evaluate(() => {
+    const original = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (this === localStorage && key === "commerce-lens:demo-runs:v1")
+        throw new DOMException("full", "QuotaExceededError");
+      return original.call(this, key, value);
+    };
+  });
+  await page.getByRole("button", { name: "取消本次分析", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await expect(page.getByRole("status", { name: "本地保存状态" })).toContainText("本地保存失败");
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "模拟分析已中断" })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+  await page.getByRole("button", { name: "重新分析", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("15,000");
+});
+
+test("完成报告可独立恢复查询范围，不因 session 范围快照丢失而扩大追问范围", async ({ page }) => {
+  await ready(page);
+  await page.getByRole("button", { name: "只看其他商品", exact: true }).click();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  const runId = await page.evaluate(() => {
+    sessionStorage.removeItem("commerce-lens:run-query:v1");
+    return JSON.parse(localStorage.getItem("commerce-lens:demo-runs:v1")!).at(-1).id as string;
+  });
+  await page.goto(`/?run=${encodeURIComponent(runId)}`);
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  await expect(page.getByRole("alert", { name: "分析范围恢复" })).toHaveCount(0);
+  await expect(page.locator(".scope-line")).toContainText("燕麦脆");
+  const input = page.getByRole("textbox", { name: "输入分析问题" });
+  await input.fill("按商品拆解");
+  await input.press("Enter");
+  await expect(page.locator(".running-state")).toBeVisible();
+  await expect(page.locator(".hero-number")).toContainText("50,000");
+  await expect(page.locator(".scope-line")).toContainText("燕麦脆");
+});
+
+test("HTTP 终态任务无本地范围快照时不误用 mock 的重确认门禁", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("commerce-lens:mode", "http"));
+  await page.route("**/api/**", (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === "/api/catalog") return route.fulfill({ json: flow.catalog });
+    if (path === "/api/sessions") return route.fulfill({ json: [] });
+    if (path === "/api/runs/example-run") {
+      const { reportId: _reportId, ...run } = flow.run;
+      return route.fulfill({ json: { ...run, status: "cancelled" } });
+    }
+    return route.fulfill({ status: 404, json: flow.error });
+  });
+  await page.goto("/?run=example-run");
+  await expect(page.getByRole("heading", { name: "分析已取消" })).toBeVisible();
+  await expect(page.getByRole("alert", { name: "分析范围恢复" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "重新分析", exact: true })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "输入分析问题" })).toBeEnabled();
+});

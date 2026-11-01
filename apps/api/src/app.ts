@@ -11,6 +11,8 @@ import { Repository,active,type Identity } from './repository.js';
 import { Runs } from './runs.js';
 import { SignalService } from '../../../packages/analytics/src/signals.js';
 import { reportMarkdown } from './report-export.js';
+import { DatasetProfileService } from '../../../packages/analytics/src/profile.js';
+import { OverviewService } from '../../../packages/analytics/src/overview.js';
 
 type AppOptions={statePool:Pool;readerPool:Pool;mode?:contracts.ExecutionMode;runtime?:PiPaymentRuntime;identity?:Identity;analytics?:AnalyticsService;timeoutMs?:number;recover?:boolean;defaultDataset?:string;runRateLimit?:number};
 const object=(properties:Record<string,import('typebox').TSchema>)=>Type.Object(properties,{additionalProperties:false});
@@ -72,6 +74,16 @@ export async function buildApp(options:AppOptions){
     catch{return reply.code(503).send({code:'NOT_READY',message:'数据库或数据集未准备好',retryable:true,traceId:randomUUID()});}
   });
   app.get('/api/catalog',{schema:{response:{200:contracts.CatalogSchema,...errors}}},async()=>({...await dataset(),contractVersion:contracts.CONTRACT_VERSION,executionMode:mode,supportedMetrics:['paid_amount','refund_amount','sold_units'],datasets:await datasets()}));
+  const profileService=new DatasetProfileService(options.readerPool);
+  const overviewService=new OverviewService(options.analytics??new AnalyticsService(options.readerPool));
+  app.post<{Params:{version:string};Body:contracts.OverviewDTO['query']}>('/api/datasets/:version/overview',{schema:{params:object({version:Type.String({minLength:1,maxLength:100})}),querystring:object({}),body:contracts.OverviewRequestSchema,response:{200:contracts.OverviewSchema,...errors}}},async request=>{
+    const authorized=await dataset(request.params.version);
+    return overviewService.overview(request.body,{storeId:identity.storeId,datasetVersion:authorized.version},authorized);
+  });
+  app.get<{Params:{version:string}}>('/api/datasets/:version/profile',{schema:{params:object({version:Type.String({minLength:1,maxLength:100})}),querystring:object({}),response:{200:contracts.DatasetProfileSchema,...errors}}},async request=>{
+    const authorized=await dataset(request.params.version);
+    return profileService.profile({storeId:identity.storeId,datasetVersion:authorized.version});
+  });
   app.post<{Body:{datasetVersion?:string}}>('/api/sessions',{schema:{body:contracts.SessionRequestSchema,response:{201:contracts.SessionResponseSchema,...errors}}},async(request,reply)=>reply.code(201).send(await repository.createSession((await dataset(request.body.datasetVersion)).version)));
   app.get<{Querystring:{limit?:string;cursor?:string}}>('/api/sessions',{schema:{response:{200:contracts.HistorySchema,...errors}}},async(request,reply)=>{
     const limit=request.query.limit===undefined?30:Number(request.query.limit);

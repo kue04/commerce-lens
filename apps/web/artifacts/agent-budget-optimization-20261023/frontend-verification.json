@@ -1,0 +1,66 @@
+{
+  "verifiedAt": "2026-10-23T08:08:04.834Z",
+  "externalModelCalls": 0,
+  "checks": [
+    {
+      "command": "npm run typecheck --prefix apps/web",
+      "start": "2026-10-23T08:07:37.777Z",
+      "end": "2026-10-23T08:07:40.278Z",
+      "exitCode": 0,
+      "log": "web-typecheck.log"
+    },
+    {
+      "command": "npm run test --prefix apps/web",
+      "start": "2026-10-23T08:07:40.278Z",
+      "end": "2026-10-23T08:07:42.349Z",
+      "exitCode": 0,
+      "log": "web-test.log"
+    },
+    {
+      "command": "npm run test:e2e --prefix apps/web",
+      "start": "2026-10-23T08:07:42.349Z",
+      "end": "2026-10-23T08:08:01.522Z",
+      "exitCode": 0,
+      "log": "web-test-e2e.log"
+    },
+    {
+      "command": "npm run build --prefix apps/web",
+      "start": "2026-10-23T08:08:01.522Z",
+      "end": "2026-10-23T08:08:04.832Z",
+      "exitCode": 0,
+      "log": "web-build.log"
+    }
+  ],
+  "sha256": {
+    "D:\\llm\\Commerce Lens\\apps\\web\\package.json": "17c0215cb3b72f0bbd6c797d70c133ea02043acd4621e2a63bb33fbc33f05835",
+    "D:\\llm\\Commerce Lens\\apps\\web\\playwright.config.ts": "407298d6be6fad8685aca2321fb29f4f65992df0a59bd089beb8dcd067ec0b80",
+    "D:\\llm\\Commerce Lens\\apps\\web\\playwright.real-agent.config.ts": "ac2019d6c103539efb61b44f9c5d4f25a33b4e3f3321d3165c2fa2d2b17c3e90",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\App.tsx": "9f5b8cad2a80e2c97a062ba6ea0b46031cc92b0872d44c2cef0415d3738b7552",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\components\\Chart.tsx": "33b77fa118a8de821882d5beee3864fc0c961eb034792ae26aca45e7f548f455",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\components\\DataPages.tsx": "8bfec4367e6b2bbb969bfa38cdf0214148478f1083e0224b47487b7d00171653",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\components\\EvidencePanel.tsx": "ce69412482e2f2ec103af10aa4508a3ccea17b2d152137a84982efb9a3d8cad2",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\components\\ReportView.tsx": "a73b007fe6cb9308a6f7218d7e3fb312f5d331fb7e2cce4ec19ecd2bb9028421",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\components\\SessionTrail.tsx": "c3860684165990493040cacf3afbfb6464d5a188f9001cfc5819de5d30bfc3ef",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\components\\ui.tsx": "689b6427769a256387471d81cf591e9efb47492804b3119dc9c9d37b29044fa1",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\lib\\api.ts": "8ce452e85ef2dd065a9445201bdde42cb727dad4dadf083834816c24c49b2c28",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\lib\\format.ts": "3a77b77bef58fff1f5dc220f23f992847403bc7b38483dd144933544fc14ed1b",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\lib\\navigation.ts": "338112a867056866d6cd1892bd7fd95b0a36af18dc19421b11653b0e4f2c94e1",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\lib\\presentation.ts": "7164d66779a4845155c1ea15646fdcd126bc525653a19923687c7a82ef0ab11a",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\lib\\selectors.ts": "597f55dfae10922a7a5ea72c21cbd6574d49f36edb0348b8786568bc2c17a6b6",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\lib\\types.ts": "a67cccb302331ef2785bd026cd57ae627be0a706f95de668eb455b389f7a8a94",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\lib\\use-workspace.ts": "399ebcab7b6ad2a69626315b3e270c6b28f2c5220392ded8a6c08851748a454c",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\main.tsx": "df245729ee06bcaddfca29736b8afe9f78906d12140e7587b355ce3c5e1c7a6c",
+    "D:\\llm\\Commerce Lens\\apps\\web\\src\\styles.css": "e1c7a166bbc9b495fe1dcaac0d69f6ee6840a02ab9b603f0fbfad8a5784d4d4d",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\data.test.ts": "de822ccd50a3cd2b7a7dcf388508c8fb049392d9b4328edf36e605c56462e82a",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\http-lifecycle-harness.tsx": "c01ebde563bca821a84ca475b358f4840551153ac1e7f48875eba8a5462711d3",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\http-recovery.spec.ts": "4a05147b224a0b995ff21d69024995012bca083da6bb482455612e3517929f1f",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\http-support.ts": "ee364bf248a184f52eedcec91e0e1ce142e84bd164a23b7c01aba455c5745d13",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\lifecycle.spec.ts": "9f8712d05f3fdffa68316fa9c68a0b64554882c48298925133fc1b5901d04b29",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\overview.spec.ts": "dca700ab068beddaee98a2d839bdcf7990ef5d66d9362c81a6278005ff04aa64",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\real-agent\\run-once.spec.ts": "672c0fc752e66003ae6e5d05ec5de9ba15a213b283c11dd862851a89e16fdad6",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\real-integration\\payment.spec.ts": "63914f4e0511fe1cf484ccc24bd906dfc82adc79c0706fe30c38e6fd59d74d81",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tests\\workspace.spec.ts": "2ee9669cb46d2ce52596a0f13bdef3394f455d7883113631b4db57e0239ded3f",
+    "D:\\llm\\Commerce Lens\\apps\\web\\tsconfig.json": "50ede6287e318bb9d13ea1deb2c7837f2a0207077925fb6e75b4959247ae4ddf"
+  },
+  "sourceUnchangedDuringChecks": true
+}

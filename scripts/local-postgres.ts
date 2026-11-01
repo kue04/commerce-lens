@@ -3,7 +3,8 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve, dirname, sep } from 'node:path';
 import { createServer } from 'node:net';
-import { execFile,spawn,type ChildProcess } from 'node:child_process';
+import { execFile } from 'node:child_process';
+import { setTimeout as delay } from 'node:timers/promises';
 import { promisify } from 'node:util';
 import EmbeddedPostgres from 'embedded-postgres';
 import { Pool } from 'pg';
@@ -11,28 +12,38 @@ import { migrate } from '../db/migrate.js';
 
 class ManagedPostgres extends EmbeddedPostgres {
   private started=false;
-  private child:ChildProcess|undefined;
   private stopping:Promise<void>|undefined;
   beforeStop:(()=>Promise<void>)|undefined;
   constructor(private readonly directory:string,options:ConstructorParameters<typeof EmbeddedPostgres>[0]){super(options);}
   override async start(){
     if(process.platform!=='win32'){await super.start();this.started=true;return;}
     const {postgres}=await import(`@embedded-postgres/windows-${process.arch}`) as {postgres:string};
-    // Windows broadcasts Ctrl+C to an attached console process group. Isolate
-    // PostgreSQL so our API can release leases before explicitly stopping it.
-    const child=spawn(postgres,['-D',this.directory,'-p',String(this.options.port),...this.options.postgresFlags],{
-      windowsHide:true,detached:true,stdio:['ignore','ignore','pipe'],env:{...process.env,LC_MESSAGES:'C'},
-    });
-    this.child=child;
-    await new Promise<void>((resolve,reject)=>{
-      const timer=setTimeout(()=>{child.kill();reject(new Error('PostgreSQL readiness timed out'));},30000);
-      child.once('error',error=>{clearTimeout(timer);reject(error);});
-      child.once('exit',()=>{clearTimeout(timer);this.started=false;reject(new Error('PostgreSQL exited before readiness'));});
-      child.stderr!.on('data',chunk=>{
-        const text=String(chunk);this.options.onLog(text);
-        if(text.includes('database system is ready to accept connections')){clearTimeout(timer);this.started=true;resolve();}
-      });
-    });
+    // A detached console-less parent makes PostgreSQL's Windows children each
+    // allocate a visible console. Give it one hidden, separate console instead:
+    // children inherit it, while Ctrl+C in the API console cannot reach the DB.
+    const logPath=resolve(this.directory,`startup-${randomUUID()}.log`);
+    const outputPath=logPath+'.stdout';
+    const literal=(value:string)=>`'${value.replaceAll("'","''")}'`;
+    const args=['-D',this.directory,'-p',String(this.options.port),...this.options.postgresFlags]
+      .map(value=>`"${value.replaceAll('"','\\"')}"`).join(' ');
+    const script=`$ErrorActionPreference='Stop'; $env:LC_MESSAGES='C'; `+
+      `$pg=Start-Process -FilePath ${literal(postgres)} -ArgumentList ${literal(args)} `+
+      `-WindowStyle Hidden -RedirectStandardError ${literal(logPath)} -RedirectStandardOutput ${literal(outputPath)} -PassThru; $pg.Id`;
+    const {stdout}=await promisify(execFile)('pwsh',['-NoProfile','-NonInteractive','-EncodedCommand',Buffer.from(script,'utf16le').toString('base64')],{windowsHide:true,timeout:10000});
+    const serverPid=Number(stdout.trim());
+    if(!Number.isSafeInteger(serverPid)||serverPid<=0)throw new Error('Invalid PostgreSQL process ID');
+    // Mark ownership immediately so startup failures still use pg_ctl shutdown.
+    this.started=true;
+    const deadline=Date.now()+30000;
+    let offset=0;
+    while(Date.now()<deadline){
+      const log=await readFile(logPath,'utf8').catch(()=>'');
+      if(log.length>offset){this.options.onLog(log.slice(offset));offset=log.length;}
+      if(log.includes('database system is ready to accept connections'))return;
+      try{process.kill(serverPid,0);}catch{this.started=false;throw new Error('PostgreSQL exited before readiness');}
+      await delay(100);
+    }
+    throw new Error('PostgreSQL readiness timed out');
   }
   override stop(){return this.stopping??=this.shutdown();}
   private async shutdown(){

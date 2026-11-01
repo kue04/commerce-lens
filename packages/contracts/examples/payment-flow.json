@@ -33,9 +33,9 @@
     "phase": 7,
     "phaseName": "persisting",
     "executionMode": "deterministic",
-    "createdAt": "2026-10-22T10:42:56.485Z",
-    "endedAt": "2026-10-22T10:42:56.485Z",
-    "reportId": "c90b1c11-0a7b-4fda-8cd2-782e62db08af",
+    "createdAt": "2026-10-23T13:05:04.212Z",
+    "endedAt": "2026-10-23T13:05:04.212Z",
+    "reportId": "950eb381-b605-47b9-b418-4fa09605d90e",
     "usage": {
       "modelRequests": 0,
       "toolCalls": 2,
@@ -48,9 +48,9 @@
     "storeName": "禾味食品演示店",
     "synthetic": true,
     "businessClock": "2026-10-22",
-    "updatedAt": "2026-10-22T10:42:56.485Z",
+    "updatedAt": "2026-10-23T13:05:04.212Z",
     "timezone": "Asia/Shanghai",
-    "contractVersion": "1.1.0",
+    "contractVersion": "1.2.0",
     "executionMode": "deterministic",
     "supportedMetrics": [
       "paid_amount",
@@ -63,13 +63,13 @@
         "storeName": "禾味食品演示店",
         "synthetic": true,
         "businessClock": "2026-10-22",
-        "updatedAt": "2026-10-22T10:42:56.485Z",
+        "updatedAt": "2026-10-23T13:05:04.212Z",
         "timezone": "Asia/Shanghai"
       }
     ]
   },
   "report": {
-    "id": "c90b1c11-0a7b-4fda-8cd2-782e62db08af",
+    "id": "950eb381-b605-47b9-b418-4fa09605d90e",
     "runId": "example-run",
     "sessionId": "example-session",
     "question": "昨天华东支付金额为什么下降？",
@@ -101,7 +101,7 @@
       "storeName": "禾味食品演示店",
       "synthetic": true,
       "businessClock": "2026-10-22",
-      "updatedAt": "2026-10-22T10:42:56.485Z",
+      "updatedAt": "2026-10-23T13:05:04.212Z",
       "timezone": "Asia/Shanghai"
     },
     "comparison": {
@@ -138,7 +138,7 @@
         "templateId": "comparison",
         "text": "支付金额由 100000.00 元 变为 70000.00 元，变化 -30000.00 元。",
         "evidenceIds": [
-          "d4a5d648-38d1-42e4-8352-2a9eb826ad17"
+          "45f4f932-f87f-455c-bd53-845d8dce302b"
         ],
         "valueRefs": [
           "comparison.baseline",
@@ -150,7 +150,7 @@
         "templateId": "contribution",
         "text": "A 支付金额变化 -40000.00 元。",
         "evidenceIds": [
-          "6f86e216-66d8-4e2b-a157-55a8c8babe6a"
+          "4c28de57-6f7e-4fc1-94e1-ec34a7a9d813"
         ],
         "valueRefs": [
           "contributors.0.delta"
@@ -160,7 +160,7 @@
         "templateId": "contribution",
         "text": "B 支付金额变化 10000.00 元。",
         "evidenceIds": [
-          "6f86e216-66d8-4e2b-a157-55a8c8babe6a"
+          "4c28de57-6f7e-4fc1-94e1-ec34a7a9d813"
         ],
         "valueRefs": [
           "contributors.1.delta"
@@ -182,7 +182,7 @@
     ],
     "evidences": [
       {
-        "id": "d4a5d648-38d1-42e4-8352-2a9eb826ad17",
+        "id": "45f4f932-f87f-455c-bd53-845d8dce302b",
         "runId": "example-run",
         "code": "E01",
         "title": "支付金额周期比较",
@@ -210,7 +210,7 @@
         "source": "PostgreSQL 支付订单行聚合",
         "datasetVersion": "acceptance-v1",
         "metricVersion": "1.0.0",
-        "createdAt": "2026-10-22T10:42:56.641Z",
+        "createdAt": "2026-10-23T13:05:04.237Z",
         "coverage": 1,
         "baselineCoverage": 1,
         "columns": [
@@ -241,7 +241,7 @@
         }
       },
       {
-        "id": "6f86e216-66d8-4e2b-a157-55a8c8babe6a",
+        "id": "4c28de57-6f7e-4fc1-94e1-ec34a7a9d813",
         "runId": "example-run",
         "code": "E02",
         "title": "支付金额变化贡献",
@@ -269,7 +269,7 @@
         "source": "PostgreSQL 支付订单行聚合",
         "datasetVersion": "acceptance-v1",
         "metricVersion": "1.0.0",
-        "createdAt": "2026-10-22T10:42:56.644Z",
+        "createdAt": "2026-10-23T13:05:04.241Z",
         "coverage": 1,
         "baselineCoverage": 1,
         "columns": [
@@ -333,9 +333,9 @@
       }
     ],
     "trace": [],
-    "createdAt": "2026-10-22T10:42:56.647Z",
+    "createdAt": "2026-10-23T13:05:04.243Z",
     "provenance": {
-      "contractVersion": "1.1.0",
+      "contractVersion": "1.2.0",
       "executionMode": "deterministic",
       "agentExecuted": false,
       "modelId": null,
@@ -345,7 +345,7 @@
     }
   },
   "evidence": {
-    "id": "d4a5d648-38d1-42e4-8352-2a9eb826ad17",
+    "id": "45f4f932-f87f-455c-bd53-845d8dce302b",
     "runId": "example-run",
     "code": "E01",
     "title": "支付金额周期比较",
@@ -373,7 +373,7 @@
     "source": "PostgreSQL 支付订单行聚合",
     "datasetVersion": "acceptance-v1",
     "metricVersion": "1.0.0",
-    "createdAt": "2026-10-22T10:42:56.641Z",
+    "createdAt": "2026-10-23T13:05:04.237Z",
     "coverage": 1,
     "baselineCoverage": 1,
     "columns": [
@@ -414,7 +414,7 @@
       "runId": "example-run",
       "seq": 1,
       "type": "run.started",
-      "at": "2026-10-22T10:42:56.485Z",
+      "at": "2026-10-23T13:05:04.212Z",
       "payload": {
         "status": "running",
         "executionMode": "deterministic"
@@ -424,7 +424,7 @@
       "runId": "example-run",
       "seq": 2,
       "type": "phase.changed",
-      "at": "2026-10-22T10:42:56.485Z",
+      "at": "2026-10-23T13:05:04.212Z",
       "payload": {
         "phase": 3,
         "phaseName": "comparing",
@@ -435,9 +435,9 @@
       "runId": "example-run",
       "seq": 3,
       "type": "report.ready",
-      "at": "2026-10-22T10:42:56.485Z",
+      "at": "2026-10-23T13:05:04.212Z",
       "payload": {
-        "reportId": "c90b1c11-0a7b-4fda-8cd2-782e62db08af",
+        "reportId": "950eb381-b605-47b9-b418-4fa09605d90e",
         "status": "completed"
       }
     },
@@ -445,7 +445,7 @@
       "runId": "example-run",
       "seq": 4,
       "type": "run.finished",
-      "at": "2026-10-22T10:42:56.485Z",
+      "at": "2026-10-23T13:05:04.212Z",
       "payload": {
         "status": "completed",
         "usage": {

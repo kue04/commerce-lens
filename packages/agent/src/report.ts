@@ -6,6 +6,7 @@ import { CONTRACT_VERSION,ReportDraftSchema,ReportSchema,EvidenceSchema, type Da
 import { METRIC_VERSION,metrics } from '../../metrics/src/index.js';
 import { resultHash } from '../../analytics/src/hash.js';
 import type { AnalyticsService } from '../../analytics/src/service.js';
+import { changeRule } from '../../analytics/src/rules.js';
 
 export function sameScope(a:QuerySpec,b:QuerySpec) {
   return a.metricId===b.metricId && isDeepStrictEqual(a.currentWindow,b.currentWindow) && isDeepStrictEqual(a.baselineWindow,b.baselineWindow) && isDeepStrictEqual(a.filters,b.filters);
@@ -98,14 +99,14 @@ export function buildReport(options:{draft:unknown;evidences:EvidenceDTO[];query
   }
   unknowns.push('可观测关联不能证明因果，无法估计因果损失。');
   if(!(draft.signalEvidenceIds?.length))unknowns.push('本次未核查库存、流量或退款原因信号，不能确认变化原因。');
-  const ruleTriggered=query.metricId==='refund_amount'?comparison.delta>=5000 && comparison.changeRate!==null && comparison.changeRate>=0.3:query.metricId==='sold_units'?comparison.baseline>=20 && comparison.changeRate!==null && comparison.changeRate<=-0.2:comparison.baseline>=10000 && comparison.changeRate!==null && comparison.changeRate<=-0.15;
+  const ruleTriggered=changeRule(query.metricId,comparison);
   const report:ReportDTO={id:randomUUID(),runId:options.runId,sessionId:options.sessionId,question:options.question,title:`${metric.name}变化分析`,status:options.partial?'partial':'completed',query,
     scopeLabel:`${query.filters.regionId?.join('、')??'全部大区'} · ${query.filters.skuId?.join('、')??'全部商品'}`,metricLabel:metric.name,unit:query.metricId==='sold_units'?'units':'fen',dataset:options.dataset,
     comparison,contributors,finding:ruleTriggered?`${metric.name}变化达到业务规则提示阈值，请核实。`:`${metric.name}变化未达到业务规则提示阈值。`,facts,hypotheses:hypotheses.slice(0,3).map(h=>({...h,contradictingEvidenceIds:[]})),
     unknowns,nextActions:['核实贡献较大的商品与渠道，补充相关源数据。'],
     limitations:['合成食品电商数据；固定演示业务时钟。','贡献分解表示变化来源，相关性不等于因果。',options.mode==='agent'?'报告事实由真实数据库工具结果渲染。':'确定性数据库分析模式，未执行 Agent 或调用模型。'],
     evidences:options.evidences,trace:options.trace,createdAt:new Date().toISOString(),
-    provenance:{contractVersion:CONTRACT_VERSION,executionMode:options.mode,agentExecuted:options.mode==='agent',modelId:options.modelId,promptVersion:'analysis-v2',metricVersion:METRIC_VERSION,datasetVersion:options.dataset.version},
+    provenance:{contractVersion:CONTRACT_VERSION,executionMode:options.mode,agentExecuted:options.mode==='agent',modelId:options.modelId,promptVersion:options.mode==='agent'?'analysis-v3':'analysis-v2',metricVersion:METRIC_VERSION,datasetVersion:options.dataset.version},
   };
   if(comparison.baseline===0)report.limitations.push('基期为零，变化率不可计算，显示为 null。');
   if(!Value.Check(ReportSchema,report))throw new DomainError('INVALID_REPORT','生成的报告不符合共享契约');

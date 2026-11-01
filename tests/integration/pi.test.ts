@@ -9,6 +9,7 @@ import { defaultWindows } from '../../packages/metrics/src/index.js';
 import { PiPaymentRuntime } from '../../packages/agent/src/pi.js';
 import { PaymentTools } from '../../packages/agent/src/tools.js';
 import { RunBudget } from '../../packages/agent/src/budget.js';
+import { DomainError } from '../../packages/contracts/src/index.js';
 import type { EvidenceDTO } from '../../packages/contracts/src/http.js';
 
 let db:Awaited<ReturnType<typeof startLocalPostgres>>;
@@ -67,4 +68,83 @@ test('429 model retry is counted in the same budget and is limited to one extra 
   assert.equal(faux.state.callCount,2);assert.equal(tools.budget.usage.modelRequests,2);
   const other=setup();other.faux.setResponses([fauxAssistantMessage('',{stopReason:'error',errorMessage:'401 Unauthorized'})]);
   await assert.rejects(()=>other.runtime.intent('昨天支付金额','2026-10-22',other.tools.budget),/模型调用失败/);assert.equal(other.faux.state.callCount,1);
+});
+
+test('Agent preserves a preflight budget error instead of replacing it with REPORT_NOT_SUBMITTED',async()=>{
+  const {runtime,tools}=setup();
+  tools.budget.record(29000,null);
+  await assert.rejects(()=>runtime.analyze(tools),(error:unknown)=>error instanceof DomainError && error.code==='BUDGET_EXCEEDED');
+  assert.equal(tools.budget.usage.modelRequests,0,'preflight rejection must not send a model request');
+});
+test('model sees compact evidence with exact values and scope while full saved evidence remains intact',async()=>{
+  const {runtime,faux,tools,saved}=setup();
+  faux.setResponses([
+    fauxAssistantMessage(fauxToolCall('compare_metric',query),{stopReason:'toolUse'}),
+    fauxAssistantMessage(fauxToolCall('decompose_change',query),{stopReason:'toolUse'}),
+    context=>{
+      const results=context.messages.filter(m=>m.role==='toolResult');
+      assert.equal(results.length,2);
+      const raw=JSON.stringify(results);
+      assert.equal(raw.includes('queryTemplateIds'),false);
+      assert.equal(raw.includes('resultHash'),false);
+      const texts=results.flatMap(m=>m.content.filter(b=>b.type==='text').map(b=>JSON.parse(b.text)));
+      assert.equal(texts[0].data.comparison.current,7000000);
+      assert.deepEqual(texts[0].data.scope.filters,{regionId:['east']});
+      assert.equal(texts[1].data.contributors[0].delta,-4000000);
+      assert.ok(saved.every(e=>e.resultHash && e.columns.length && e.rows.length));
+      return fauxAssistantMessage(fauxToolCall('submit_report',{comparisonEvidenceId:saved[0]!.id,contributionEvidenceId:saved[1]!.id}),{stopReason:'toolUse'});
+    },
+  ]);
+  await runtime.analyze(tools);
+  assert.equal(tools.render().status,'completed');
+  assert.deepEqual(tools.render().evidences,saved);
+});
+test('low remaining budget preserves a submission-only model turn without raising limits',async()=>{
+  const {runtime,faux,tools,saved}=setup();
+  faux.setResponses([
+    fauxAssistantMessage(fauxToolCall('compare_metric',query),{stopReason:'toolUse'}),
+    ()=>{
+      tools.budget.record(17500,null);
+      return fauxAssistantMessage(fauxToolCall('decompose_change',query),{stopReason:'toolUse'});
+    },
+    context=>{
+      const available=context.messages.flatMap(m=>m.role==='system'?m.toolsAdded??[]:[]).map(t=>t.name);
+      assert.deepEqual(available,['submit_report'],'when exploration cannot leave a closing turn, only submission is offered');
+      assert.ok(JSON.stringify(context).includes(saved[0]!.id));
+      return fauxAssistantMessage(fauxToolCall('submit_report',{comparisonEvidenceId:saved[0]!.id,contributionEvidenceId:saved[1]!.id}),{stopReason:'toolUse'});
+    },
+  ]);
+  await runtime.analyze(tools);
+  assert.equal(tools.render().status,'completed');
+  assert.ok(tools.budget.usage.tokens<=30000);
+  assert.ok(tools.budget.usage.modelRequests<=8);
+  assert.ok(tools.budget.usage.toolCalls<=12);
+});
+test('submission-only turn allows one invalid-ID repair with explicit feedback',async()=>{
+  const {runtime,faux,tools,saved}=setup();
+  faux.setResponses([
+    fauxAssistantMessage(fauxToolCall('compare_metric',query),{stopReason:'toolUse'}),
+    ()=>{tools.budget.record(17500,null);return fauxAssistantMessage(fauxToolCall('decompose_change',query),{stopReason:'toolUse'});},
+    ()=>{
+      return fauxAssistantMessage(fauxToolCall('submit_report',{comparisonEvidenceId:'invented',contributionEvidenceId:saved[1]!.id}),{stopReason:'toolUse'});
+    },
+    context=>{
+      assert.match(JSON.stringify(context),/lastSubmissionError.*INVALID_EVIDENCE/);
+      return fauxAssistantMessage(fauxToolCall('submit_report',{comparisonEvidenceId:saved[0]!.id,contributionEvidenceId:saved[1]!.id}),{stopReason:'toolUse'});
+    },
+  ]);
+  await runtime.analyze(tools);
+  assert.equal(tools.render().status,'completed');
+  assert.equal(saved.length,2);
+});
+test('a provider attempting unavailable exploration in submission-only mode cannot execute extra SQL',async()=>{
+  const {runtime,faux,tools,saved}=setup();
+  faux.setResponses([
+    fauxAssistantMessage(fauxToolCall('compare_metric',query),{stopReason:'toolUse'}),
+    ()=>{tools.budget.record(17500,null);return fauxAssistantMessage(fauxToolCall('decompose_change',query),{stopReason:'toolUse'});},
+    fauxAssistantMessage(fauxToolCall('inspect_signals',{signalType:'inventory',query}),{stopReason:'toolUse'}),
+  ]);
+  await assert.rejects(()=>runtime.analyze(tools),(error:unknown)=>error instanceof DomainError && error.code==='MODEL_FAILED');
+  assert.equal(saved.length,2);
+  assert.equal(tools.trace.some(item=>item.name==='inspect_signals'),false);
 });

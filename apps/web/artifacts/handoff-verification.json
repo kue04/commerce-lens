@@ -1,0 +1,185 @@
+{
+  "startedAt": "2026-10-22T20:56:44.7332670+08:00",
+  "endedAt": "2026-10-22T20:58:22.1955262+08:00",
+  "branch": "main",
+  "head": "25a18ec3e64ae2d8384a101eb6fd403d5bb9038f",
+  "node": "v24.22.1",
+  "checks": [
+    {
+      "command": "npm run typecheck --prefix apps/web",
+      "startedAt": "2026-10-22T20:56:44.7400292+08:00",
+      "endedAt": "2026-10-22T20:56:46.6429299+08:00",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test --prefix apps/web",
+      "startedAt": "2026-10-22T20:56:46.6448301+08:00",
+      "endedAt": "2026-10-22T20:56:48.4001767+08:00",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:e2e --prefix apps/web",
+      "startedAt": "2026-10-22T20:56:48.4002080+08:00",
+      "endedAt": "2026-10-22T20:58:19.6152017+08:00",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build --prefix apps/web",
+      "startedAt": "2026-10-22T20:58:19.6152400+08:00",
+      "endedAt": "2026-10-22T20:58:22.1757905+08:00",
+      "exitCode": 0
+    }
+  ],
+  "sourceUnchangedDuringChecks": true,
+  "sourceHashes": [
+    {
+      "path": "apps/web/index.html",
+      "sha256": "0f3103f4f5ee25fbd2700d3a05fb08703b660fd190d2c8897e975eb80e46e4f6"
+    },
+    {
+      "path": "apps/web/package-lock.json",
+      "sha256": "5786767eca1516e72a9233c219b7fde6f1d4afe2467ecbf2a0e8f46bd8d06aef"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "e5d1665abb7bf545897938a56a665b5511d25a9aaa2dae7e0c0ffe5cb2f555fa"
+    },
+    {
+      "path": "apps/web/playwright.config.ts",
+      "sha256": "1af0325e7b28b9f8696948d842a0b6536e3f1212d35489c41a5046171260d3ab"
+    },
+    {
+      "path": "apps/web/public/favicon.svg",
+      "sha256": "83ab75cb1279aea151fb323606896dc005b6f83858e20c35e9f4110e46bbb8dc"
+    },
+    {
+      "path": "apps/web/public/fonts/dm-sans-variable.ttf",
+      "sha256": "8cd08d97e89c24d0aa92edd2f0f4c8ee6195eee9b7c9f154865a58b02f0c1c0d"
+    },
+    {
+      "path": "apps/web/public/fonts/OFL-DM-Sans.txt",
+      "sha256": "9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1"
+    },
+    {
+      "path": "apps/web/public/fonts/README.md",
+      "sha256": "be88d56b65c6660a2ddc47c245ce666b31babac6f07e1693da9398aa70c2eb2c"
+    },
+    {
+      "path": "apps/web/README.md",
+      "sha256": "1df95756aee886e9a9f8647c7840e55e24e1f85e0211c610791f3f10c8c718be"
+    },
+    {
+      "path": "apps/web/src/App.tsx",
+      "sha256": "0d8c646914d19cc66d08f8b09df4e5f7c51513596c9a84a56b7f7ce97eaed751"
+    },
+    {
+      "path": "apps/web/src/components/Chart.tsx",
+      "sha256": "33d331995beee6ad7d3d755c97e69c50f3622e579c02f84a7a465d1e0043ae5d"
+    },
+    {
+      "path": "apps/web/src/components/EvidencePanel.tsx",
+      "sha256": "5680bb6c7b80313adcf9d1adab9a2ea02cefe34c8911b5a645300534dfbd164f"
+    },
+    {
+      "path": "apps/web/src/components/ReportView.tsx",
+      "sha256": "07dc00fe94214f1d16bed877ce83c712823f83b1305e0c30fc534d6f24e946a3"
+    },
+    {
+      "path": "apps/web/src/components/ScopeDialog.tsx",
+      "sha256": "75132ecda82a73aae367711a7408841b3e759184c3f522f061b4c6466f55b35e"
+    },
+    {
+      "path": "apps/web/src/components/SessionTrail.tsx",
+      "sha256": "c3860684165990493040cacf3afbfb6464d5a188f9001cfc5819de5d30bfc3ef"
+    },
+    {
+      "path": "apps/web/src/components/ui.tsx",
+      "sha256": "689b6427769a256387471d81cf591e9efb47492804b3119dc9c9d37b29044fa1"
+    },
+    {
+      "path": "apps/web/src/lib/api.ts",
+      "sha256": "1a75637a2add79e0d5917d9e46787cb660ab585673f4bf344bcadf264130c3b2"
+    },
+    {
+      "path": "apps/web/src/lib/fixtures.ts",
+      "sha256": "faf53e013a8d66e57c22649ac55c8c072e0f9338e3c3190ca174496bdf607eb4"
+    },
+    {
+      "path": "apps/web/src/lib/format.ts",
+      "sha256": "3a77b77bef58fff1f5dc220f23f992847403bc7b38483dd144933544fc14ed1b"
+    },
+    {
+      "path": "apps/web/src/lib/selectors.ts",
+      "sha256": "eb60e148c4220120688900425e88be1171ae8d914e97a67caec73476430c26d1"
+    },
+    {
+      "path": "apps/web/src/lib/storage.ts",
+      "sha256": "91258b6c0f59a9be60cf74968156672969119ebcd5264d7d1a7e9dc6e3a2636e"
+    },
+    {
+      "path": "apps/web/src/lib/types.ts",
+      "sha256": "27f398485b61b0166af07add08a6e73f703929a872c0fa57ce95640992eeeded"
+    },
+    {
+      "path": "apps/web/src/lib/use-workspace.ts",
+      "sha256": "7e65bbc0cc655f7227bd015e80d7f1105b2c0e4a5fd39d535cadc69e6a72231f"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "df245729ee06bcaddfca29736b8afe9f78906d12140e7587b355ce3c5e1c7a6c"
+    },
+    {
+      "path": "apps/web/src/styles.css",
+      "sha256": "31dd27a0fae56f6b33d711bf9252aafab3ee156394bf9a0ad2554a353b74a0f8"
+    },
+    {
+      "path": "apps/web/tests/data.test.ts",
+      "sha256": "dbbb9da4a064efbcb58ef0f2a41a55ff0765cfca412ec3a585a3e6db115e6365"
+    },
+    {
+      "path": "apps/web/tests/lifecycle-harness.tsx",
+      "sha256": "51df92d5cc2b7c070cef4c63a71d7d8c471c0e0f8348fb422ba988feb2082c02"
+    },
+    {
+      "path": "apps/web/tests/lifecycle.spec.ts",
+      "sha256": "f2d3f99d95c7fd89fe74fd1313ec78e472681ac257f5ba471e304293d8e613fb"
+    },
+    {
+      "path": "apps/web/tests/storage.spec.ts",
+      "sha256": "e58d0bb433c073b188eb68a4efd0cde56382a24715827eee5d29d60aaafc8616"
+    },
+    {
+      "path": "apps/web/tests/visual.mjs",
+      "sha256": "e21a5ecc2711b65c567037a7c412c7af88a32f8b12100254305160436a8b6527"
+    },
+    {
+      "path": "apps/web/tests/workspace.spec.ts",
+      "sha256": "8b9f5b1d12adb152a859d85ffc1a2372ff5ed955523fd8603d02009af104f944"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "sha256": "8a75cc914a7770248959866efbd433702038f0e7452676bca9e9f1fd202690c9"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "8e2b09d99deebc6967b2065fa25a02c760461d18a62b7fe2f376e01cafd502b7"
+    },
+    {
+      "path": "packages/analytics/src/compare.ts",
+      "sha256": "1a370642eb740fd83a1fcdfe9f19ec412f893b2239e085e4250ca16cf17f8655"
+    },
+    {
+      "path": "packages/contracts/examples/payment-flow.json",
+      "sha256": "5294f9b2eb252ebb665d1c0128f5578cd2283affcd75edb6802d4b9ad9a112ff"
+    },
+    {
+      "path": "packages/contracts/src/http.ts",
+      "sha256": "f26c52ed21be9aaaf07e607724495a896cc6be1d38e333fa797430b36c182e79"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "ffe60c0397a75abbe17081e11fde776ed7ab887632015e9ce79a94557a0ce219"
+    }
+  ],
+  "note": "前端 mock 存储损坏、读写禁用/配额失败、部分写入、范围确认与恢复验证；包含既有工作台/生命周期全量回归。HTTP 使用拦截样例，未验证真实 API、PostgreSQL 或 Agent。原始日志 storage-verification.log。"
+}

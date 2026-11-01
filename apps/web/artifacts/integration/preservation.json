@@ -1,0 +1,172 @@
+[
+  {
+    "path": ".gitignore",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "index.html",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "package-lock.json",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "package.json",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "playwright.config.ts",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "README.md",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "tsconfig.json",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "vite.config.ts",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "public/favicon.svg",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "public/fonts/dm-sans-variable.ttf",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "public/fonts/OFL-DM-Sans.txt",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "public/fonts/README.md",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/App.tsx",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "src/main.tsx",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/styles.css",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/components/Chart.tsx",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/components/EvidencePanel.tsx",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "src/components/ReportView.tsx",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "src/components/ScopeDialog.tsx",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/components/SessionTrail.tsx",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/components/ui.tsx",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/lib/api.ts",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "src/lib/fixtures.ts",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "src/lib/format.ts",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/lib/selectors.ts",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "src/lib/storage.ts",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/lib/types.ts",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "src/lib/use-workspace.ts",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "tests/data.test.ts",
+    "exists": true,
+    "changed": true
+  },
+  {
+    "path": "tests/lifecycle-harness.tsx",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "tests/lifecycle.spec.ts",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "tests/storage.spec.ts",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "tests/visual.mjs",
+    "exists": true,
+    "changed": false
+  },
+  {
+    "path": "tests/workspace.spec.ts",
+    "exists": true,
+    "changed": false
+  }
+]

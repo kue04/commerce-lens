@@ -1,0 +1,28 @@
+{
+  "modifiedExisting": [
+    "apps/web/package.json",
+    "apps/web/src/App.tsx",
+    "apps/web/src/components/Chart.tsx",
+    "apps/web/src/components/DataPages.tsx",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/types.ts",
+    "apps/web/src/styles.css",
+    "apps/web/tests/data.test.ts",
+    "apps/web/tests/overview.spec.ts",
+    "docs/INTEGRATION-RESULTS.md",
+    "docs/progress-frontend.md",
+    "docs/PROGRESS.md"
+  ],
+  "newSource": [
+    "apps/web/src/components/OverviewPanel.tsx",
+    "apps/web/src/lib/overview-scope.ts",
+    "apps/web/src/lib/use-overview.ts",
+    "apps/web/tests/overview-boundaries.spec.ts",
+    "apps/web/tests/real-integration/overview-read.spec.ts",
+    "apps/web/tests/real-integration/overview-oracle.mjs"
+  ],
+  "unexpectedModification": false,
+  "backendSourceUnchanged": true,
+  "contractByteIdentical": true,
+  "priorEvidenceRestored": true
+}

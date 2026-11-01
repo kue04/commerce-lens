@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-23",
+  "externalModelCalls": 0,
+  "realModelCompletedRevalidated": false,
+  "backendIsolatedTests": {
+    "passed": 86,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 176928.6572
+  },
+  "frontendTests": {
+    "unitPassed": 9,
+    "browserPassed": 28
+  },
+  "originalFifthInputUpperBound": 24476,
+  "optimizedFifthInputUpperBound": 4068,
+  "offlineResponses": {
+    "recorded": 4,
+    "synthetic": 1
+  },
+  "immutableOriginalZipSha256": "412652D38EAF741DAB0E9967A622C03833AFD5A3EF2FF428081FFE846AD4E874",
+  "limitsRaised": false,
+  "promptVersion": "analysis-v3",
+  "sharedBackendConcurrentChange": "HTTP1.2.0/data profile not included in isolated baseline verdict"
+}
