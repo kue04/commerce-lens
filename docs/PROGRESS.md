@@ -1,11 +1,12 @@
 # GitHub 汇总上传（2026-11-01，Asia/Shanghai）
 
-- 用户授权创建 GitHub 仓库并上传项目。仓库为 `kue04/commerce-lens`，私有；本地汇总分支 `codex/github-upload` 推送到远程 `main`。本节为上传快照，以下各节保留原验收时间与边界。
+- 用户授权创建 GitHub 仓库并上传项目。仓库为 `kue04/commerce-lens`，私有；本地汇总分支 `codex/github-upload` 作为上传快照，GitHub 默认分支为 `main`。本节为上传快照，以下各节保留原验收时间与边界。
 - 来源：原前端目录 `main@25a18ec` 的当前前端、同步契约与进度，及后端独立目录 `backend/payment-api@a250286` 的当前后端、数据库、Agent 和评测成果。独立 worktree 汇总，不覆盖原目录、不合并原本地 main，不清理原未提交修改。
 - 本次验证环境：Windows、Node 24.22.1、真实 PostgreSQL 18.4；根目录 `npm ci`、`npm run typecheck`、`npm test`（100/100，0 跳过，242.38 秒）、`npm run build` 通过；前端 `npm ci --prefix apps/web`、`npm run typecheck --prefix apps/web`、`npm test --prefix apps/web`（12/12）、`npm run build --prefix apps/web` 通过。
 - 前端浏览器回归使用隔离 Vite 端口 5189 和临时 Playwright 配置，36/36 通过（18.12 秒，0 跳过、0 flaky）；未复用现有预览服务。构建保留图表分包超过 500 kB 的提示，未因上传扩展优化范围。
 - 整理根 README 的同仓库启动方式、能力边界及截图；前端 README 补充同仓库运行与 SQL oracle 的后端路径变量。现有数据/业务/Agent 实现保持来源文件一致，原目录 459 个文件内容哈希保持不变。
 - 源码及所上传提交历史扫描未发现实际凭证。仅上传源码、评测/验收摘要和页面截图；不上传 `.env`、连接文件、本地数据库、依赖、构建产物、原始网络抓包或 ZIP。历史文档中部分原始抓包引用只在原本地目录保留。
+- 网络记录：直连 `github.com:443` 的 Git push 连接失败，官方 GitHub API 可用，改用 Git Data API 创建文件树与提交。远程文件树逐项 SHA 与本地已验证快照核对；远程为首次上传提交，原 Git 历史保留在本地，不能声称已通过 Git push 同步整段历史。
 - 本次无真实模型调用，未重跑冻结评测、规模性能或真实前后端浏览器/独立 SQL oracle 命令。上传不能视为功能补齐；真实模型历史终态仍为 partial，完整 completed 验收与概览到明确数据版本新分析的剩余边界保持原记录。实际评测定义为 120 案例、dev/frozen-test 各 60，不声明 200 条冻结案例或真实模型成功率。
 
 ---
